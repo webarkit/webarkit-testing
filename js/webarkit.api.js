@@ -16,6 +16,10 @@ ARtest.prototype.log = function () {
   scope.webarkit.test();
 }
 
+ARtest.prototype.init = function (data, cols, rows) {
+  scope.webarkit.initTracking(data, cols, rows);
+}
+
 // WebARKit exported JS API
 //
 var webarkit = {
@@ -24,6 +28,7 @@ var webarkit = {
 
 var FUNCTIONS = [
     'test',
+    'initTracking'
 ];
 
 function runWhenLoaded() {
