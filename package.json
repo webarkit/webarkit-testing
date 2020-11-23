@@ -1,0 +1,40 @@
+{
+  "name": "@kalwalt/webarkit-testing",
+  "version": "0.0.0",
+  "description": "Experimental WebARKit",
+  "keywords": [
+    "ARToolKit",
+    "AR",
+    "Augmented Reality",
+    "WebAR",
+    "JavaScript",
+    "WebARKit",
+    "markerless"
+  ],
+  "author": {
+    "name": "Walter Perdan",
+    "email": "github@kalwaltart.it",
+    "url": "https://www.kalwaltart.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kalwalt/webarkit-testing"
+  },
+  "homepage": "",
+  "contributors": [
+  ],
+  "bugs": {
+    "url": ""
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "build": "node tools/makem.js; echo Built at `date`",
+    "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
+    "test": "grunt qunit",
+    "watch": "./node_modules/.bin/watch 'npm run build' ./js/"
+  },
+  "license": "LGPL-3.0",
+  "dependencies": {
+  }
+}
