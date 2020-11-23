@@ -9,7 +9,7 @@
     }
 
 var ARtest = function () {
-  console.log('this is a test');
+  console.log('This is a test from the js API!');
 }
 
 ARtest.prototype.log = function () {
