@@ -1,6 +1,7 @@
 {
   "name": "@kalwalt/webarkit-testing",
   "version": "0.0.0",
+  "main": "dist/WebARKit.js",
   "description": "Experimental WebARKit",
   "keywords": [
     "ARToolKit",
@@ -21,14 +22,21 @@
     "url": "https://github.com/kalwalt/webarkit-testing"
   },
   "homepage": "",
-  "contributors": [
-  ],
+  "contributors": [],
   "bugs": {
     "url": ""
   },
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "babel-loader": "^8.1.0",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
   },
   "scripts": {
+    "dev-es6": "webpack --mode development --progress --colors --watch",
+    "build-es6": "webpack --mode production",
     "build": "node tools/makem.js; echo Built at `date`",
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
     "test": "grunt qunit",
@@ -36,5 +44,7 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
+    "@babel/runtime": "^7.9.2",
+    "axios": "^0.19.2"
   }
 }
