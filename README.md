@@ -4,6 +4,12 @@ This is a repository testing for WebARKit. This will not became the official rep
 
 ## Building
 
+### Pre-requisites
+
+You need emscripten `1.39.16` because openCV may be built with this version.
+
+### Instructions
+
 Before all, you need to clone this repository with the WebARKitLib submodule:
 
 ```
