@@ -8,17 +8,18 @@
         scope = self;
     }
 
-var ARtest = function () {
+var WebARController = function () {
   console.log('This is a test from the js API!');
 }
 
-ARtest.prototype.log = function () {
+WebARController.prototype.log = function () {
   scope.webarkit.test();
 }
 
-ARtest.prototype.init = function (data, cols, rows) {
+// will see this...
+/*WebARController.prototype.init = function (data, cols, rows) {
   scope.webarkit.initTracking(data, cols, rows);
-}
+}*/
 
 // WebARKit exported JS API
 //
@@ -37,7 +38,7 @@ function runWhenLoaded() {
     });
 
     for (var m in Module) {
-        if (m.match(/^AR/))
+        if (m.match(/^WebAR/))
             webarkit[m] = Module[m];
     }
 }
@@ -45,7 +46,7 @@ function runWhenLoaded() {
 
 /* Exports */
 scope.webarkit = webarkit;
-scope.ARtest = ARtest;
+scope.WebARController = WebARController;
 
 if (scope.Module) {
     scope.Module.onRuntimeInitialized = function () {
