@@ -8,7 +8,9 @@
     <script src="../dist/WebARKit.js"></script>
     <script>
       console.log(WebARKit)
-      WebARKit.WebARKitController.init()
+       WebARKit.WebARKitController.init().then(wark => {
+        wark.webarkit.test();
+      })
     </script>
   </body>
 </html>
