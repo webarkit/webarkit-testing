@@ -23,7 +23,8 @@ export default class WebARKit {
   _decorate () {
     // add delegate methods
     [
-      'test'
+      'test',
+      'initTracking'
     ].forEach(method => {
       this[method] = this.instance[method]
     })

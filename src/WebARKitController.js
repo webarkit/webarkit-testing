@@ -23,6 +23,10 @@ export default class WebARKitController {
     }, 1)
       return this
   }
+
+  initTracking(data, refCols, refRows) {
+    this.webarkit.initTracking(data, refCols, refRows)
+  }
   addEventListener(name, callback) {
     if(!this.listeners[name]) {
       this.listeners[name] = [];
