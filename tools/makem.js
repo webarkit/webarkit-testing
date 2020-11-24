@@ -207,6 +207,18 @@ var INCLUDES = [
     path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/KPM/FreakMatcher'),
 ].map(function(s) { return '-I' + s }).join(' ');
 
+var OPENCV_LIBS = [
+	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_calib3d.a'),
+	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_core.a'),
+	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_dnn.a'),
+	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_features2d.a'),
+	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_flann.a'),
+	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_imgproc.a'),
+	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_objdetect.a'),
+	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_photo.a'),
+	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_video.a'),
+].map(function(s) { return ' ' + s }).join(' ');
+
 function format(str) {
     for (var f = 1; f < arguments.length; f++) {
         str = str.replace(/{\w*}/, arguments[f]);
@@ -257,12 +269,12 @@ var compile_combine_min = format(EMCC + ' ' + INCLUDES + ' '
 
 var compile_wasm = format(EMCC + ' ' + INCLUDES + ' '
     + ALL_BC + MAIN_SOURCES
-    + FLAGS + WASM_FLAGS + DEFINES + PRE_FLAGS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
+    + FLAGS + WASM_FLAGS + DEFINES + PRE_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
     OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_FILE);
 
 var compile_wasm_es6 = format(EMCC + ' ' + INCLUDES + ' '
 		 + ALL_BC + MAIN_SOURCES
-		 + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
+		 + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
 		 OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_ES6_FILE);
 
 /*

@@ -9,11 +9,11 @@ extern "C" {
        console.log("This is a test from WebARKitJS.cpp!")
      );
    }
-   /*int initTracking(char &data, size_t refCols, size_t refRows) {
+   int initTracking(unsigned char *data, size_t refCols, size_t refRows) {
      WebARKitOrbTracker *tracker;
      tracker->initialize(data, refCols, refRows);
      return 0;
-   }*/
+   }
 }
 
 #include "bindings.cpp"
