@@ -2,6 +2,7 @@
 #include <iostream>
 #include <emscripten.h>
 #include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitOrbTracker.h>
+//#include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitUtils.h>
 
 extern "C" {
    void test() {
@@ -9,9 +10,9 @@ extern "C" {
        console.log("This is a test from WebARKitJS.cpp!")
      );
    }
-   int initTracking(unsigned char *data, size_t refCols, size_t refRows) {
+   int initTracking(const char *filename, size_t refCols, size_t refRows) {
      WebARKitOrbTracker *tracker;
-     tracker->initialize(data, refCols, refRows);
+     tracker->initialize(filename, refCols, refRows);
      return 0;
    }
 }
