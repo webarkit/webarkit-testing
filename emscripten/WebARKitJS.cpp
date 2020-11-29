@@ -62,8 +62,11 @@ extern "C" {
  	}
 
 
-   int initTracking(unsigned char *data, size_t refCols, size_t refRows) {
+   int initTracking(int id, size_t refCols, size_t refRows) {
+    webARKitController *warc = &(webARKitControllers[id]);
     WebARKitOrbTracker *tracker;
+    unsigned char *data;
+    data = warc->image2DFrame;
     tracker->initialize(data, refCols, refRows);
     return 0;
    }

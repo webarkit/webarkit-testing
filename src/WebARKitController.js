@@ -54,7 +54,14 @@ export default class WebARKitController {
       this.videoLumaPointer = params.videoLumaPointer
 
       this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
-      // this.webarkit.initTracking(data, this.width, this.height)
+
+      if (this.dataHeap) {
+        this.dataHeap.set(data)
+        //console.log(this.dataHeap);
+        return true
+      }
+
+      this.webarkit.initTracking(this.id, this.width, this.height)
     })
   }
 
