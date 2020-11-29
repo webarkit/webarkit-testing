@@ -63,9 +63,9 @@ extern "C" {
 
 
    int initTracking(unsigned char *data, size_t refCols, size_t refRows) {
-     WebARKitOrbTracker *tracker;
-     tracker->initialize(data, refCols, refRows);
-     return 0;
+    WebARKitOrbTracker *tracker;
+    tracker->initialize(data, refCols, refRows);
+    return 0;
    }
 }
 
