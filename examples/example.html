@@ -10,7 +10,7 @@
       console.log(WebARKit)
        WebARKit.WebARKitController.init().then(wark => {
         wark.webarkit.test();
-        wark.initTracking()
+        wark.initTracking('path/to/data', 120, 120)
       })
     </script>
   </body>

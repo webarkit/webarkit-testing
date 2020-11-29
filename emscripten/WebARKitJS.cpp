@@ -10,7 +10,7 @@ extern "C" {
        console.log("This is a test from WebARKitJS.cpp!")
      );
    }
-   int initTracking(const char *filename, size_t refCols, size_t refRows) {
+   int initTracking(std::string filename, size_t refCols, size_t refRows) {
      WebARKitOrbTracker *tracker;
      tracker->initialize(filename, refCols, refRows);
      return 0;
