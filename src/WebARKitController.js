@@ -58,10 +58,11 @@ export default class WebARKitController {
       if (this.dataHeap) {
         this.dataHeap.set(data)
         //console.log(this.dataHeap);
+        this.webarkit.initTracking(this.id, this.width, this.height)
         return true
       }
 
-      this.webarkit.initTracking(this.id, this.width, this.height)
+      //this.webarkit.initTracking(this.id, this.width, this.height)
     })
   }
 
