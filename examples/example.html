@@ -7,10 +7,9 @@
   <body>
     <script src="../dist/WebARKit.js"></script>
     <script>
-      console.log(WebARKit)
        WebARKit.WebARKitController.init().then(wark => {
         wark.webarkit.test();
-        wark.initTracking('path/to/data', 120, 120)
+        wark.load2DMarker('data/pinball.jpg', 120, 120)
       })
     </script>
   </body>

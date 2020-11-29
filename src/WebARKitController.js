@@ -27,6 +27,12 @@ export default class WebARKitController {
   initTracking(data, refCols, refRows) {
     this.webarkit.initTracking(data, refCols, refRows)
   }
+
+  async load2DMarker (url, width, height) {
+    let marker = await this.webarkit.add2DMarker(url, width, height)
+    return marker
+  };
+
   addEventListener(name, callback) {
     if(!this.listeners[name]) {
       this.listeners[name] = [];

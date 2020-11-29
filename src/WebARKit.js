@@ -1,10 +1,12 @@
 import ModuleLoader from './ModuleLoader'
+import Utils from './Utils'
 
 export default class WebARKit {
   // construction
   constructor () {
     // reference to WASM module
     this.instance
+    this.marker2DCount = 0
     this.version = '0.0.0'
     console.info('WebARKit ', this.version)
   }
@@ -35,5 +37,27 @@ export default class WebARKit {
         this[co] = this.instance[co]
       }
     }
+  }
+
+  async add2DMarker (url, width, height) {
+    // url doesn't need to be a valid url. Extensions to make it valid will be added here
+    const target = '/marker2D_' + this.marker2DCount++
+
+    let data
+
+    try { data = await Utils.fetchRemoteData(url) } catch (error) { throw error }
+
+    this._storeDataFile(data, target)
+
+    // return the internal marker ID
+    return this.instance.initTracking(target, width, height)
+  }
+
+  _storeDataFile (data, target) {
+    // FS is provided by emscripten
+    // Note: valid data must be in binary format encoded as Uint8Array
+    this.instance.FS.writeFile(target, data, {
+      encoding: 'binary'
+    })
   }
 }
