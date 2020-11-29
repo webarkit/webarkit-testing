@@ -2,6 +2,7 @@ import WebARKit from './WebARKit'
 
 export default class WebARKitController {
   constructor(){
+    this.id
     this.listeners = {}
   }
   static async init () {
@@ -22,6 +23,10 @@ export default class WebARKitController {
       })
     }, 1)
       return this
+  }
+
+  setup (width, height) {
+    return this.id = this.webarkit.setup(width, height)
   }
 
   initTracking(data, refCols, refRows) {
