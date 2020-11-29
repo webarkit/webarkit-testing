@@ -1,5 +1,5 @@
 import WebARKit from './WebARKit'
-import { loadImage } from 'canvas'
+import { createCanvas, loadImage } from 'canvas'
 
 export default class WebARKitController {
   constructor(){
@@ -12,33 +12,16 @@ export default class WebARKitController {
     this.listeners = {}
     this.webarkit
   }
-  static async init (url) {
+  static async init () {
     // directly init with given width / height
     const webARC = new WebARKitController()
-    return await webARC._initialize(url)
+    return await webARC._initialize()
   }
 
-  async _initialize (url) {
+  async _initialize () {
     // initialize the toolkit
     this.webarkit = await new WebARKit().init()
     console.log('[WebARKitController]', 'WebARKit initialized')
-
-    loadImage(url).then((image) => {
-      this.width = image.width
-      this.height = image.height
-      console.log('Width of image is: ', this.width)
-      console.log('Height of image is: ', this.height)
-      // setup
-      this.id = this.webarkit.setup(this.width, this.height)
-      console.log('[WebARKitController]', 'Got ID from setup', this.id)
-
-      let params = this.webarkit.frameMalloc
-      this.framepointer = params.framepointer
-      this.framesize = params.framesize
-      this.videoLumaPointer = params.videoLumaPointer
-
-      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
-    })
 
     setTimeout(() => {
       this.dispatchEvent({
@@ -49,8 +32,30 @@ export default class WebARKitController {
       return this
   }
 
-  initTracking(data, refCols, refRows) {
-    this.webarkit.initTracking(data, refCols, refRows)
+  loadTracker(url) {
+    loadImage(url).then((image) => {
+      this.webarkit.test()
+      this.width = image.width
+      this.height = image.height
+      console.log('Width of image is: ', this.width)
+      console.log('Height of image is: ', this.height)
+      // setup
+      this.id = this.webarkit.setup(this.width, this.height)
+      console.log('[WebARKitController]', 'Got ID from setup', this.id)
+
+      const canvas = createCanvas(this.width, this.height)
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(image, 0, 0)
+      let data = ctx.getImageData(0, 0, this.width, this.height).data
+
+      let params = this.webarkit.frameMalloc
+      this.framepointer = params.framepointer
+      this.framesize = params.framesize
+      this.videoLumaPointer = params.videoLumaPointer
+
+      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
+      // this.webarkit.initTracking(data, this.width, this.height)
+    })
   }
 
   addEventListener(name, callback) {
