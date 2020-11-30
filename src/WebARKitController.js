@@ -52,7 +52,7 @@ export default class WebARKitController {
       this.framepointer = params.framepointer
       this.framesize = params.framesize
 
-      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
+      this.dataHeap = new Uint8ClampedArray(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
 
       this._copyImageToHeap(data)
       console.log('Hey, i am here!');
