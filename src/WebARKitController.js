@@ -54,14 +54,19 @@ export default class WebARKitController {
 
       this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
 
-      if (this.dataHeap) {
-        this.dataHeap.set(data)
-        //console.log(this.dataHeap);
-        this.webarkit.initTracking(this.id, this.width, this.height)
-        return true
-      }
-      //this.webarkit.initTracking(this.id, this.width, this.height)
+      this._copyImageToHeap(data)
+      console.log('Hey, i am here!');
+      console.log(this.width);
+      console.log(this.dataHeap);
+      this.webarkit.initTracking(this.id, this.width, this.height)
     })
+  }
+
+  _copyImageToHeap(data) {
+    if (this.dataHeap) {
+      this.dataHeap.set(data)
+      return true
+    }
   }
 
   addEventListener(name, callback) {
