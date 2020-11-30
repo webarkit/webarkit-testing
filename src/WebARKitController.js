@@ -51,7 +51,6 @@ export default class WebARKitController {
       let params = this.webarkit.frameMalloc
       this.framepointer = params.framepointer
       this.framesize = params.framesize
-      this.videoLumaPointer = params.videoLumaPointer
 
       this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
 
@@ -61,7 +60,6 @@ export default class WebARKitController {
         this.webarkit.initTracking(this.id, this.width, this.height)
         return true
       }
-
       //this.webarkit.initTracking(this.id, this.width, this.height)
     })
   }

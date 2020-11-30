@@ -67,6 +67,9 @@ extern "C" {
     WebARKitOrbTracker *tracker;
     unsigned char *data;
     data = warc->image2DFrame;
+    EM_ASM(
+      console.log('Start to initialize tracker...');
+    );
     tracker->initialize(data, refCols, refRows);
     return 0;
    }
