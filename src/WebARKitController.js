@@ -40,31 +40,39 @@ export default class WebARKitController {
       console.log('Width of image is: ', this.width)
       console.log('Height of image is: ', this.height)
       // setup
-      this.id = this.webarkit.setup(this.width, this.height)
+      this.id = this.webarkit.setup(this.width, this.height, 640, 480)
       console.log('[WebARKitController]', 'Got ID from setup', this.id)
 
       const canvas = createCanvas(this.width, this.height)
       const ctx = canvas.getContext('2d')
       ctx.drawImage(image, 0, 0)
       let data = ctx.getImageData(0, 0, this.width, this.height).data
-      //console.log(data.length);
 
       let params = this.webarkit.frameMalloc
-      this.framepointer = params.framepointer
-      this.framesize = params.framesize
+      this.framepointer = params.framevideopointer
+      this.framesize = params.framevideosize
+      this.frame2Dpointer = params.frame2Dpointer
+      this.frame2Dsize = params.frame2Dsize
       console.log(this.framepointer);
 
-      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize+1)
-
-      this._copyImageToHeap(data)
+      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
+      this.image2Dframe = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.frame2Dpointer, this.frame2Dsize)
+      this._copyDataToImage2dFrame(data)
       console.log('Hey, i am here!');
       console.log(this.width);
       console.log(this.dataHeap);
       this.webarkit.initTracking(this.id, this.width, this.height)
-      //this.Module.free(this.framepointer);
+      this.webarkit.track(this.id, 640, 480)
     })
   }
 
+  _copyDataToImage2dFrame(data) {
+    if (this.image2Dframe) {
+      this.image2Dframe.set(data)
+      return true
+    }
+  }
+  
   _copyImageToHeap(data) {
     if (this.dataHeap) {
       this.dataHeap.set(data)

@@ -25,7 +25,8 @@ export default class WebARKit {
     [
       'test',
       'setup',
-      'initTracking'
+      'initTracking',
+      'track'
     ].forEach(method => {
       this[method] = this.instance[method]
     })

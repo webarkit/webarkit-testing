@@ -8,6 +8,10 @@
 
 struct webARKitController {
   int id;
+  int videoWidth;
+  int videoHeight;
+  int videoSize;
+  unsigned char *videoFrame;
   int width;
   int height;
   int image2DSize;
@@ -25,10 +29,16 @@ extern "C" {
      );
    }
 
-   int setup(int width, int height) {
+   int setup(int width, int height, int videoWidth, int videoHeight) {
  		int id = gwebARKitControllerID++;
  		webARKitController *warc = &(webARKitControllers[id]);
  		warc->id = id;
+
+    warc->videoWidth = videoWidth;
+ 		warc->videoHeight = videoHeight;
+
+ 		warc->videoSize = videoWidth * videoHeight * 4 * sizeof(unsigned char);
+ 		warc->videoFrame = (unsigned char*) malloc(warc->videoSize);
 
  		warc->width = width;
  		warc->height = height;
@@ -37,9 +47,13 @@ extern "C" {
  		warc->image2DFrame = (unsigned char*) malloc(warc->image2DSize);
 
     EM_ASM({
-      console.log("Allocated image2DSize: %d\n", $0);
-      console.log("Allocated image2DFrame, pointer is: %d\n", $1);
+      console.log("Allocated videoSize: %d\n", $0);
+      console.log("Allocated videoFrame, pointer is: %d\n", $1);
+      console.log("Allocated image2DSize: %d\n", $2);
+      console.log("Allocated image2DFrame, pointer is: %d\n", $3);
     },
+      warc->videoSize,
+      warc->videoFrame,
       warc->image2DSize,
       warc->image2DFrame
     );
@@ -50,10 +64,14 @@ extern "C" {
  				webarkit["frameMalloc"] = ({});
  			}
  			var frameMalloc = webarkit["frameMalloc"];
- 			frameMalloc["framepointer"] = $1;
- 			frameMalloc["framesize"] = $2;
+ 			frameMalloc["framevideopointer"] = $1;
+ 			frameMalloc["framevideosize"] = $2;
+      frameMalloc["frame2Dpointer"] = $3;
+ 			frameMalloc["frame2Dsize"] = $4;
  		},
  			warc->id,
+      warc->videoSize,
+      warc->videoFrame,
  			warc->image2DFrame,
  			warc->image2DSize
  		);
@@ -75,6 +93,22 @@ extern "C" {
       tracker.initialize(data, refCols, refRows);
       return 0;
     }
+
+    int track(int id, size_t refCols, size_t refRows) {
+      if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
+      webARKitController *warc = &(webARKitControllers[id]);
+      WebARKitOrbTracker tracker;
+      unsigned char *data;
+      data = warc->videoFrame;
+
+      EM_ASM(
+        console.log('Start to initialize tracking...');
+      );
+      tracker.track(data, refCols, refRows);
+      return 0;
+    }
+
+
 }
 
 #include "bindings.cpp"
