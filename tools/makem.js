@@ -236,12 +236,13 @@ function clean_builds() {
 
     try {
         var files = fs.readdirSync(OUTPUT_PATH);
-				var filesLength = files.length;
+        var i;
+                var filesLength = files.length;
         if (filesLength > 0)
 				if (NO_LIBAR == true){
-					filesLength -= 1;
-				}
-            for (var i = 0; i < filesLength; i++) {
+                    i=1;
+				} else { i=0; }
+            for ( ;i < filesLength; i++) {
                 var filePath = OUTPUT_PATH + '/' + files[i];
                 if (fs.statSync(filePath).isFile())
                     fs.unlinkSync(filePath);
