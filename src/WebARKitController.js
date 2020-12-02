@@ -47,18 +47,21 @@ export default class WebARKitController {
       const ctx = canvas.getContext('2d')
       ctx.drawImage(image, 0, 0)
       let data = ctx.getImageData(0, 0, this.width, this.height).data
+      //console.log(data.length);
 
       let params = this.webarkit.frameMalloc
       this.framepointer = params.framepointer
       this.framesize = params.framesize
+      console.log(this.framepointer);
 
-      this.dataHeap = new Uint8ClampedArray(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
+      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize+1)
 
       this._copyImageToHeap(data)
       console.log('Hey, i am here!');
       console.log(this.width);
       console.log(this.dataHeap);
       this.webarkit.initTracking(this.id, this.width, this.height)
+      //this.Module.free(this.framepointer);
     })
   }
 

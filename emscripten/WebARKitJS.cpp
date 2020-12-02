@@ -62,17 +62,19 @@ extern "C" {
  	}
 
 
-   int initTracking(int id, size_t refCols, size_t refRows) {
-    webARKitController *warc = &(webARKitControllers[id]);
-    WebARKitOrbTracker *tracker;
-    unsigned char *data;
-    data = warc->image2DFrame;
-    EM_ASM(
-      console.log('Start to initialize tracker...');
-    );
-    tracker->initialize(data, refCols, refRows);
-    return 0;
-   }
+    int initTracking(int id, size_t refCols, size_t refRows) {
+      if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
+      webARKitController *warc = &(webARKitControllers[id]);
+      WebARKitOrbTracker *tracker;
+      unsigned char *data;
+      data = warc->image2DFrame;
+
+      EM_ASM(
+        console.log('Start to initialize tracker...');
+      );
+      tracker->initialize(data, refCols, refRows);
+      return 0;
+    }
 }
 
 #include "bindings.cpp"
