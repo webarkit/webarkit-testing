@@ -1,3 +1,5 @@
+//import { createCanvas, loadImage } from 'canvas'
+
 export default class Container {
   static createContainer () {
     const container = document.createElement('div')
@@ -15,32 +17,6 @@ export default class Container {
     document.body.insertBefore(container, loading)
     const obj = { container: container, canvas: canvas, video: video }
     return obj
-  }
-
-  static createStats (create) {
-    if (create) {
-      const stats = document.createElement('div')
-      stats.id = 'stats'
-      stats.className = 'ui stats'
-      const stats1 = document.createElement('div')
-      stats1.id = 'stats1'
-      stats1.className = 'stats-item'
-      const stats1p = document.createElement('p')
-      stats1p.className = 'stats-item-title'
-      stats1p.innerText = 'Main'
-      stats1.appendChild(stats1p)
-      stats.appendChild(stats1)
-      const stats2 = document.createElement('div')
-      stats2.id = 'stats2'
-      stats2.className = 'stats-item'
-      const stats2p = document.createElement('p')
-      stats2p.className = 'stats-item-title'
-      stats2p.innerText = 'Worker'
-      stats2.appendChild(stats2p)
-      stats.appendChild(stats2)
-      const loading = document.getElementById('loading')
-      document.body.insertBefore(stats, loading)
-    }
   }
 
   static createLoading (configData) {

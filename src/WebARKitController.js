@@ -2,6 +2,7 @@ import WebARKit from './WebARKit'
 import Utils from './utils/Utils'
 import Container from './utils/html/Container'
 import { createCanvas, loadImage } from 'canvas'
+import ThreejsRenderer from './renderers/ThreejsRenderer'
 
 export default class WebARKitController {
   constructor(){
@@ -17,6 +18,9 @@ export default class WebARKitController {
     this.params
     this.webarkit
     this.config
+    this.canvas
+    this.canvasHeap
+    this.root
   }
 
   static async init (videoWidth, videoHeight, config) {
@@ -30,6 +34,7 @@ export default class WebARKitController {
   }
 
   async _initialize () {
+    const root = this.root
     // initialize the toolkit
     this.webarkit = await new WebARKit().init()
     console.log('[WebARKitController]', 'WebARKit initialized')
@@ -38,14 +43,10 @@ export default class WebARKitController {
     console.log('[WebARKitController]', 'Got ID from setup', this.id)
 
     this.params = this.webarkit.frameMalloc
-    //console.log(this.params);
     this.framepointer = this.params.framevideopointer
     this.framesize = this.params.framevideosize
 
     this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
-
-    //const config = this.config
-    //console.log(config);
 
     const config = {
       "addPath": "",
@@ -77,20 +78,33 @@ export default class WebARKitController {
     }
 
     Container.createLoading(config)
-        //Container.createStats(stats)
-        const containerObj = Container.createContainer()
-        const container = containerObj.container
-        const canvas = containerObj.canvas  
+    //Container.createStats(stats)
+    const containerObj = Container.createContainer()
+    const container = containerObj.container
+    this.canvas = containerObj.canvas
+    this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight)
     
     // the jsonParser need to be fixed, for now we load the configs in the old way...
     // const data = Utils.jsonParser(config)
     // data.then((configData) => {
 
     Utils.getUserMedia(config).then((video) => {
+      console.log(video);
       this._copyImageToHeap(video)
     })
 
     //})
+
+    if (config.renderer.type === 'three') {
+      const renderer = new ThreejsRenderer(config, canvas, root)
+      console.log(canvas);
+      renderer.initRenderer()
+      const tick = () => {
+        renderer.draw()
+        window.requestAnimationFrame(tick)
+      }
+      tick()
+    }
 
     setTimeout(() => {
       this.dispatchEvent({
@@ -116,14 +130,13 @@ export default class WebARKitController {
 
       this.frame2Dpointer = this.params.frame2Dpointer
       this.frame2Dsize = this.params.frame2Dsize
-      console.log(this.framepointer);
 
       this.image2Dframe = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.frame2Dpointer, this.frame2Dsize)
       this._copyDataToImage2dFrame(data)
       console.log('Hey, i am here!');
       console.log(this.width);
       //console.log(this.dataHeap);
-      this.webarkit.initTracking(this.id, this.width, this.height)
+      //this.webarkit.initTracking(this.id, this.width, this.height)
     })
   }
 
@@ -134,11 +147,18 @@ export default class WebARKitController {
     }
   }
   
-  _copyImageToHeap(data) {
+  _copyImageToHeap(video) {
+    this.ctx = this.canvasHeap.getContext('2d')
+    this.ctx.save()
+    this.ctx.drawImage(video, 0, 0, this.videoWidth, this.videoHeight) // draw video
+    this.ctx.restore()
+    let imageData = this.ctx.getImageData(0, 0, this.videoWidth, this.videoHeight)
+    let data = imageData.data
     if (this.dataHeap) {
       this.dataHeap.set(data)
       return true
     }
+    return false
   }
 
   track () {
