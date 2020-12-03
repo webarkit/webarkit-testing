@@ -114,12 +114,11 @@ export default class WebARKitController {
         target: this
       })
     }, 1)
-      return this
+    return this
   }
 
   loadTracker(url) {
     loadImage(url).then((image) => {
-      this.webarkit.test()
       this.width = image.width
       this.height = image.height
       console.log('Width of image is: ', this.width)
@@ -164,7 +163,7 @@ export default class WebARKitController {
   }
 
   track () {
-
+    this.webarkit.track(this.id, this.videoWidth, this.videoHeight)
   }
 
   addEventListener(name, callback) {

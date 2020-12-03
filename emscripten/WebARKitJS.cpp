@@ -101,8 +101,8 @@ extern "C" {
   
 
 
-    int initTracking(int id, size_t refCols, size_t refRows) {
-      if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
+  int initTracking(int id, size_t refCols, size_t refRows) {
+    if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
       webARKitController *warc = &(webARKitControllers[id]);
       WebARKitOrbTracker tracker;
       unsigned char *data;
@@ -113,10 +113,10 @@ extern "C" {
       );
       tracker.initialize(data, refCols, refRows);
       return 0;
-    }
+  }
 
-    int track(int id, size_t refCols, size_t refRows) {
-      if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
+  int track(int id, size_t refCols, size_t refRows) {
+    if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
       webARKitController *warc = &(webARKitControllers[id]);
       WebARKitOrbTracker tracker;
       unsigned char *data;
@@ -127,9 +127,7 @@ extern "C" {
       );
       tracker.track(data, refCols, refRows);
       return 0;
-    }
-
-
+  }
 }
 
 #include "bindings.cpp"
