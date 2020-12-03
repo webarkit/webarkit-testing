@@ -1,4 +1,6 @@
 import WebARKit from './WebARKit'
+import Utils from './utils/Utils'
+import Container from './utils/html/Container'
 import { createCanvas, loadImage } from 'canvas'
 
 export default class WebARKitController {
@@ -6,13 +8,22 @@ export default class WebARKitController {
     this.id
     this.width = 120
     this.height = 120
+    this.videoWidth = 640
+    this.videoHeight = 480
     this.framepointer = null
     this.framesize = null
     this.dataHeap = null
     this.listeners = {}
+    this.params
     this.webarkit
+    this.config
   }
-  static async init () {
+
+  static async init (videoWidth, videoHeight, config) {
+    this.videoWidth = videoWidth
+    this.videoHeight = videoHeight
+    this.config = config
+    console.log(config);
     // directly init with given width / height
     const webARC = new WebARKitController()
     return await webARC._initialize()
@@ -22,6 +33,64 @@ export default class WebARKitController {
     // initialize the toolkit
     this.webarkit = await new WebARKit().init()
     console.log('[WebARKitController]', 'WebARKit initialized')
+
+    this.id = this.webarkit.setup(this.videoWidth, this.videoHeight)
+    console.log('[WebARKitController]', 'Got ID from setup', this.id)
+
+    this.params = this.webarkit.frameMalloc
+    //console.log(this.params);
+    this.framepointer = this.params.framevideopointer
+    this.framesize = this.params.framevideosize
+
+    this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
+
+    //const config = this.config
+    //console.log(config);
+
+    const config = {
+      "addPath": "",
+      "cameraPara": "examples/Data/camera_para.dat",
+      "videoSettings": {
+        "width": {
+          "min": 640,
+          "max": 800
+        },
+        "height": {
+          "min": 480,
+          "max": 600
+        },
+        "facingMode": "environment"
+      },
+      "loading": {
+        "logo": {
+          "src": "data/arNFT-logo.gif",
+          "alt": "arNFT.js logo"
+        },
+        "loadingMessage": "Loading, please wait..."
+      },
+      "renderer": {
+        "type": "three",
+        "alpha": true,
+        "antialias": true,
+        "precision": "mediump"
+      }
+    }
+
+    Container.createLoading(config)
+        //Container.createStats(stats)
+        const containerObj = Container.createContainer()
+        const container = containerObj.container
+        const canvas = containerObj.canvas  
+    
+    // the jsonParser need to be fixed, for now we load the configs in the old way...
+    // const data = Utils.jsonParser(config)
+    // data.then((configData) => {
+
+    Utils.getUserMedia(config).then((video) => {
+      this._copyImageToHeap(video)
+    })
+
+    //})
 
     setTimeout(() => {
       this.dispatchEvent({
@@ -39,30 +108,22 @@ export default class WebARKitController {
       this.height = image.height
       console.log('Width of image is: ', this.width)
       console.log('Height of image is: ', this.height)
-      // setup
-      this.id = this.webarkit.setup(this.width, this.height, 640, 480)
-      console.log('[WebARKitController]', 'Got ID from setup', this.id)
 
       const canvas = createCanvas(this.width, this.height)
       const ctx = canvas.getContext('2d')
       ctx.drawImage(image, 0, 0)
       let data = ctx.getImageData(0, 0, this.width, this.height).data
 
-      let params = this.webarkit.frameMalloc
-      this.framepointer = params.framevideopointer
-      this.framesize = params.framevideosize
-      this.frame2Dpointer = params.frame2Dpointer
-      this.frame2Dsize = params.frame2Dsize
+      this.frame2Dpointer = this.params.frame2Dpointer
+      this.frame2Dsize = this.params.frame2Dsize
       console.log(this.framepointer);
 
-      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
       this.image2Dframe = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.frame2Dpointer, this.frame2Dsize)
       this._copyDataToImage2dFrame(data)
       console.log('Hey, i am here!');
       console.log(this.width);
-      console.log(this.dataHeap);
-      this.webarkit.initTracking(this.id, this.width, this.height)
-      this.webarkit.track(this.id, 640, 480)
+      //console.log(this.dataHeap);
+      //this.webarkit.initTracking(this.id, this.width, this.height)
     })
   }
 

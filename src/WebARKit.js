@@ -25,6 +25,7 @@ export default class WebARKit {
     [
       'test',
       'setup',
+      'imageSetup',
       'initTracking',
       'track'
     ].forEach(method => {

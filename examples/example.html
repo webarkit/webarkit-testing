@@ -7,10 +7,9 @@
   <body>
     <script src="../dist/WebARKit.js"></script>
     <script>
-       WebARKit.WebARKitController.init().then(wark => {
+       WebARKit.WebARKitController.init(640, 480,'../examples/config.json').then(wark => {
         //wark.webarkit.test();
         wark.loadTracker('data/pinball.jpg');
-        //wark.setup(120, 120);
       })
     </script>
   </body>
