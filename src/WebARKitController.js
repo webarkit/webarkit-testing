@@ -123,7 +123,7 @@ export default class WebARKitController {
       console.log('Hey, i am here!');
       console.log(this.width);
       //console.log(this.dataHeap);
-      //this.webarkit.initTracking(this.id, this.width, this.height)
+      this.webarkit.initTracking(this.id, this.width, this.height)
     })
   }
 
@@ -139,6 +139,10 @@ export default class WebARKitController {
       this.dataHeap.set(data)
       return true
     }
+  }
+
+  track () {
+
   }
 
   addEventListener(name, callback) {
