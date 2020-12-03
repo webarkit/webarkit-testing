@@ -11,9 +11,14 @@ export default class WebARKitController {
     this.height = 120
     this.videoWidth = 640
     this.videoHeight = 480
+    //pointers
     this.framepointer = null
     this.framesize = null
     this.dataHeap = null
+    this.frame2Dpointer = null
+    this.frame2Dpointer = null
+    this.frame2Dsize = null
+
     this.listeners = {}
     this.params
     this.webarkit
@@ -27,7 +32,6 @@ export default class WebARKitController {
     this.videoWidth = videoWidth
     this.videoHeight = videoHeight
     this.config = config
-    console.log(config);
     // directly init with given width / height
     const webARC = new WebARKitController()
     return await webARC._initialize()
@@ -89,7 +93,6 @@ export default class WebARKitController {
     // data.then((configData) => {
 
     Utils.getUserMedia(config).then((video) => {
-      console.log(video);
       this._copyImageToHeap(video)
     })
 
@@ -97,7 +100,6 @@ export default class WebARKitController {
 
     if (config.renderer.type === 'three') {
       const renderer = new ThreejsRenderer(config, canvas, root)
-      console.log(canvas);
       renderer.initRenderer()
       const tick = () => {
         renderer.draw()
@@ -136,7 +138,7 @@ export default class WebARKitController {
       console.log('Hey, i am here!');
       console.log(this.width);
       //console.log(this.dataHeap);
-      //this.webarkit.initTracking(this.id, this.width, this.height)
+      this.webarkit.initTracking(this.id, this.width, this.height)
     })
   }
 
