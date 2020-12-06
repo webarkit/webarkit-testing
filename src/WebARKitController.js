@@ -125,9 +125,13 @@ export default class WebARKitController {
       console.log('Height of image is: ', this.height)
 
       const canvas = createCanvas(this.width, this.height)
+      console.log('Creating the canvas...');
       const ctx = canvas.getContext('2d')
       ctx.drawImage(image, 0, 0)
       let data = ctx.getImageData(0, 0, this.width, this.height).data
+      console.log('we get the data...');
+
+      this.webarkit.imageSetup(this.width, this.height)
 
       this.frame2Dpointer = this.params.frame2Dpointer
       this.frame2Dsize = this.params.frame2Dsize
