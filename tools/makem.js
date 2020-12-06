@@ -174,9 +174,9 @@ FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s "EXTRA_EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
-//FLAGS += ' -fsanitize=address '
+FLAGS += ' -fsanitize=address '
 FLAGS += ' -s ASSERTIONS=1 '
-FLAGS += ' -s SAFE_HEAP=1 '
+//FLAGS += ' -s SAFE_HEAP=1 '
 
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
