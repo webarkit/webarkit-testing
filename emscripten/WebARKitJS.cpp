@@ -59,8 +59,8 @@ extern "C" {
  			frameMalloc["framevideosize"] = $2;
  		},
  			warc->id,
-      warc->videoSize,
-      warc->videoFrame
+      warc->videoFrame,
+      warc->videoSize
  		);
 
  		return warc->id;
