@@ -87,7 +87,7 @@ export default class WebARKitController {
     const container = containerObj.container
     this.canvas = containerObj.canvas
     this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight)
-    
+
     // the jsonParser need to be fixed, for now we load the configs in the old way...
     // const data = Utils.jsonParser(config)
     // data.then((configData) => {
@@ -142,7 +142,9 @@ export default class WebARKitController {
       console.log(this.width);
       //console.log(this.dataHeap);
       this.webarkit.initTracking(this.id, this.width, this.height)
-    })
+    }).catch(err => {
+  console.log('Error in loadImage:', err)
+})
   }
 
   _copyDataToImage2dFrame(data) {
@@ -151,7 +153,7 @@ export default class WebARKitController {
       return true
     }
   }
-  
+
   _copyImageToHeap(video) {
     this.ctx = this.canvasHeap.getContext('2d')
     this.ctx.save()
