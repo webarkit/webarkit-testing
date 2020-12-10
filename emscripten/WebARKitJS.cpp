@@ -109,6 +109,8 @@ extern "C" {
         console.log('Start WebARKitOrbTracker tracker...');
       );
       unsigned char *data;
+      int size = refCols * refRows * 4 * sizeof(unsigned char);
+   		data = (unsigned char*) malloc(size);
       EM_ASM(
         console.log('Allocating data...');
       );
