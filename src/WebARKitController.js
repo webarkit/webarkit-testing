@@ -127,7 +127,7 @@ export default class WebARKitController {
       const canvas = createCanvas(this.width, this.height)
       console.log('Creating the canvas...');
       const ctx = canvas.getContext('2d')
-      ctx.drawImage(image, 0, 0)
+      ctx.drawImage(image, 0, 0, this.width, this.height)
       let data = ctx.getImageData(0, 0, this.width, this.height).data
       console.log('we get the data...');
 
