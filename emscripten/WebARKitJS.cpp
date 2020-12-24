@@ -11,8 +11,8 @@ extern "C" {
      );
    }
    int initTracking(std::string filename, size_t refCols, size_t refRows) {
-     WebARKitOrbTracker *tracker;
-     tracker->initialize(filename, refCols, refRows);
+     WebARKitOrbTracker tracker;
+     tracker.initialize(filename, refCols, refRows);
      return 0;
    }
 }
