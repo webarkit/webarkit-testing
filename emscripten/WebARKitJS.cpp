@@ -40,7 +40,7 @@ extern "C" {
  		warc->videoSize = videoWidth * videoHeight * 4 * sizeof(unsigned char);
  		warc->videoFrame = (unsigned char*) malloc(warc->videoSize);
 
- 		
+
 
     EM_ASM({
       console.log("Allocated videoSize: %d\n", $0);
@@ -98,15 +98,26 @@ extern "C" {
     return warc->id;
   }
 
-  
+
 
 
   int initTracking(int id, size_t refCols, size_t refRows) {
     if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
       webARKitController *warc = &(webARKitControllers[id]);
       WebARKitOrbTracker tracker;
+      EM_ASM(
+        console.log('Start WebARKitOrbTracker tracker...');
+      );
       unsigned char *data;
+      int size = refCols * refRows * 4 * sizeof(unsigned char);
+   		data = (unsigned char*) malloc(size);
+      EM_ASM(
+        console.log('Allocating data...');
+      );
       data = warc->image2DFrame;
+      EM_ASM(
+        console.log('passing data fromimage2Dframe');
+      );
 
       EM_ASM(
         console.log('Start to initialize tracker...');
