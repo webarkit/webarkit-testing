@@ -84,10 +84,10 @@ extern "C" {
     );
 
     	EM_ASM_({
- 			/*if (!webarkit["frameMalloc"]) {
+ 			if (!webarkit["frameMalloc"]) {
  				webarkit["frameMalloc"] = ({});
  			}
- 			var frameMalloc = webarkit["frameMalloc"];*/
+ 			var frameMalloc = webarkit["frameMalloc"];
       frameMalloc["frame2Dpointer"] = $0;
  			frameMalloc["frame2Dsize"] = $1;
  		},
