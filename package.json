@@ -41,6 +41,7 @@
     "build-es6": "webpack --mode production",
     "build": "node tools/makem.js; echo Built at `date`",
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
+    "build-all-dev": "node tools/makem.js --no-libar; echo Built at `date` && webpack --mode development --progress --watch",
     "test": "grunt qunit",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/"
   },
