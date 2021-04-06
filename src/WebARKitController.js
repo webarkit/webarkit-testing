@@ -141,7 +141,8 @@ export default class WebARKitController {
       console.log('Hey, i am here!');
       console.log(this.width);
       //console.log(this.dataHeap);
-      this.webarkit.initTracking(this.id, this.width, this.height)
+      console.log("id is: ", this.id);
+      this.webarkit.initTracking(1, this.width, this.height)
     }).catch(err => {
   console.log('Error in loadImage:', err)
 })
