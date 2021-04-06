@@ -91,7 +91,7 @@ extern "C" {
       frameMalloc["frame2Dpointer"] = $0;
  			frameMalloc["frame2Dsize"] = $1;
  		},
- 			//warc->id,
+ 			warc->id,
  			warc->image2DFrame,
  			warc->image2DSize
  		);
@@ -108,13 +108,14 @@ extern "C" {
       EM_ASM(
         console.log('Start WebARKitOrbTracker tracker...');
       );
-      unsigned char *data;
-      int size = refCols * refRows * 4 * sizeof(unsigned char);
-   		data = (unsigned char*) malloc(size);
+      // Maybe this is not necessary?
+      //unsigned char *data;
+      //int size = refCols * refRows * 4 * sizeof(unsigned char);
+   		//data = (unsigned char*) malloc(size);
       EM_ASM(
         console.log('Allocating data...');
       );
-      data = warc->image2DFrame;
+      //data = warc->image2DFrame;
       EM_ASM(
         console.log('passing data fromimage2Dframe');
       );
@@ -122,7 +123,7 @@ extern "C" {
       EM_ASM(
         console.log('Start to initialize tracker...');
       );
-      tracker.initialize(data, refCols, refRows);
+      tracker.initialize( warc->image2DFrame, refCols, refRows);
       return 0;
   }
 
