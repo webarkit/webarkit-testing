@@ -143,6 +143,14 @@ export default class WebARKitController {
       //console.log(this.dataHeap);
       console.log("id is: ", this.id);
       this.webarkit.initTracking(1, this.width, this.height)
+      // removing loader page if present
+      const loader = document.getElementById('loading')
+      if (loader) {
+        loader.querySelector('.loading-text').innerText = 'Start the tracking!'
+        setTimeout(function () {
+          loader.parentElement.removeChild(loader)
+        }, 2000)
+      }
     }).catch(err => {
   console.log('Error in loadImage:', err)
 })
