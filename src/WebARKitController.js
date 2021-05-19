@@ -169,6 +169,10 @@ export default class WebARKitController {
     return false
   }
 
+  resetTracking () {
+    this.webarkit.resetTracking(this.id, this.videoWidth, this.videoHeight)
+  }
+
   track () {
     this.webarkit.track(this.id, this.videoWidth, this.videoHeight)
   }

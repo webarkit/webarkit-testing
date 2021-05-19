@@ -127,6 +127,24 @@ extern "C" {
       return 0;
   }
 
+  int resetTracking(int id, size_t refCols, size_t refRows) {
+     if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
+      webARKitController *warc = &(webARKitControllers[id]);
+      WebARKitOrbTracker tracker;
+      unsigned char *data;
+      data = warc->videoFrame;
+
+      EM_ASM(
+        console.log('Reset tracking...');
+      );
+
+      double* out = tracker.resetTracking(data, refCols, refRows);
+      EM_ASM(
+        console.log('Reset done.');
+      );
+    return 0;
+  }
+
   int track(int id, size_t refCols, size_t refRows) {
     if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
       webARKitController *warc = &(webARKitControllers[id]);
@@ -137,7 +155,13 @@ extern "C" {
       EM_ASM(
         console.log('Start to initialize tracking...');
       );
-      tracker.track(data, refCols, refRows);
+      double* out = tracker.track(data, refCols, refRows);
+
+      EM_ASM({
+        console.log("Output from tracker: %d\n", $0);
+        },
+        &out
+      );
       return 0;
   }
 }

@@ -7,5 +7,6 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
     function("setup", &setup);
     function("imageSetup", &imageSetup);
     function("initTracking", &initTracking);
+    function("resetTracking", &resetTracking);
     function("track", &track);
 }
