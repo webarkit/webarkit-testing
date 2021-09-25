@@ -132,6 +132,9 @@ extern "C" {
       webARKitController *warc = &(webARKitControllers[id]);
       WebARKitOrbTracker tracker;
       unsigned char *data;
+      EM_ASM(
+        console.log('Start to Reset tracking...');
+      );
       data = warc->videoFrame;
 
       EM_ASM(
