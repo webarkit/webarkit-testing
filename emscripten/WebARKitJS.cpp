@@ -28,7 +28,6 @@ std::unordered_map<int, webARKitController> webARKitControllers;
 static int gwebARKitControllerID = 0;
 
 extern "C" {
-void test() { EM_ASM(console.log("This is a test from WebARKitJS.cpp!")); }
 
 int setup(int videoWidth, int videoHeight) {
   int id = gwebARKitControllerID++;
@@ -62,48 +61,18 @@ int setup(int videoWidth, int videoHeight) {
   return warc->id;
 }
 
-int imageSetup(int width, int height) {
-  int id = gwebARKitControllerID++;
-  webARKitController *warc = &(webARKitControllers[id]);
-  warc->width = width;
-  warc->height = height;
-
-  warc->image2DSize = width * height * 4 * sizeof(unsigned char);
-  warc->image2DFrame = (unsigned char *)malloc(warc->image2DSize);
-
-  EM_ASM(
-      {
-        console.log("Allocated image2DSize: %d\n", $0);
-        console.log("Allocated image2DFrame, pointer is: %d\n", $1);
-      },
-      warc->image2DSize, warc->image2DFrame);
-
-  EM_ASM_(
-      {
-        if (!webarkit["frameMalloc"]) {
-          webarkit["frameMalloc"] = ({});
-        }
-        var frameMalloc = webarkit["frameMalloc"];
-        frameMalloc["frame2Dpointer"] = $0;
-        frameMalloc["frame2Dsize"] = $1;
-      },
-      warc->id, warc->image2DFrame, warc->image2DSize);
-  return warc->id;
-}
-
-int initTracking(int id, size_t refCols, size_t refRows, const char* filename) {
+int initTracking(int id, const char* filename) {
   if (webARKitControllers.find(id) == webARKitControllers.end()) {
     return 0;
   }
   webARKitController *warc = &(webARKitControllers[id]);
   WebARKitOrbTracker tracker;
   EM_ASM(console.log('Start WebARKitOrbTracker tracker...'););
-  // Maybe this is not necessary?
-  // unsigned char *data;
-  // int size = refCols * refRows * 4 * sizeof(unsigned char);
-  // data = (unsigned char*) malloc(size);
+
   char *ext;
   char buf1[512], buf2[512];
+  size_t refCols; 
+  size_t refRows;
 
   AR2JpegImageT *jpegImage;
   if (!filename)
@@ -125,19 +94,19 @@ int initTracking(int id, size_t refCols, size_t refRows, const char* filename) {
       //EXIT(E_INPUT_DATA_ERROR);
     }
     ARLOGi("   Done.\n");
-    EM_ASM(console.log('Allocating data...'););
-    // data = warc->image2DFrame;
-    EM_ASM(console.log('passing data fromimage2Dframe'););
+
+    refCols = jpegImage->xsize;
+    refRows = jpegImage->ysize;
 
     EM_ASM(console.log('Start to initialize tracker...'););
     tracker.initialize((unsigned char *)jpegImage, refCols, refRows);
-      }
+    }
     return 0;
   }
 
-  int readJpeg(int id, size_t refCols, size_t refRows, std::string filename) {
+  int readJpeg(int id, std::string filename) {
     ARLOGi("Filename is: '%s'\n", filename.c_str());
-    initTracking(id, refCols, refRows, filename.c_str());
+    initTracking(id, filename.c_str());
     return 0;
   }
 
