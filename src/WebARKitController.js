@@ -113,7 +113,7 @@ export default class WebARKitController {
   }
 
   loadTracker(url) {
-    this.webarkit.readJpeg(1, url)
+    this.webarkit.readJpeg(0, url)
   }
 
   _copyImageToHeap(video) {

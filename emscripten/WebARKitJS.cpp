@@ -75,9 +75,11 @@ int initTracking(int id, const char* filename) {
   size_t refRows;
 
   AR2JpegImageT *jpegImage;
-  if (!filename)
+  if (!filename) {
     return 0;
+  }
   ext = arUtilGetFileExtensionFromPath(filename, 1);
+  EM_ASM( {console.log("ext: ", $0)}, ext);
   if (!ext) {
     ARLOGe("Error: unable to determine extension of file '%s'. Exiting.\n",
            filename);
