@@ -112,8 +112,27 @@ export default class WebARKitController {
     return this
   }
 
-  loadTracker(url) {
-    this.webarkit.readJpeg(0, url)
+  async loadTracker(urlOrData) {
+    const targetPrefix = '/load_jpeg_' + this.jpegCount++
+
+    let data
+    let ext = 'jpg'
+    const fullUrl = urlOrData + '.' + ext
+    const target = targetPrefix + '.' + ext
+
+    if (urlOrData instanceof Uint8Array) {
+      // assume preloaded camera params
+      data = urlOrData
+      
+    } else {
+      // fetch data via HTTP
+      try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
+    }
+
+    this._storeDataFile(data, target)
+
+    // return the internal marker ID
+    return this.webarkit.readJpeg(0, target)
   }
 
   _copyImageToHeap(video) {
@@ -162,4 +181,12 @@ export default class WebARKitController {
       }
     }
   };
+
+  _storeDataFile (data, target) {
+    // FS is provided by emscripten
+    // Note: valid data must be in binary format encoded as Uint8Array
+    this.webarkit.FS.writeFile(target, data, {
+      encoding: 'binary'
+    })
+  }
 }

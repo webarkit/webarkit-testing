@@ -28,7 +28,8 @@ export default class WebARKit {
       'imageSetup',
       'readJpeg',
       'resetTracking',
-      'track'
+      'track',
+      'FS'
     ].forEach(method => {
       this[method] = this.instance[method]
     })

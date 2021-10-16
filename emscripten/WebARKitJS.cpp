@@ -9,6 +9,9 @@
 #include <AR2/imageFormat.h>
 #include <AR2/util.h>
 #include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitOrbTracker.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/core/types_c.h>
 #include <emscripten.h>
 
 struct webARKitController {
@@ -79,7 +82,9 @@ int initTracking(int id, const char* filename) {
     return 0;
   }
   ext = arUtilGetFileExtensionFromPath(filename, 1);
-  EM_ASM( {console.log("ext: ", $0)}, ext);
+  EM_ASM( {
+    var message = UTF8ToString($0);
+    console.log("ext: ", message)}, ext);
   if (!ext) {
     ARLOGe("Error: unable to determine extension of file '%s'. Exiting.\n",
            filename);
@@ -99,9 +104,10 @@ int initTracking(int id, const char* filename) {
 
     refCols = jpegImage->xsize;
     refRows = jpegImage->ysize;
+    std::cout << refCols << std::endl;
 
     EM_ASM(console.log('Start to initialize tracker...'););
-    tracker.initialize((unsigned char *)jpegImage, refCols, refRows);
+    tracker.initialize((uchar*)jpegImage->image, refCols, refRows);
     }
     return 0;
   }
