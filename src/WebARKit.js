@@ -26,7 +26,7 @@ export default class WebARKit {
       'test',
       'setup',
       'imageSetup',
-      'initTracking',
+      'readJpeg',
       'resetTracking',
       'track'
     ].forEach(method => {
