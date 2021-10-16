@@ -11,8 +11,10 @@
     <script>
        WebARKit.WebARKitController.init(640, 480,'../examples/config.json').then(wark => {
         wark.loadTracker('data/pinball.jpg');
-        wark.resetTracking();
-        wark.track()
+        setTimeout(function(){
+          wark.resetTracking();
+          wark.track();
+        }, 3000) 
       })
     </script>
   </body>
