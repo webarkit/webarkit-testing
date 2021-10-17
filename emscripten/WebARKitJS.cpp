@@ -9,9 +9,9 @@
 #include <AR2/imageFormat.h>
 #include <AR2/util.h>
 #include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitOrbTracker.h>
-#include <opencv2/opencv.hpp>
-#include <opencv2/core.hpp>
-#include <opencv2/core/types_c.h>
+//#include <opencv2/opencv.hpp>
+//#include <opencv2/core.hpp>
+//#include <opencv2/core/types_c.h>
 #include <emscripten.h>
 
 struct webARKitController {
@@ -107,7 +107,9 @@ int initTracking(int id, const char* filename) {
     std::cout << refCols << std::endl;
 
     EM_ASM(console.log('Start to initialize tracker...'););
-    tracker.initialize((uchar*)jpegImage->image, refCols, refRows);
+    tracker.initialize((unsigned char*)jpegImage->image, refCols, refRows);
+    free(jpegImage);
+    free(ext);
     }
     return 0;
   }
