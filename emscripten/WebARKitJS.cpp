@@ -105,9 +105,12 @@ int initTracking(int id, const char* filename) {
     refCols = jpegImage->xsize;
     refRows = jpegImage->ysize;
     std::cout << refCols << std::endl;
+    warc->image2DSize = refCols * refRows * 3 * sizeof(unsigned char);
+    warc->image2DFrame = (unsigned char *)malloc(warc->image2DSize);
+    warc->image2DFrame = (unsigned char *)jpegImage->image;
 
     EM_ASM(console.log('Start to initialize tracker...'););
-    tracker.initialize((unsigned char*)jpegImage->image, refCols, refRows);
+    tracker.initialize(warc->image2DFrame, refCols, refRows);
     free(jpegImage);
     free(ext);
     }
