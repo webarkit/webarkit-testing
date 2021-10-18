@@ -69,7 +69,7 @@ int initTracking(int id, const char* filename) {
     return 0;
   }
   webARKitController *warc = &(webARKitControllers[id]);
-  WebARKitOrbTracker tracker;
+  WebARKitOrbTracker *tracker;
   EM_ASM(console.log('Start WebARKitOrbTracker tracker...'););
 
   char *ext;
@@ -107,10 +107,10 @@ int initTracking(int id, const char* filename) {
     std::cout << refCols << std::endl;
     warc->image2DSize = refCols * refRows * 3 * sizeof(unsigned char);
     warc->image2DFrame = (unsigned char *)malloc(warc->image2DSize);
-    warc->image2DFrame = (unsigned char *)jpegImage->image;
+    warc->image2DFrame = jpegImage->image;
 
     EM_ASM(console.log('Start to initialize tracker...'););
-    tracker.initialize(warc->image2DFrame, refCols, refRows);
+    tracker->initialize(warc->image2DFrame, refCols, refRows);
     free(jpegImage);
     free(ext);
     }
