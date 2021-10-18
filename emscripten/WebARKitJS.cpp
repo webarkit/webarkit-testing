@@ -9,9 +9,9 @@
 #include <AR2/imageFormat.h>
 #include <AR2/util.h>
 #include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitOrbTracker.h>
-//#include <opencv2/opencv.hpp>
-//#include <opencv2/core.hpp>
-//#include <opencv2/core/types_c.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/core/types_c.h>
 #include <emscripten.h>
 
 struct webARKitController {
@@ -104,13 +104,27 @@ int initTracking(int id, const char* filename) {
 
     refCols = jpegImage->xsize;
     refRows = jpegImage->ysize;
-    std::cout << refCols << std::endl;
-    warc->image2DSize = refCols * refRows * 3 * sizeof(unsigned char);
-    warc->image2DFrame = (unsigned char *)malloc(warc->image2DSize);
-    warc->image2DFrame = jpegImage->image;
+    //std::cout << refCols << std::endl;
+    //warc->image2DSize = refCols * refRows * 3 * sizeof(unsigned char);
+    //warc->image2DFrame = (unsigned char *)malloc(warc->image2DSize);
+    //warc->image2DFrame = jpegImage->image;
 
     EM_ASM(console.log('Start to initialize tracker...'););
-    tracker->initialize(warc->image2DFrame, refCols, refRows);
+    /*cv::Ptr<cv::ORB> orb = NULL;
+    cv::Ptr<cv::BFMatcher> matcher = NULL;
+    orb = cv::ORB::create(2000);
+    std::cout << "Orb created!" << std::endl;
+    matcher = cv::BFMatcher::create();
+    std::cout << "BFMatcher created!" << std::endl;
+    //cv::Mat refGray = im_gray(refData, refCols, refRows);
+    //free(refData);
+    cv::Mat colorFrame(refCols, refRows, CV_8UC4, (unsigned char*)jpegImage->image);
+    cv::Mat refGray(refCols, refRows, CV_8UC1);
+    cv::cvtColor(colorFrame, refGray, cv::COLOR_RGBA2GRAY);
+    std::cout << "Gray Image!" << std::endl;*/
+    //std::cout << refGray << std::endl;
+    //orb->detectAndCompute(refGray, cv::noArray(), refKeyPts, refDescr)
+    tracker->initialize((unsigned char*)jpegImage->image, refCols, refRows);
     free(jpegImage);
     free(ext);
     }
