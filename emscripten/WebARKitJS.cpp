@@ -24,6 +24,7 @@ struct webARKitController {
   int height;
   int image2DSize;
   unsigned char *image2DFrame;
+  WebARKitOrbTracker *tracker;
 };
 
 std::unordered_map<int, webARKitController> webARKitControllers;
@@ -60,6 +61,8 @@ int setup(int videoWidth, int videoHeight) {
         frameMalloc["framevideosize"] = $2;
       },
       warc->id, warc->videoFrame, warc->videoSize);
+      // We instantiate the tracker class.
+      warc->tracker = new WebARKitOrbTracker();
 
   return warc->id;
 }
@@ -69,7 +72,7 @@ int initTracking(int id, const char* filename) {
     return 0;
   }
   webARKitController *warc = &(webARKitControllers[id]);
-  WebARKitOrbTracker *tracker;
+ 
   EM_ASM(console.log('Start WebARKitOrbTracker tracker...'););
 
   char *ext;
@@ -124,7 +127,7 @@ int initTracking(int id, const char* filename) {
     std::cout << "Gray Image!" << std::endl;*/
     //std::cout << refGray << std::endl;
     //orb->detectAndCompute(refGray, cv::noArray(), refKeyPts, refDescr)
-    tracker->initialize((unsigned char*)jpegImage->image, refCols, refRows);
+    warc->tracker->initialize((unsigned char*)jpegImage->image, refCols, refRows);
     free(jpegImage);
     free(ext);
     }
