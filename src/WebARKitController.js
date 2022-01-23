@@ -131,7 +131,7 @@ export default class WebARKitController {
       let data = ctx.getImageData(0, 0, this.width, this.height).data
       console.log('we get the data...');
 
-      this.webarkit.imageSetup(this.width, this.height)
+      this.webarkit.imageSetup(this.id, this.width, this.height)
 
       this.frame2Dpointer = this.params.frame2Dpointer
       this.frame2Dsize = this.params.frame2Dsize
@@ -142,7 +142,7 @@ export default class WebARKitController {
       console.log(this.width);
       //console.log(this.dataHeap);
       console.log("id is: ", this.id);
-      this.webarkit.initTracking(1, this.width, this.height)
+      this.webarkit.initTracking(this.id, this.width, this.height)
       // removing loader page if present
       const loader = document.getElementById('loading')
       if (loader) {

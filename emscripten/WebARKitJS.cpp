@@ -66,9 +66,9 @@ extern "C" {
  		return warc->id;
  	}
 
-  int imageSetup(int width, int height) {
-    int id = gwebARKitControllerID++;
- 		webARKitController *warc = &(webARKitControllers[id]);
+  int imageSetup(int id, int width, int height) {
+    if (webARKitControllers.find(id) == webARKitControllers.end()) { return -1; }
+    webARKitController *warc = &(webARKitControllers[id]);
     warc->width = width;
  		warc->height = height;
 
@@ -88,8 +88,8 @@ extern "C" {
  				webarkit["frameMalloc"] = ({});
  			}
  			var frameMalloc = webarkit["frameMalloc"];
-      frameMalloc["frame2Dpointer"] = $0;
- 			frameMalloc["frame2Dsize"] = $1;
+      frameMalloc["frame2Dpointer"] = $1;
+ 			frameMalloc["frame2Dsize"] = $2;
  		},
  			warc->id,
  			warc->image2DFrame,
