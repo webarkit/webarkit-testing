@@ -7,17 +7,13 @@ import ThreejsRenderer from './renderers/ThreejsRenderer'
 export default class WebARKitController {
   constructor(){
     this.id
-    this.width = 120
-    this.height = 120
+    this.jpegCount = 0
     this.videoWidth = 640
     this.videoHeight = 480
     //pointers
     this.framepointer = null
     this.framesize = null
     this.dataHeap = null
-    this.frame2Dpointer = null
-    this.frame2Dpointer = null
-    this.frame2Dsize = null
 
     this.listeners = {}
     this.params
@@ -117,50 +113,27 @@ export default class WebARKitController {
     return this
   }
 
-  loadTracker(url) {
-    loadImage(url).then((image) => {
-      this.width = image.width
-      this.height = image.height
-      console.log('Width of image is: ', this.width)
-      console.log('Height of image is: ', this.height)
+  async loadTracker(urlOrData) {
+    const targetPrefix = '/load_jpeg_' + this.jpegCount++
 
-      const canvas = createCanvas(this.width, this.height)
-      console.log('Creating the canvas...');
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(image, 0, 0, this.width, this.height)
-      let data = ctx.getImageData(0, 0, this.width, this.height).data
-      console.log('we get the data...');
+    let data
+    let ext = 'jpg'
+    const fullUrl = urlOrData + '.' + ext
+    const target = targetPrefix + '.' + ext
 
-      this.webarkit.imageSetup(this.id, this.width, this.height)
-
-      this.frame2Dpointer = this.params.frame2Dpointer
-      this.frame2Dsize = this.params.frame2Dsize
-
-      this.image2Dframe = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.frame2Dpointer, this.frame2Dsize)
-      this._copyDataToImage2dFrame(data)
-      console.log('Hey, i am here!');
-      console.log(this.width);
-      //console.log(this.dataHeap);
-      console.log("id is: ", this.id);
-      this.webarkit.initTracking(this.id, this.width, this.height)
-      // removing loader page if present
-      const loader = document.getElementById('loading')
-      if (loader) {
-        loader.querySelector('.loading-text').innerText = 'Start the tracking!'
-        setTimeout(function () {
-          loader.parentElement.removeChild(loader)
-        }, 2000)
-      }
-    }).catch(err => {
-  console.log('Error in loadImage:', err)
-})
-  }
-
-  _copyDataToImage2dFrame(data) {
-    if (this.image2Dframe) {
-      this.image2Dframe.set(data)
-      return true
+    if (urlOrData instanceof Uint8Array) {
+      // assume preloaded camera params
+      data = urlOrData
+      
+    } else {
+      // fetch data via HTTP
+      try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
     }
+
+    this._storeDataFile(data, target)
+
+    // return the internal marker ID
+    return this.webarkit.readJpeg(this.id, target)
   }
 
   _copyImageToHeap(video) {
@@ -209,4 +182,12 @@ export default class WebARKitController {
       }
     }
   };
+
+  _storeDataFile (data, target) {
+    // FS is provided by emscripten
+    // Note: valid data must be in binary format encoded as Uint8Array
+    this.webarkit.FS.writeFile(target, data, {
+      encoding: 'binary'
+    })
+  }
 }

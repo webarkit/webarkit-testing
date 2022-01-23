@@ -1,10 +1,18 @@
-#include <stdio.h>
-#include <emscripten.h>
-#include <string>
-#include <vector>
-#include <unordered_map>
 #include <iostream>
+#include <stdio.h>
+#include <string>
+#include <sys/types.h>
+#include <unordered_map>
+#include <vector>
+#include <AR/ar.h>
+#include <AR2/config.h>
+#include <AR2/imageFormat.h>
+#include <AR2/util.h>
 #include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitOrbTracker.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/core/types_c.h>
+#include <emscripten.h>
 
 struct webARKitController {
   int id;
@@ -16,6 +24,7 @@ struct webARKitController {
   int height;
   int image2DSize;
   unsigned char *image2DFrame;
+  WebARKitOrbTracker *tracker;
 };
 
 std::unordered_map<int, webARKitController> webARKitControllers;
@@ -23,11 +32,6 @@ std::unordered_map<int, webARKitController> webARKitControllers;
 static int gwebARKitControllerID = 0;
 
 extern "C" {
-  void test() {
-    EM_ASM(
-      console.log("This is a test from WebARKitJS.cpp!")
-    );
-  }
 
   int setup(int videoWidth, int videoHeight) {
  	  int id = gwebARKitControllerID++;
@@ -98,74 +102,109 @@ extern "C" {
     return warc->id;
   }
 
+int initTracking(int id, const char* filename) {
+  if (webARKitControllers.find(id) == webARKitControllers.end()) {
+    return 0;
+  }
+  webARKitController *warc = &(webARKitControllers[id]);
+ 
+  EM_ASM(console.log('Start WebARKitOrbTracker tracker...'););
 
+  char *ext;
+  char buf1[512], buf2[512];
+  size_t refCols; 
+  size_t refRows;
 
+  AR2JpegImageT *jpegImage;
+  if (!filename) {
+    return 0;
+  }
+  ext = arUtilGetFileExtensionFromPath(filename, 1);
+  EM_ASM( {
+    var message = UTF8ToString($0);
+    console.log("ext: ", message)}, ext);
+  if (!ext) {
+    ARLOGe("Error: unable to determine extension of file '%s'. Exiting.\n",
+           filename);
+    //EXIT(E_INPUT_DATA_ERROR);
+  }
+  if (strcmp(ext, "jpeg") == 0 || strcmp(ext, "jpg") == 0 ||
+      strcmp(ext, "jpe") == 0) {
+    ARLOGi("Reading JPEG file...\n");
+    ar2UtilDivideExt(filename, buf1, buf2);
+    jpegImage = ar2ReadJpegImage(buf1, buf2);
+    if (jpegImage == NULL) {
+      ARLOGe("Error: unable to read JPEG image from file '%s'. Exiting.\n",
+             filename);
+      //EXIT(E_INPUT_DATA_ERROR);
+    }
+    ARLOGi("   Done.\n");
 
-  int initTracking(int id, size_t refCols, size_t refRows) {
-    if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
-      webARKitController *warc = &(webARKitControllers[id]);
-      WebARKitOrbTracker tracker;
-      EM_ASM(
-        console.log('Start WebARKitOrbTracker tracker...');
-      );
-      // Maybe this is not necessary?
-      //unsigned char *data;
-      //int size = refCols * refRows * 4 * sizeof(unsigned char);
-   		//data = (unsigned char*) malloc(size);
-      EM_ASM(
-        console.log('Allocating data...');
-      );
-      //data = warc->image2DFrame;
-      EM_ASM(
-        console.log('passing data fromimage2Dframe');
-      );
+    refCols = jpegImage->xsize;
+    refRows = jpegImage->ysize;
+    //std::cout << refCols << std::endl;
+    //warc->image2DSize = refCols * refRows * 3 * sizeof(unsigned char);
+    //warc->image2DFrame = (unsigned char *)malloc(warc->image2DSize);
+    //warc->image2DFrame = jpegImage->image;
 
-      EM_ASM(
-        console.log('Start to initialize tracker...');
-      );
-      tracker.initialize( warc->image2DFrame, refCols, refRows);
-      return 0;
+    EM_ASM(console.log('Start to initialize tracker...'););
+    /*cv::Ptr<cv::ORB> orb = NULL;
+    cv::Ptr<cv::BFMatcher> matcher = NULL;
+    orb = cv::ORB::create(2000);
+    std::cout << "Orb created!" << std::endl;
+    matcher = cv::BFMatcher::create();
+    std::cout << "BFMatcher created!" << std::endl;
+    //cv::Mat refGray = im_gray(refData, refCols, refRows);
+    //free(refData);
+    cv::Mat colorFrame(refCols, refRows, CV_8UC4, (unsigned char*)jpegImage->image);
+    cv::Mat refGray(refCols, refRows, CV_8UC1);
+    cv::cvtColor(colorFrame, refGray, cv::COLOR_RGBA2GRAY);
+    std::cout << "Gray Image!" << std::endl;*/
+    //std::cout << refGray << std::endl;
+    //orb->detectAndCompute(refGray, cv::noArray(), refKeyPts, refDescr)
+    warc->tracker->initialize((unsigned char*)jpegImage->image, refCols, refRows);
+    free(jpegImage);
+    free(ext);
+    }
+    return 0;
+  }
+
+  int readJpeg(int id, std::string filename) {
+    ARLOGi("Filename is: '%s'\n", filename.c_str());
+    initTracking(id, filename.c_str());
+    return 0;
   }
 
   int resetTracking(int id, size_t refCols, size_t refRows) {
-     if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
-      webARKitController *warc = &(webARKitControllers[id]);
-      WebARKitOrbTracker tracker;
-      unsigned char *data;
-      EM_ASM(
-        console.log('Start to Reset tracking...');
-      );
-      data = warc->videoFrame;
+    if (webARKitControllers.find(id) == webARKitControllers.end()) {
+      return 0;
+    }
+    webARKitController *warc = &(webARKitControllers[id]);
+    WebARKitOrbTracker tracker;
+    unsigned char *data;
+    data = warc->videoFrame;
 
-      EM_ASM(
-        console.log('Reset tracking...');
-      );
+    EM_ASM(console.log('Reset tracking...'););
 
-      double* out = tracker.resetTracking(data, refCols, refRows);
-      EM_ASM(
-        console.log('Reset done.');
-      );
+    double *out = tracker.resetTracking(data, refCols, refRows);
+    EM_ASM(console.log('Reset done.'););
     return 0;
   }
 
   int track(int id, size_t refCols, size_t refRows) {
-    if (webARKitControllers.find(id) == webARKitControllers.end()) { return 0; }
-      webARKitController *warc = &(webARKitControllers[id]);
-      WebARKitOrbTracker tracker;
-      unsigned char *data;
-      data = warc->videoFrame;
-
-      EM_ASM(
-        console.log('Start to initialize tracking...');
-      );
-      double* out = tracker.track(data, refCols, refRows);
-
-      EM_ASM({
-        console.log("Output from tracker: %d\n", $0);
-        },
-        &out
-      );
+    if (webARKitControllers.find(id) == webARKitControllers.end()) {
       return 0;
+    }
+    webARKitController *warc = &(webARKitControllers[id]);
+    WebARKitOrbTracker tracker;
+    unsigned char *data;
+    data = warc->videoFrame;
+
+    EM_ASM(console.log('Start to initialize tracking...'););
+    double *out = tracker.track(data, refCols, refRows);
+
+    EM_ASM({ console.log("Output from tracker: %d\n", $0); }, &out);
+    return 0;
   }
 }
 
