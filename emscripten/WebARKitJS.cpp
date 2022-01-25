@@ -24,7 +24,7 @@ struct webARKitController {
   int height;
   int image2DSize;
   unsigned char *image2DFrame;
-  WebARKitOrbTracker *tracker;
+  WebARKitOrbTracker tracker;
 };
 
 std::unordered_map<int, webARKitController> webARKitControllers;
@@ -126,7 +126,7 @@ int initTracking(int id, const char* filename) {
   if (!ext) {
     ARLOGe("Error: unable to determine extension of file '%s'. Exiting.\n",
            filename);
-    //EXIT(E_INPUT_DATA_ERROR);
+    return -1;
   }
   if (strcmp(ext, "jpeg") == 0 || strcmp(ext, "jpg") == 0 ||
       strcmp(ext, "jpe") == 0) {
@@ -136,33 +136,16 @@ int initTracking(int id, const char* filename) {
     if (jpegImage == NULL) {
       ARLOGe("Error: unable to read JPEG image from file '%s'. Exiting.\n",
              filename);
-      //EXIT(E_INPUT_DATA_ERROR);
+      return -1;
     }
     ARLOGi("   Done.\n");
 
     refCols = jpegImage->xsize;
     refRows = jpegImage->ysize;
-    //std::cout << refCols << std::endl;
-    //warc->image2DSize = refCols * refRows * 3 * sizeof(unsigned char);
-    //warc->image2DFrame = (unsigned char *)malloc(warc->image2DSize);
-    //warc->image2DFrame = jpegImage->image;
 
     EM_ASM(console.log('Start to initialize tracker...'););
-    /*cv::Ptr<cv::ORB> orb = NULL;
-    cv::Ptr<cv::BFMatcher> matcher = NULL;
-    orb = cv::ORB::create(2000);
-    std::cout << "Orb created!" << std::endl;
-    matcher = cv::BFMatcher::create();
-    std::cout << "BFMatcher created!" << std::endl;
-    //cv::Mat refGray = im_gray(refData, refCols, refRows);
-    //free(refData);
-    cv::Mat colorFrame(refCols, refRows, CV_8UC4, (unsigned char*)jpegImage->image);
-    cv::Mat refGray(refCols, refRows, CV_8UC1);
-    cv::cvtColor(colorFrame, refGray, cv::COLOR_RGBA2GRAY);
-    std::cout << "Gray Image!" << std::endl;*/
-    //std::cout << refGray << std::endl;
-    //orb->detectAndCompute(refGray, cv::noArray(), refKeyPts, refDescr)
-    warc->tracker->initialize((unsigned char*)jpegImage->image, refCols, refRows);
+
+    warc->tracker.initialize((unsigned char*)jpegImage->image, refCols, refRows);
     free(jpegImage);
     free(ext);
     }
@@ -180,13 +163,12 @@ int initTracking(int id, const char* filename) {
       return 0;
     }
     webARKitController *warc = &(webARKitControllers[id]);
-    WebARKitOrbTracker tracker;
     unsigned char *data;
     data = warc->videoFrame;
 
     EM_ASM(console.log('Reset tracking...'););
 
-    double *out = tracker.resetTracking(data, refCols, refRows);
+    double *out = warc->tracker.resetTracking(data, refCols, refRows);
     EM_ASM(console.log('Reset done.'););
     return 0;
   }
@@ -196,12 +178,11 @@ int initTracking(int id, const char* filename) {
       return 0;
     }
     webARKitController *warc = &(webARKitControllers[id]);
-    WebARKitOrbTracker tracker;
     unsigned char *data;
     data = warc->videoFrame;
 
     EM_ASM(console.log('Start to initialize tracking...'););
-    double *out = tracker.track(data, refCols, refRows);
+    double *out = warc->tracker.track(data, refCols, refRows);
 
     EM_ASM({ console.log("Output from tracker: %d\n", $0); }, &out);
     return 0;

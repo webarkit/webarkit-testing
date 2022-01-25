@@ -193,22 +193,26 @@ DEBUG_FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
 
 var INCLUDES = [
-    path.resolve(__dirname, WEBARKITLIB_ROOT + '/include'),
-		path.resolve(__dirname, '../opencv/include'),
-		path.resolve(__dirname, '../opencv/modules/calib3d/include'),
-		path.resolve(__dirname, '../opencv/modules/core/include'),
-		path.resolve(__dirname, '../opencv/modules/dnn/include'),
-		path.resolve(__dirname, '../opencv/modules/features2d/include'),
-		path.resolve(__dirname, '../opencv/modules/flann/include'),
-		path.resolve(__dirname, '../opencv/modules/imgproc/include'),
-		path.resolve(__dirname, '../opencv/modules/objdetect/include'),
-		path.resolve(__dirname, '../opencv/modules/photo/include'),
-		path.resolve(__dirname, '../opencv/modules/video/include'),
-		path.resolve(__dirname, '../opencv/build_wasm'),
+    path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
+    path.resolve(__dirname, "../opencv/include"),
+    path.resolve(__dirname, "../opencv/modules/calib3d/include"),
+    path.resolve(__dirname, "../opencv/modules/core/include"),
+    path.resolve(__dirname, "../opencv/modules/dnn/include"),
+    path.resolve(__dirname, "../opencv/modules/features2d/include"),
+    path.resolve(__dirname, "../opencv/modules/flann/include"),
+    path.resolve(__dirname, "../opencv/modules/imgproc/include"),
+    path.resolve(__dirname, "../opencv/modules/objdetect/include"),
+    path.resolve(__dirname, "../opencv/modules/photo/include"),
+    path.resolve(__dirname, "../opencv/modules/video/include"),
+    path.resolve(__dirname, "../opencv/build_wasm"),
     OUTPUT_PATH,
     SOURCE_PATH,
-    path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/KPM/FreakMatcher'),
-].map(function(s) { return '-I' + s }).join(' ');
+    path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/FreakMatcher"),
+]
+    .map(function (s) {
+        return "-I" + s;
+    })
+    .join(" ");
 
 var OPENCV_LIBS = [
 	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_calib3d.a'),
