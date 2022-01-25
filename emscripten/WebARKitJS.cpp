@@ -70,38 +70,6 @@ extern "C" {
  		return warc->id;
  	}
 
-  int imageSetup(int id, int width, int height) {
-    if (webARKitControllers.find(id) == webARKitControllers.end()) { return -1; }
-    webARKitController *warc = &(webARKitControllers[id]);
-    warc->width = width;
- 		warc->height = height;
-
- 		warc->image2DSize = width * height * 4 * sizeof(unsigned char);
- 		warc->image2DFrame = (unsigned char*) malloc(warc->image2DSize);
-
-    EM_ASM({
-      console.log("Allocated image2DSize: %d\n", $0);
-      console.log("Allocated image2DFrame, pointer is: %d\n", $1);
-    },
-      warc->image2DSize,
-      warc->image2DFrame
-    );
-
-    	EM_ASM_({
- 			if (!webarkit["frameMalloc"]) {
- 				webarkit["frameMalloc"] = ({});
- 			}
- 			var frameMalloc = webarkit["frameMalloc"];
-      frameMalloc["frame2Dpointer"] = $1;
- 			frameMalloc["frame2Dsize"] = $2;
- 		},
- 			warc->id,
- 			warc->image2DFrame,
- 			warc->image2DSize
- 		);
-    return warc->id;
-  }
-
 int initTracking(int id, const char* filename) {
   if (webARKitControllers.find(id) == webARKitControllers.end()) {
     return 0;
@@ -163,12 +131,10 @@ int initTracking(int id, const char* filename) {
       return 0;
     }
     webARKitController *warc = &(webARKitControllers[id]);
-    unsigned char *data;
-    data = warc->videoFrame;
 
     EM_ASM(console.log('Reset tracking...'););
 
-    double *out = warc->tracker.resetTracking(data, refCols, refRows);
+    double *out = warc->tracker.resetTracking(warc->videoFrame, refCols, refRows);
     EM_ASM(console.log('Reset done.'););
     return 0;
   }
@@ -178,13 +144,11 @@ int initTracking(int id, const char* filename) {
       return 0;
     }
     webARKitController *warc = &(webARKitControllers[id]);
-    unsigned char *data;
-    data = warc->videoFrame;
 
     EM_ASM(console.log('Start to initialize tracking...'););
-    double *out = warc->tracker.track(data, refCols, refRows);
+    double *out = warc->tracker.track(warc->videoFrame, refCols, refRows);
 
-    EM_ASM({ console.log("Output from tracker: %d\n", $0); }, &out);
+    EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
     return 0;
   }
 }
