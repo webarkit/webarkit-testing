@@ -135,6 +135,8 @@ int initTracking(int id, const char* filename) {
     EM_ASM(console.log('Reset tracking...'););
 
     double *out = warc->tracker.resetTracking(warc->videoFrame, refCols, refRows);
+
+    EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
     EM_ASM(console.log('Reset done.'););
     return 0;
   }
