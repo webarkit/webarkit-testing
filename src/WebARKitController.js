@@ -141,18 +141,19 @@ export default class WebARKitController {
     this.ctx.save()
     this.ctx.drawImage(video, 0, 0, this.videoWidth, this.videoHeight) // draw video
     this.ctx.restore()
-    let data;
+
     const getImageData = () => {
       let imageData = this.ctx.getImageData(0, 0, this.videoWidth, this.videoHeight)
-      data = imageData.data
+      let data = imageData.data
+      if (this.dataHeap) {
+        this.dataHeap.set(data)
+        return true
+      }
       requestAnimationFrame(getImageData)
-      return data;
     }
-    
-    if (this.dataHeap) {
-      this.dataHeap.set(getImageData())
-      return true
-    }
+
+    getImageData()
+
     return false
   }
 
