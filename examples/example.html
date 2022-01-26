@@ -10,9 +10,13 @@
     <script src="../dist/WebARKit.js"></script>
     <script>
        WebARKit.WebARKitController.init(640, 480,'../examples/config.json').then(wark => {
-        wark.loadTracker('data/pinball.jpg').then(_ => {
-          wark.resetTracking();
-          wark.track();
+        wark.loadTracker('data/pinball.jpg').then(_ => {       
+          window.addEventListener('loadedvideo', function(e){
+            console.log(e);
+            wark.resetTracking();
+            //wark.track();
+            console.log(wark);
+          })
         })
       })
     </script>

@@ -106,6 +106,8 @@ export default class Utils {
     return new Promise(resolve => {
       video.onloadedmetadata = () => {
         resolve(video)
+        var ev = new Event('loadedvideo')
+        window.dispatchEvent(ev)
       }
     })
   }
