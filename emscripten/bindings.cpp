@@ -7,4 +7,5 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
     function("readJpeg", &readJpeg);
     function("resetTracking", &resetTracking);
     function("track", &track);
+    function("getVideo", &getVideo);
 }

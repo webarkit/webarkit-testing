@@ -27,7 +27,9 @@ export default class WebARKit {
       'readJpeg',
       'resetTracking',
       'track',
-      'FS'
+      'FS',
+      'getValue',
+      'getVideo'
     ].forEach(method => {
       this[method] = this.instance[method]
     })

@@ -22,6 +22,7 @@ export default class WebARKitController {
     this.canvas
     this.canvasHeap
     this.root
+    this.config
   }
 
   static async init (videoWidth, videoHeight, config) {
@@ -48,7 +49,7 @@ export default class WebARKitController {
 
     this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
 
-    const config = {
+    this.config = {
       "addPath": "",
       "cameraPara": "examples/Data/camera_para.dat",
       "videoSettings": {
@@ -77,7 +78,7 @@ export default class WebARKitController {
       }
     }
 
-    Container.createLoading(config)
+    Container.createLoading(this.config)
     //Container.createStats(stats)
     const containerObj = Container.createContainer()
     const container = containerObj.container
@@ -88,14 +89,10 @@ export default class WebARKitController {
     // const data = Utils.jsonParser(config)
     // data.then((configData) => {
 
-    Utils.getUserMedia(config).then((video) => {
-      this._copyImageToHeap(video)
-    })
-
     //})
 
-    if (config.renderer.type === 'three') {
-      const renderer = new ThreejsRenderer(config, canvas, root)
+    if (this.config.renderer.type === 'three') {
+      const renderer = new ThreejsRenderer(this.config, canvas, root)
       renderer.initRenderer()
       const tick = () => {
         renderer.draw()
@@ -111,6 +108,16 @@ export default class WebARKitController {
       })
     }, 1)
     return this
+  }
+
+  startVideo(callback) {
+    Utils.getUserMedia(this.config).then((video) => {
+      callback(video)
+    })
+  }
+
+  process(video) {
+    this._copyImageToHeap(video)
   }
 
   async loadTracker(urlOrData) {
@@ -149,12 +156,30 @@ export default class WebARKitController {
         this.dataHeap.set(data)
         return true
       }
-      requestAnimationFrame(getImageData)
     }
 
     getImageData()
 
     return false
+  }
+
+  parseResult(ptr) {
+    const valid = this.webarkit.getValue(ptr, "i8");
+    const dataPtr = this.webarkit.getValue(ptr + 4, "*");
+    let data = new Float64Array(this.webarkit.HEAPF64.buffer, dataPtr, 17);
+
+    const h = data.slice(0, 9);
+    const warped = data.slice(9, 17);
+
+    return {
+        valid: valid,
+        H: h,
+        corners: warped
+    };
+  }
+
+  getVideo() {
+    return this.webarkit.getVideo(this.id, this.videoWidth, this.videoHeight);
   }
 
   resetTracking () {

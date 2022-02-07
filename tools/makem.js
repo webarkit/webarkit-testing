@@ -172,7 +172,7 @@ FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
 FLAGS += ' -s USE_ZLIB=1';
 FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
-FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\']"';
+FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\', \'getValue\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 FLAGS += ' -gsource-map -fsanitize=address '
 FLAGS += ' -s ASSERTIONS=1 '
@@ -186,7 +186,7 @@ var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/webarkit.api.js') 
 FLAGS += ' --bind ';
 
 /* DEBUG FLAGS */
-var DEBUG_FLAGS = ' -g ';
+var DEBUG_FLAGS = ' -g2 ';
 DEBUG_FLAGS += ' -s ASSERTIONS=1 '
 DEBUG_FLAGS += ' --profiling '
 DEBUG_FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
@@ -282,7 +282,7 @@ var compile_wasm = format(EMCC + ' ' + INCLUDES + ' '
 
 var compile_wasm_es6 = format(EMCC + ' ' + INCLUDES + ' '
 		 + ALL_BC + MAIN_SOURCES
-		 + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
+		 + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + DEBUG_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
 		 OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_ES6_FILE);
 
 /*

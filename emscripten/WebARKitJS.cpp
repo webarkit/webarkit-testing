@@ -13,6 +13,9 @@
 #include <opencv2/core.hpp>
 #include <opencv2/core/types_c.h>
 #include <emscripten.h>
+#include <emscripten/val.h>
+
+using namespace emscripten;
 
 struct webARKitController {
   int id;
@@ -28,6 +31,8 @@ struct webARKitController {
 };
 
 std::unordered_map<int, webARKitController> webARKitControllers;
+
+thread_local const val Uint8ClampedArray = val::global("Uint8ClampedArray");
 
 static int gwebARKitControllerID = 0;
 
@@ -139,6 +144,15 @@ int initTracking(int id, const char* filename) {
     EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
     EM_ASM(console.log('Reset done.'););
     return 0;
+  }
+
+  val getVideo(int id, int width, int height) {
+     if (webARKitControllers.find(id) == webARKitControllers.end()) {
+      return val(false);
+    }
+    webARKitController *warc = &(webARKitControllers[id]);
+    val js_result = Uint8ClampedArray.new_(typed_memory_view(width * height * 4, warc->videoFrame));
+    return js_result;
   }
 
   int track(int id, size_t refCols, size_t refRows) {

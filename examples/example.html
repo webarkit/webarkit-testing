@@ -10,11 +10,37 @@
     <script src="../dist/WebARKit.js"></script>
     <script>
        WebARKit.WebARKitController.init(640, 480,'../examples/config.json').then(wark => {
-        wark.loadTracker('data/pinball.jpg').then(_ => {       
+        wark.loadTracker('data/pinball.jpg').then(_ => {   
+          var res;
+          wark.startVideo(function(video){
+            console.log(video);
+            function update() {
+              wark.process(video)
+              requestAnimationFrame(update)
+            }
+            update(video);
+          })
+  
           window.addEventListener('loadedvideo', function(e){
             console.log(e);
-            wark.resetTracking();
+            function updateCanva(){
+              res=wark.getVideo();
+              requestAnimationFrame(updateCanva)
+            }
+            updateCanva()
+            var canva = document.createElement('canvas');
+            canva.id = "test"
+            document.body.appendChild(canva)
+            canva.width = 640;
+            canva.height = 480;
+            var ctx = canva.getContext('2d');
+            var img_data = ctx.createImageData(canva.width, canva.height);
+            for (var i=0; i<canva.width*canva.height; ++i)
+              img_data[i] = res[i];
+            ctx.putImageData(img_data,100,100)
             //wark.track();
+            wark.resetTracking();
+            wark.track();
             console.log(wark);
           })
         })
