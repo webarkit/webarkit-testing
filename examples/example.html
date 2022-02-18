@@ -23,11 +23,6 @@
   
           window.addEventListener('loadedvideo', function(e){
             console.log(e);
-            function updateCanva(){
-              res=wark.getVideo();
-              requestAnimationFrame(updateCanva)
-            }
-            updateCanva()
             var canva = document.createElement('canvas');
             canva.id = "test"
             document.body.appendChild(canva)
@@ -35,12 +30,17 @@
             canva.height = 480;
             var ctx = canva.getContext('2d');
             var img_data = ctx.createImageData(canva.width, canva.height);
-            for (var i=0; i<canva.width*canva.height; ++i)
-              img_data[i] = res[i];
-            ctx.putImageData(img_data,100,100)
+            function updateCanva(){
+              res = wark.getVideo();
+              img_data.data.set(res)
+              ctx.putImageData(img_data,0,0)
+              requestAnimationFrame(updateCanva)
+            }
+            updateCanva()
+            console.log(wark);
             //wark.track();
-            wark.resetTracking();
-            wark.track();
+            //wark.resetTracking();
+            //wark.track();
             console.log(wark);
           })
         })
