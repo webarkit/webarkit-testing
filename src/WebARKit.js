@@ -1,4 +1,5 @@
-import ModuleLoader from './ModuleLoader'
+
+import webarkit from '../build/webarkit_ES6_wasm'
 
 export default class WebARKit {
   // construction
@@ -12,19 +13,22 @@ export default class WebARKit {
 
   // initialization
   async init () {
-    const runtime = await ModuleLoader.init()
-    this.instance = runtime.instance
+    const runtime = await webarkit();
+    this.instance = runtime
     this._decorate()
     const scope = (typeof window !== 'undefined') ? window : global
     scope.webarkit = this
-
     return this
   }
+
   _decorate () {
     // add delegate methods
     [
-      'test',
-      'initTracking'
+      'setup',      
+      'readJpeg',
+      'resetTrackingAR',
+      'trackAR',
+      'FS',
     ].forEach(method => {
       this[method] = this.instance[method]
     })

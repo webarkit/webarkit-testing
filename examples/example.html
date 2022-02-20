@@ -8,9 +8,10 @@
     <script src="../dist/WebARKit.js"></script>
     <script>
       console.log(WebARKit)
-       WebARKit.WebARKitController.init().then(wark => {
-        wark.webarkit.test();
-        wark.initTracking()
+       WebARKit.WebARKitController.init(640, 480).then(wark => {      
+        wark.loadTracker('data/pinball.jpg').then(_ => {
+          console.log(wark);
+        })
       })
     </script>
   </body>

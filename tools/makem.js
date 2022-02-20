@@ -150,7 +150,8 @@ var kpm_sources = [
 });
 
 var webarkit_sources = [
-	'WebARKitOpticalTracking/WebARKitOrbTracker.cpp'
+	'WebARKitOpticalTracking/WebARKitOrbTracker.cpp',
+    'WebARKitOpticalTracking/WebARKitUtils.cpp'
 ].map(function(src) {
 	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/WebARKitTrackers/', src);
 });
@@ -159,7 +160,7 @@ if (HAVE_NFT) {
   ar_sources = ar_sources
   .concat(ar2_sources)
   .concat(kpm_sources)
-	.concat(webarkit_sources);
+  .concat(webarkit_sources);
 }
 
 var DEFINES = ' ';
@@ -172,11 +173,12 @@ FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
 FLAGS += ' -s USE_ZLIB=1';
 FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
-FLAGS += ' -s "EXTRA_EXPORTED_RUNTIME_METHODS=[\'FS\']"';
+FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
-var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
+var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s EXPORT_NAME="webarkit" -s MODULARIZE=1 ';
+
 
 var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/webarkit.api.js') +' ';
 
@@ -250,8 +252,8 @@ function clean_builds() {
 }
 
 var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
-    //+ ar_sources.join(' ')
-		+ webarkit_sources.join(' ')
+    + ar_sources.join(' ')
+	//	+ webarkit_sources.join(' ')
     + FLAGS + ' ' + DEFINES + ' -r -o {OUTPUT_PATH}libwebarkit.bc ',
     OUTPUT_PATH);
 

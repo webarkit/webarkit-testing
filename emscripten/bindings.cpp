@@ -3,6 +3,8 @@
 using namespace emscripten;
 
 EMSCRIPTEN_BINDINGS(constant_bindings) {
-    function("test", &test);
-    function("initTracking", &initTracking, allow_raw_pointers());
+    function("setup", &setup);
+    function("readJpeg", &readJpeg);
+    function("resetTrackingAR", &resetTrackingAR);
+    function("trackAR", &trackAR);
 }
