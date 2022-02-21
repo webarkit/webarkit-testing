@@ -25,8 +25,8 @@ struct webARKitController {
   unsigned char *videoLuma;
   int width;
   int height;
-  int image2DSize;
-  unsigned char *image2DFrame;
+  char output_t_valid;
+  double *output_t_data;
 };
 
 std::unordered_map<int, webARKitController> webARKitControllers;
@@ -138,9 +138,23 @@ int initTracking(int id, const char* filename) {
     EM_ASM(console.log('Reset tracking...'););
 
     output_t *out = resetTracking(warc->videoLuma, refCols, refRows);
+    warc->output_t_valid = out->valid;
+    warc->output_t_data = out->data;
 
     EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
     EM_ASM({ console.log("Output from tracker, valid: %d\n", $0); }, out->valid);
+    EM_ASM_({
+ 			if (!webarkit["frameMalloc"]) {
+ 				webarkit["frameMalloc"] = ({});
+ 			}
+ 			var frameMalloc = webarkit["frameMalloc"];
+ 			frameMalloc["output_t_valid"] = $1;
+ 			frameMalloc["output_t_data"] = $2;
+ 		},
+ 			warc->id,
+      warc->output_t_valid,
+      warc->output_t_data
+ 		);
     EM_ASM(console.log('Reset done.'););
     return 0;
   }

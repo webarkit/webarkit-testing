@@ -19,7 +19,10 @@ export default class WebARKitController {
     this.canvasHeap
     this.videoLuma = null
     this.videoLumaPointer = null
-    this.valid = false
+    this.output_t_valid = null
+    this.output_t_data = null
+    this.valid
+    this.out_data
   }
 
   static async init(videoWidth, videoHeight) {
@@ -40,6 +43,8 @@ export default class WebARKitController {
     this.framepointer = this.params.framevideopointer
     this.framesize = this.params.framevideosize
     this.videoLumaPointer = this.params.videoLumaPointer
+    this.output_t_valid = this.params.output_t_valid
+    this.output_t_data = this.params.output_t_data
 
     this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
     this.videoLuma = new Uint8Array(
@@ -48,6 +53,8 @@ export default class WebARKitController {
       this.framesize / 4
     );
     this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight)
+    this.valid = new Int8Array(this.webarkit.instance.HEAP8.buffer, this.output_t_valid, 1)
+    this.out_data = new Float64Array(this.webarkit.instance.HEAPF64.buffer, this.output_t_data, 17)
     this.config = {
       "addPath": "",
       "cameraPara": "examples/Data/camera_para.dat",
@@ -119,7 +126,8 @@ export default class WebARKitController {
   }
 
   track(){
-    if(!this.valid){
+    if(!this.valid[0]){
+      //console.log(this.valid);
       this.webarkit.instance.resetTrackingAR(this.id, this.videoWidth, this.videoHeight);
     }
 
