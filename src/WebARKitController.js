@@ -1,8 +1,9 @@
 import WebARKit from './WebARKit'
 import Utils from './Utils'
+import { createCanvas, loadImage } from 'canvas'
 
 export default class WebARKitController {
-  constructor(){
+  constructor() {
     this.id
     this.jpegCount = 0
     this.videoWidth = 640
@@ -11,15 +12,17 @@ export default class WebARKitController {
     this.framepointer = null
     this.framesize = null
     this.dataHeap = null
-
     this.listeners = {}
     this.params
     this.webarkit
     this.canvas
     this.canvasHeap
+    this.videoLuma = null
+    this.videoLumaPointer = null
+    this.valid = false
   }
 
-  static async init (videoWidth, videoHeight) {
+  static async init(videoWidth, videoHeight) {
     this.videoWidth = videoWidth
     this.videoHeight = videoHeight
     // directly init with given width / height
@@ -27,19 +30,69 @@ export default class WebARKitController {
     return await webARC._initialize()
   }
 
-  async _initialize () {
+  async _initialize() {
     // initialize the toolkit
     this.webarkit = await new WebARKit().init()
     console.log('[WebARController]', 'WebARKit initialized')
     this.id = this.webarkit.setup(this.videoWidth, this.videoHeight)
+    // setting malloc params
+    this.params = this.webarkit.instance.frameMalloc
+    this.framepointer = this.params.framevideopointer
+    this.framesize = this.params.framevideosize
+    this.videoLumaPointer = this.params.videoLumaPointer
 
+    this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
+    this.videoLuma = new Uint8Array(
+      this.webarkit.instance.HEAPU8.buffer,
+      this.videoLumaPointer,
+      this.framesize / 4
+    );
+    this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight)
+    this.config = {
+      "addPath": "",
+      "cameraPara": "examples/Data/camera_para.dat",
+      "videoSettings": {
+        "width": {
+          "min": 640,
+          "max": 800
+        },
+        "height": {
+          "min": 480,
+          "max": 600
+        },
+        "facingMode": "environment"
+      },
+      "loading": {
+        "logo": {
+          "src": "data/arNFT-logo.gif",
+          "alt": "arNFT.js logo"
+        },
+        "loadingMessage": "Loading, please wait..."
+      },
+      "renderer": {
+        "type": "three",
+        "alpha": true,
+        "antialias": true,
+        "precision": "mediump"
+      }
+    }
     setTimeout(() => {
       this.dispatchEvent({
         name: 'load',
         target: this
       })
     }, 1)
-      return this
+    return this
+  }
+
+  startVideo(callback) {
+    Utils.getUserMedia(this.config).then((video) => {
+      callback(video)
+    })
+  }
+
+  process(video) {
+    this._copyImageToHeap(video)
   }
 
   async loadTracker(urlOrData) {
@@ -65,9 +118,15 @@ export default class WebARKitController {
     return this.webarkit.readJpeg(this.id, target)
   }
 
-  
+  track(){
+    if(!this.valid){
+      this.webarkit.instance.resetTrackingAR(this.id, this.videoWidth, this.videoHeight);
+    }
 
-  _storeDataFile (data, target) {
+    this.webarkit.instance.trackAR(this.id, this.videoWidth, this.videoHeight);
+  }
+
+  _storeDataFile(data, target) {
     // FS is provided by emscripten
     // Note: valid data must be in binary format encoded as Uint8Array
     this.webarkit.FS.writeFile(target, data, {
@@ -75,17 +134,44 @@ export default class WebARKitController {
     })
   }
 
+  _copyImageToHeap(video) {
+    this.ctx = this.canvasHeap.getContext('2d')
+    this.ctx.save()
+    this.ctx.drawImage(video, 0, 0, this.videoWidth, this.videoHeight) // draw video
+    this.ctx.restore()
+    let imageData = this.ctx.getImageData(0, 0, this.videoWidth, this.videoHeight)
+    let data = imageData.data
+    if (this.videoLuma) {
+      let q = 0;
+      // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
+      // see (ARToolKitJS.cpp L: 43)
+      for (let p = 0; p < this.videoSize; p++) {
+        let r = data[q + 0],
+          g = data[q + 1],
+          b = data[q + 2];
+        // @see https://stackoverflow.com/a/596241/5843642
+        this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
+        q += 4;
+      }
+    }
+    if (this.dataHeap) {
+      this.dataHeap.set(data)
+      return true
+    }
+    return false
+  }
+
   addEventListener(name, callback) {
-    if(!this.listeners[name]) {
+    if (!this.listeners[name]) {
       this.listeners[name] = [];
     }
     this.listeners[name].push(callback);
   };
 
   removeEventListener(name, callback) {
-    if(this.listeners[name]) {
+    if (this.listeners[name]) {
       let index = this.listeners[name].indexOf(callback);
-      if(index > -1) {
+      if (index > -1) {
         this.listeners[name].splice(index, 1);
       }
     }
@@ -93,8 +179,8 @@ export default class WebARKitController {
 
   dispatchEvent(event) {
     let listeners = this.listeners[event.name];
-    if(listeners) {
-      for(let i = 0; i < listeners.length; i++) {
+    if (listeners) {
+      for (let i = 0; i < listeners.length; i++) {
         listeners[i].call(this, event);
       }
     }

@@ -5,12 +5,22 @@
     <title></title>
   </head>
   <body>
+    <video id="video" autoplay muted playinline></video>
     <script src="../dist/WebARKit.js"></script>
     <script>
       console.log(WebARKit)
-       WebARKit.WebARKitController.init(640, 480).then(wark => {      
+       WebARKit.WebARKitController.init(640, 480).then(wark => {  
+        console.log(wark);    
         wark.loadTracker('data/pinball.jpg').then(_ => {
-          console.log(wark);
+          wark.startVideo(function(video){
+            function update() {
+              wark.process(video)
+              wark.track()
+              requestAnimationFrame(update)
+            }
+            update(video);
+            
+          })
         })
       })
     </script>

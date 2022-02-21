@@ -22,6 +22,7 @@ struct webARKitController {
   int videoHeight;
   int videoSize;
   unsigned char *videoFrame;
+  unsigned char *videoLuma;
   int width;
   int height;
   int image2DSize;
@@ -44,8 +45,7 @@ int setup(int videoWidth, int videoHeight) {
 
  		warc->videoSize = videoWidth * videoHeight * 4 * sizeof(unsigned char);
  		warc->videoFrame = (unsigned char*) malloc(warc->videoSize);
-
-
+    warc->videoLuma = (unsigned char*) malloc(warc->videoSize / 4);
 
     EM_ASM({
       console.log("Allocated videoSize: %d\n", $0);
@@ -62,10 +62,12 @@ int setup(int videoWidth, int videoHeight) {
  			var frameMalloc = webarkit["frameMalloc"];
  			frameMalloc["framevideopointer"] = $1;
  			frameMalloc["framevideosize"] = $2;
+      frameMalloc["videoLumaPointer"] = $3;
  		},
  			warc->id,
       warc->videoFrame,
-      warc->videoSize
+      warc->videoSize,
+      warc->videoLuma
  		);
 
  		return warc->id;
@@ -135,9 +137,10 @@ int initTracking(int id, const char* filename) {
 
     EM_ASM(console.log('Reset tracking...'););
 
-    output_t *out = resetTracking(warc->videoFrame, refCols, refRows);
+    output_t *out = resetTracking(warc->videoLuma, refCols, refRows);
 
     EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
+    EM_ASM({ console.log("Output from tracker, valid: %d\n", $0); }, out->valid);
     EM_ASM(console.log('Reset done.'););
     return 0;
   }
@@ -149,7 +152,7 @@ int initTracking(int id, const char* filename) {
     webARKitController *warc = &(webARKitControllers[id]);
 
     EM_ASM(console.log('Start to initialize tracking...'););
-    output_t *out = track(warc->videoFrame, refCols, refRows);
+    output_t *out = track(warc->videoLuma, refCols, refRows);
 
     EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
     return 0;
