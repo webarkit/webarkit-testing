@@ -165,10 +165,10 @@ export default class WebARKitController {
         q += 4;
       }
     }
-    if (this.dataHeap) {
+    /*if (this.dataHeap) {
       this.dataHeap.set(data)
       return true
-    }
+    }*/
     return false
   }
 
