@@ -126,9 +126,12 @@ export default class WebARKitController {
   }
 
   track(){
-    if(!this.valid[0]){
+    console.log(this.videoLuma);
+
+    if(this.valid[0] == -1){
       //console.log(this.valid);
       this.webarkit.instance.resetTrackingAR(this.id, this.videoWidth, this.videoHeight);
+      console.log(this.out_data);
     }
 
     this.webarkit.instance.trackAR(this.id, this.videoWidth, this.videoHeight);

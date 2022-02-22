@@ -142,7 +142,9 @@ int initTracking(int id, const char* filename) {
     warc->output_t_data = out->data;
 
     EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
-    EM_ASM({ console.log("Output from tracker, valid: %d\n", $0); }, out->valid);
+    EM_ASM({
+      console.log("Output from valid: %i\n", $0); },
+      warc->output_t_valid);
     EM_ASM_({
  			if (!webarkit["frameMalloc"]) {
  				webarkit["frameMalloc"] = ({});
