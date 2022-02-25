@@ -21,7 +21,7 @@ export default class WebARKitController {
     this.videoLumaPointer = null
     this.output_t_valid = null
     this.output_t_data = null
-    this.valid
+    this.valid = false
     this.out_data
   }
 
@@ -43,9 +43,6 @@ export default class WebARKitController {
     this.framepointer = this.params.framevideopointer
     this.framesize = this.params.framevideosize
     this.videoLumaPointer = this.params.videoLumaPointer
-    this.output_t_valid = this.params.output_t_valid
-    this.output_t_data = this.params.output_t_data
-
     this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
     this.videoLuma = new Uint8Array(
       this.webarkit.instance.HEAPU8.buffer,
@@ -53,8 +50,6 @@ export default class WebARKitController {
       this.framesize / 4
     );
     this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight)
-    this.valid = new Int8Array(this.webarkit.instance.HEAP8.buffer, this.output_t_valid, 1)
-    this.out_data = new Float64Array(this.webarkit.instance.HEAPF64.buffer, this.output_t_data, 17)
     this.config = {
       "addPath": "",
       "cameraPara": "examples/Data/camera_para.dat",
@@ -126,11 +121,12 @@ export default class WebARKitController {
   }
 
   track(){
-    console.log(this.videoLuma);
-
-    if(this.valid[0] == -1){
-      //console.log(this.valid);
+    if(!this.output_t_valid){
       this.webarkit.instance.resetTrackingAR(this.id, this.videoWidth, this.videoHeight);
+      this.output_t_valid = this.params.outputtValid
+      this.output_t_data = this.params.outputtData
+      //this.valid = new Int8Array(this.webarkit.instance.HEAP8.buffer, this.output_t_valid, 1)
+      this.out_data = new Float64Array(this.webarkit.instance.HEAPF64.buffer, this.output_t_data, 17)
       console.log(this.out_data);
     }
 
@@ -165,10 +161,10 @@ export default class WebARKitController {
         q += 4;
       }
     }
-    /*if (this.dataHeap) {
+    if (this.dataHeap) {
       this.dataHeap.set(data)
       return true
-    }*/
+    }
     return false
   }
 

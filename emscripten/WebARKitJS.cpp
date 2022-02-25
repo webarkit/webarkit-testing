@@ -46,6 +46,7 @@ int setup(int videoWidth, int videoHeight) {
  		warc->videoSize = videoWidth * videoHeight * 4 * sizeof(unsigned char);
  		warc->videoFrame = (unsigned char*) malloc(warc->videoSize);
     warc->videoLuma = (unsigned char*) malloc(warc->videoSize / 4);
+    warc->output_t_data = (double*)malloc(17 * sizeof(double));
 
     EM_ASM({
       console.log("Allocated videoSize: %d\n", $0);
@@ -138,6 +139,7 @@ int initTracking(int id, const char* filename) {
     EM_ASM(console.log('Reset tracking...'););
 
     output_t *out = resetTracking(warc->videoLuma, refCols, refRows);
+    //std::cout << out->valid << std::endl;
     warc->output_t_valid = out->valid;
     warc->output_t_data = out->data;
 
@@ -150,8 +152,8 @@ int initTracking(int id, const char* filename) {
  				webarkit["frameMalloc"] = ({});
  			}
  			var frameMalloc = webarkit["frameMalloc"];
- 			frameMalloc["output_t_valid"] = $1;
- 			frameMalloc["output_t_data"] = $2;
+      frameMalloc["outputtValid"] = $1;
+      frameMalloc["outputtData"] = $2; 
  		},
  			warc->id,
       warc->output_t_valid,
