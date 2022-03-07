@@ -127,6 +127,13 @@ export default class WebARKitController {
       this.output_t_data = this.params.outputtData
       //this.valid = new Int8Array(this.webarkit.instance.HEAP8.buffer, this.output_t_valid, 1)
       this.out_data = new Float64Array(this.webarkit.instance.HEAPF64.buffer, this.output_t_data, 17)
+      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
+      this.videoLuma = new Uint8Array(
+        this.webarkit.instance.HEAPU8.buffer,
+        this.videoLumaPointer,
+        this.framesize / 4
+      );
+      console.log(this.output_t_valid);
       console.log(this.out_data);
     }
 
