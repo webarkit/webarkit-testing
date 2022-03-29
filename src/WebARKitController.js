@@ -19,7 +19,7 @@ export default class WebARKitController {
     this.canvasHeap
     this.videoLuma = null
     this.videoLumaPointer = null
-    this.output_t_valid = null
+    this.output_t_valid = 0
     this.output_t_data = null
     this.valid = false
     this.out_data
@@ -121,7 +121,7 @@ export default class WebARKitController {
   }
 
   track(){
-    if(!this.output_t_valid){
+    if(this.output_t_valid == 0){
       this.webarkit.instance.resetTrackingAR(this.id, this.videoWidth, this.videoHeight);
       this.output_t_valid = this.params.outputtValid
       this.output_t_data = this.params.outputtData
