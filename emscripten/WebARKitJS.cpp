@@ -23,11 +23,6 @@ struct webARKitController {
   int videoHeight;
   int videoSize;
   unsigned char *videoFrame;
-  unsigned char *videoLuma;
-  int width;
-  int height;
-  char output_t_valid;
-  double *output_t_data;
 };
 
 std::unordered_map<int, webARKitController> webARKitControllers;
@@ -48,8 +43,6 @@ int setup(int videoWidth, int videoHeight) {
 
   warc->videoSize = videoWidth * videoHeight * 4 * sizeof(unsigned char);
   warc->videoFrame = (unsigned char *)malloc(warc->videoSize);
-  warc->videoLuma = (unsigned char *)malloc(warc->videoSize / 4);
-  warc->output_t_data = (double *)malloc(17 * sizeof(double));
 
   EM_ASM(
       {
@@ -66,9 +59,10 @@ int setup(int videoWidth, int videoHeight) {
         var frameMalloc = webarkit["frameMalloc"];
         frameMalloc["framevideopointer"] = $1;
         frameMalloc["framevideosize"] = $2;
-        frameMalloc["videoLumaPointer"] = $3;
       },
-      warc->id, warc->videoFrame, warc->videoSize, warc->videoLuma);
+      warc->id,
+      warc->videoFrame,
+      warc->videoSize);
 
   return warc->id;
 }
