@@ -44,11 +44,11 @@ export default class WebARKitController {
     this.framesize = this.params.framevideosize
     this.videoLumaPointer = this.params.videoLumaPointer
     this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
-    this.videoLuma = new Uint8Array(
+    /*this.videoLuma = new Uint8Array(
       this.webarkit.instance.HEAPU8.buffer,
       this.videoLumaPointer,
       this.framesize / 4
-    );
+    );*/
     this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight)
     this.config = {
       "addPath": "",
@@ -120,19 +120,18 @@ export default class WebARKitController {
     return this.webarkit.readJpeg(this.id, target)
   }
 
-  track(){
+  track(data){
     if(this.output_t_valid == 0){
       this.webarkit.instance.resetTrackingAR(this.id, this.videoWidth, this.videoHeight);
-      this.output_t_valid = this.params.outputtValid
-      this.output_t_data = this.params.outputtData
+      this.output_t_valid = this.params.outputtValid;
+      this.output_t_data = this.params.outputtData;
       //this.valid = new Int8Array(this.webarkit.instance.HEAP8.buffer, this.output_t_valid, 1)
-      this.out_data = new Float64Array(this.webarkit.instance.HEAPF64.buffer, this.output_t_data, 17)
-      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
-      this.videoLuma = new Uint8Array(
-        this.webarkit.instance.HEAPU8.buffer,
-        this.videoLumaPointer,
-        this.framesize / 4
-      );
+      this.out_data = new Float64Array(this.webarkit.instance.HEAPF64.buffer, this.output_t_data, 17);
+      //this.out_data.set(this.output_t_data);
+      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize);
+      if (this.dataHeap) {
+        this.dataHeap.set(data);
+      }
       console.log(this.output_t_valid);
       console.log(this.out_data);
     }

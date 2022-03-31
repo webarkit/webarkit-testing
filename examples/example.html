@@ -15,7 +15,7 @@
           wark.startVideo(function(video){
             function update() {
               wark.process(video)
-              wark.track()
+              wark.track(video)
               requestAnimationFrame(update)
             }
           
