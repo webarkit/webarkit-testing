@@ -4,6 +4,7 @@
 #include <AR2/util.h>
 #include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitOrbTracker.h>
 #include <emscripten.h>
+#include <emscripten/val.h>
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/core/types_c.h>
@@ -14,7 +15,7 @@
 #include <unordered_map>
 #include <vector>
 
-// using namespace emscripten;
+using namespace emscripten;
 
 struct webARKitController {
   int id;
@@ -32,6 +33,8 @@ struct webARKitController {
 std::unordered_map<int, webARKitController> webARKitControllers;
 
 static int gwebARKitControllerID = 0;
+
+thread_local const val Float64Array = val::global("Float64Array");
 
 extern "C" {
 
@@ -129,57 +132,41 @@ int readJpeg(int id, std::string filename) {
   return 0;
 }
 
-int resetTrackingAR(int id, size_t refCols, size_t refRows) {
+val resetTrackingAR(int id, size_t refCols, size_t refRows) {
+  val object = val::object();
+ 
   if (webARKitControllers.find(id) == webARKitControllers.end()) {
-    return 0;
+    return object;
   }
   webARKitController *warc = &(webARKitControllers[id]);
 
   EM_ASM(console.log('Reset tracking...'););
 
   output_t *out = resetTracking(warc->videoFrame, refCols, refRows);
-  // std::cout << out->valid << std::endl;
-  warc->output_t_valid = out->valid;
-  warc->output_t_data = out->data;
 
-  EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
-  EM_ASM({ console.log("Output from valid: %i\n", $0); }, warc->output_t_valid);
-  EM_ASM_(
-      {
-        if (!webarkit["frameMalloc"]) {
-          webarkit["frameMalloc"] = ({});
-        }
-        var frameMalloc = webarkit["frameMalloc"];
-        frameMalloc["outputtValid"] = $1;
-        frameMalloc["outputtData"] = $2;
-      },
-      warc->id, warc->output_t_valid, warc->output_t_data);
+  object.set("valid", out->valid);
+  val floats = Float64Array.new_(typed_memory_view(17, out->data));
+  object.set("data", floats);
+  free(out);
   EM_ASM(console.log('Reset done.'););
-  return 0;
+  return object;
 }
 
-int trackAR(int id, size_t refCols, size_t refRows) {
+val trackAR(int id, size_t refCols, size_t refRows) {
+  val object = val::object();
   if (webARKitControllers.find(id) == webARKitControllers.end()) {
-    return 0;
+    return object;
   }
   webARKitController *warc = &(webARKitControllers[id]);
 
   EM_ASM(console.log('Start to initialize tracking...'););
   output_t *out = track(warc->videoFrame, refCols, refRows);
-  EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
-  EM_ASM({ console.log("Output from valid: %i\n", $0); }, warc->output_t_valid);
-  EM_ASM_(
-      {
-        if (!webarkit["frameMalloc"]) {
-          webarkit["frameMalloc"] = ({});
-        }
-        var frameMalloc = webarkit["frameMalloc"];
-        frameMalloc["outputtValid"] = $1;
-        frameMalloc["outputtData"] = $2;
-      },
-      warc->id, warc->output_t_valid, warc->output_t_data);
-
-  return 0;
+  object.set("valid", out->valid);
+  val floats = Float64Array.new_(typed_memory_view(17, out->data));
+  object.set("data", floats);
+  free(out);
+  EM_ASM(console.log('Reset done.'););
+  return object;
 }
 }
 

@@ -121,22 +121,21 @@ export default class WebARKitController {
   }
 
   track(data){
+    let obj;
     if(this.output_t_valid == 0){
-      this.webarkit.instance.resetTrackingAR(this.id, this.videoWidth, this.videoHeight);
-      this.output_t_valid = this.params.outputtValid;
-      this.output_t_data = this.params.outputtData;
-      //this.valid = new Int8Array(this.webarkit.instance.HEAP8.buffer, this.output_t_valid, 1)
-      this.out_data = new Float64Array(this.webarkit.instance.HEAPF64.buffer, this.output_t_data, 17);
-      //this.out_data.set(this.output_t_data);
-      this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize);
-      if (this.dataHeap) {
-        this.dataHeap.set(data);
-      }
+      obj = this.webarkit.instance.resetTrackingAR(this.id, this.videoWidth, this.videoHeight);
+      console.log(obj);
+
+      this.output_t_valid = obj.valid;
+      this.out_data = obj.data;
       console.log(this.output_t_valid);
       console.log(this.out_data);
     }
 
-    this.webarkit.instance.trackAR(this.id, this.videoWidth, this.videoHeight);
+    obj = this.webarkit.instance.trackAR(this.id, this.videoWidth, this.videoHeight);
+    console.log(obj);
+
+    this.output_t_valid = obj.valid
   }
 
   _storeDataFile(data, target) {
