@@ -7,4 +7,5 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
     function("readJpeg", &readJpeg);
     function("resetTrackingAR", &resetTrackingAR);
     function("trackAR", &trackAR);
+    function("trackAR2", &trackAR2);
 }

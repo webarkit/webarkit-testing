@@ -162,6 +162,23 @@ val trackAR(int id, size_t refCols, size_t refRows) {
   EM_ASM(console.log('Reset done.'););
   return object;
 }
+
+val trackAR2(int id, size_t refCols, size_t refRows) {
+  val object = val::object();
+  if (webARKitControllers.find(id) == webARKitControllers.end()) {
+    return object;
+  }
+  webARKitController *warc = &(webARKitControllers[id]);
+
+  EM_ASM(console.log('Start to initialize tracking...'););
+  output_t *out = track2(warc->videoFrame, refCols, refRows);
+  object.set("valid", out->valid);
+  val floats = Float64Array.new_(typed_memory_view(17, out->data));
+  object.set("data", floats);
+  //free(out);
+  EM_ASM(console.log('Reset done.'););
+  return object;
+}
 }
 
 #include "bindings.cpp"

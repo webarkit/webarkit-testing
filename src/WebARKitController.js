@@ -112,7 +112,7 @@ export default class WebARKitController {
 
   track(){
     let obj;
-    if(this.output_t_valid == 0){
+    /*if(this.output_t_valid == 0){
       obj = this.webarkit.instance.resetTrackingAR(this.id, this.videoWidth, this.videoHeight);
       console.log(obj);
 
@@ -120,9 +120,9 @@ export default class WebARKitController {
       this.output_t_data = obj.data;
       console.log(this.output_t_valid);
       console.log(this.output_t_data);
-    }
+    }*/
 
-    obj = this.webarkit.instance.trackAR(this.id, this.videoWidth, this.videoHeight);
+    obj = this.webarkit.instance.trackAR2(this.id, this.videoWidth, this.videoHeight);
     console.log(obj);
 
     this.output_t_valid = obj.valid
