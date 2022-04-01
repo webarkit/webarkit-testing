@@ -175,7 +175,7 @@ val trackAR2(int id, size_t refCols, size_t refRows) {
   object.set("valid", out->valid);
   val floats = Float64Array.new_(typed_memory_view(17, out->data));
   object.set("data", floats);
-  //free(out);
+
   EM_ASM(console.log('Reset done.'););
   return object;
 }
