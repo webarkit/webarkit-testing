@@ -84,7 +84,14 @@ export default class WebARKitController {
   }
 
   process(video) {
-    this._copyImageToHeap(video)
+    const result = this.detectORB(video);
+    if (result.valid) {
+      this.dispatchEvent({
+        name: 'getOrbTracker',
+        target: this,
+        data: result.data
+      });
+    }
   }
 
   async loadTracker(urlOrData) {
@@ -110,22 +117,10 @@ export default class WebARKitController {
     return this.webarkit.readJpeg(this.id, target)
   }
 
-  track(){
-    let obj;
-    /*if(this.output_t_valid == 0){
-      obj = this.webarkit.instance.resetTrackingAR(this.id, this.videoWidth, this.videoHeight);
-      console.log(obj);
-
-      this.output_t_valid = obj.valid;
-      this.output_t_data = obj.data;
-      console.log(this.output_t_valid);
-      console.log(this.output_t_data);
-    }*/
-
-    obj = this.webarkit.instance.trackAR2(this.id, this.videoWidth, this.videoHeight);
-    console.log(obj);
-
-    this.output_t_valid = obj.valid
+  detectORB(video){
+    if(this._copyImageToHeap(video)){
+      return this.webarkit.instance.trackAR2(this.id, this.videoWidth, this.videoHeight);
+    }
   }
 
   _storeDataFile(data, target) {
