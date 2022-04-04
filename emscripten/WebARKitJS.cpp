@@ -27,7 +27,8 @@ struct webARKitController {
   int height;
   int image2DSize;
   unsigned char *image2DFrame;
-  WebARKitOrbTracker tracker;
+  //WebARKitOrbTracker tracker;
+  std::shared_ptr<WebARKitOrbTracker> m_tracker;
 };
 
 std::unordered_map<int, webARKitController> webARKitControllers;
@@ -48,6 +49,10 @@ extern "C" {
 
  		warc->videoSize = videoWidth * videoHeight * 4 * sizeof(unsigned char);
  		warc->videoFrame = (unsigned char*) malloc(warc->videoSize);
+
+    if(!warc->m_tracker){
+      warc->m_tracker =  std::make_shared<WebARKitOrbTracker>(WebARKitOrbTracker());
+    }
 
 
 
@@ -118,7 +123,7 @@ int initTracking(int id, const char* filename) {
 
     EM_ASM(console.log('Start to initialize tracker...'););
 
-    warc->tracker.initialize((unsigned char*)jpegImage->image, refCols, refRows);
+    warc->m_tracker->initialize((unsigned char*)jpegImage->image, refCols, refRows);
     free(jpegImage);
     free(ext);
     }
@@ -139,9 +144,9 @@ int initTracking(int id, const char* filename) {
 
     EM_ASM(console.log('Reset tracking...'););
 
-    double *out = warc->tracker.resetTracking(warc->videoFrame, refCols, refRows);
+    warc->m_tracker->resetTracking(warc->videoFrame, refCols, refRows);
 
-    EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
+    //EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
     EM_ASM(console.log('Reset done.'););
     return 0;
   }
@@ -162,9 +167,9 @@ int initTracking(int id, const char* filename) {
     webARKitController *warc = &(webARKitControllers[id]);
 
     EM_ASM(console.log('Start to initialize tracking...'););
-    double *out = warc->tracker.track(warc->videoFrame, refCols, refRows);
+    warc->m_tracker->track(warc->videoFrame, refCols, refRows);
 
-    EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
+    //EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
     return 0;
   }
 }

@@ -8,4 +8,4 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
     function("resetTracking", &resetTracking);
     function("track", &track);
     function("getVideo", &getVideo);
-}
+};
