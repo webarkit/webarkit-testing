@@ -27,13 +27,13 @@
     "url": ""
   },
   "devDependencies": {
-    "@babel/core": "^7.16.2",
-    "@babel/plugin-transform-runtime": "^7.16.1",
-    "@babel/preset-env": "^7.16.1",
-    "babel-loader": "^8.2.3",
+    "@babel/core": "^7.18.2",
+    "@babel/plugin-transform-runtime": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "babel-loader": "^8.2.5",
     "custom-event": "^1.0.1",
-    "three": "^0.136.0",
-    "webpack": "^5.67.0",
+    "three": "^0.141.0",
+    "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2"
   },
   "scripts": {
@@ -47,8 +47,8 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "^7.16.7",
-    "axios": "^0.25.0",
-    "canvas": "^2.9.0"
+    "@babel/runtime": "^7.18.3",
+    "axios": "^0.27.2",
+    "canvas": "^2.9.1"
   }
 }
