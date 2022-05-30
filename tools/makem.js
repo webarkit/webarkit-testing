@@ -150,7 +150,8 @@ var kpm_sources = [
 });
 
 var webarkit_sources = [
-	'WebARKitOpticalTracking/WebARKitOrbTracker.cpp'
+	'WebARKitOpticalTracking/WebARKitOrbTracker.cpp',
+    'WebARKitOpticalTracking/WebARKitConfig.cpp'
 ].map(function(src) {
 	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/WebARKitTrackers/', src);
 });
