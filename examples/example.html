@@ -22,6 +22,8 @@
           })
   
           window.addEventListener('loadedvideo', function(e){
+            var rm = document.getElementById('loading');
+            rm.remove();
 
             function updateT() {
               if (wark.resetTracking()) {
