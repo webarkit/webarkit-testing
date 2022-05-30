@@ -143,12 +143,13 @@ int initTracking(int id, const char* filename) {
     webARKitController *warc = &(webARKitControllers[id]);
 
     EM_ASM(console.log('Reset tracking...'););
+    bool valid;
 
-    warc->m_tracker->resetTracking(warc->videoFrame, refCols, refRows);
+    valid = warc->m_tracker->resetTracking(warc->videoFrame, refCols, refRows);
 
     //EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
     EM_ASM(console.log('Reset done.'););
-    return 0;
+    return valid;
   }
 
   val getVideo(int id, int width, int height) {
