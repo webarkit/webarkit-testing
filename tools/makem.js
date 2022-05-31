@@ -39,7 +39,7 @@ if (!EMSCRIPTEN_ROOT) {
 var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'emcc') : 'emcc';
 var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'em++') : 'em++';
 var OPTIMIZE_FLAGS = ' -Oz '; // -Oz for smallest size
-var MEM = 256 * 1024 * 1024; // 64MB
+var MEM = 512 * 1024 * 1024; // 64MB
 
 
 var SOURCE_PATH = path.resolve(__dirname, '../emscripten/') + '/';
@@ -150,7 +150,8 @@ var kpm_sources = [
 });
 
 var webarkit_sources = [
-	'WebARKitOpticalTracking/WebARKitOrbTracker.cpp'
+	'WebARKitOpticalTracking/WebARKitOrbTracker.cpp',
+    'WebARKitOpticalTracking/WebARKitConfig.cpp'
 ].map(function(src) {
 	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/WebARKitTrackers/', src);
 });
@@ -159,7 +160,7 @@ if (HAVE_NFT) {
   ar_sources = ar_sources
   .concat(ar2_sources)
   .concat(kpm_sources)
-	.concat(webarkit_sources);
+  .concat(webarkit_sources);
 }
 
 var DEFINES = ' ';
@@ -172,8 +173,11 @@ FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
 FLAGS += ' -s USE_ZLIB=1';
 FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
-FLAGS += ' -s "EXTRA_EXPORTED_RUNTIME_METHODS=[\'FS\']"';
+FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\', \'getValue\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
+FLAGS += ' -gsource-map -fsanitize=address '
+FLAGS += ' -s ASSERTIONS=1 '
+//FLAGS += ' -s SAFE_HEAP=1 '
 
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
@@ -183,29 +187,33 @@ var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/webarkit.api.js') 
 FLAGS += ' --bind ';
 
 /* DEBUG FLAGS */
-var DEBUG_FLAGS = ' -g ';
+var DEBUG_FLAGS = ' -g2 ';
 DEBUG_FLAGS += ' -s ASSERTIONS=1 '
 DEBUG_FLAGS += ' --profiling '
 DEBUG_FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
 
 var INCLUDES = [
-    path.resolve(__dirname, WEBARKITLIB_ROOT + '/include'),
-		path.resolve(__dirname, '../opencv/include'),
-		path.resolve(__dirname, '../opencv/modules/calib3d/include'),
-		path.resolve(__dirname, '../opencv/modules/core/include'),
-		path.resolve(__dirname, '../opencv/modules/dnn/include'),
-		path.resolve(__dirname, '../opencv/modules/features2d/include'),
-		path.resolve(__dirname, '../opencv/modules/flann/include'),
-		path.resolve(__dirname, '../opencv/modules/imgproc/include'),
-		path.resolve(__dirname, '../opencv/modules/objdetect/include'),
-		path.resolve(__dirname, '../opencv/modules/photo/include'),
-		path.resolve(__dirname, '../opencv/modules/video/include'),
-		path.resolve(__dirname, '../opencv/build_wasm'),
+    path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
+    path.resolve(__dirname, "../opencv/include"),
+    path.resolve(__dirname, "../opencv/modules/calib3d/include"),
+    path.resolve(__dirname, "../opencv/modules/core/include"),
+    path.resolve(__dirname, "../opencv/modules/dnn/include"),
+    path.resolve(__dirname, "../opencv/modules/features2d/include"),
+    path.resolve(__dirname, "../opencv/modules/flann/include"),
+    path.resolve(__dirname, "../opencv/modules/imgproc/include"),
+    path.resolve(__dirname, "../opencv/modules/objdetect/include"),
+    path.resolve(__dirname, "../opencv/modules/photo/include"),
+    path.resolve(__dirname, "../opencv/modules/video/include"),
+    path.resolve(__dirname, "../opencv/build_wasm"),
     OUTPUT_PATH,
     SOURCE_PATH,
-    path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/KPM/FreakMatcher'),
-].map(function(s) { return '-I' + s }).join(' ');
+    path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/FreakMatcher"),
+]
+    .map(function (s) {
+        return "-I" + s;
+    })
+    .join(" ");
 
 var OPENCV_LIBS = [
 	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_calib3d.a'),
@@ -235,12 +243,13 @@ function clean_builds() {
 
     try {
         var files = fs.readdirSync(OUTPUT_PATH);
-				var filesLength = files.length;
+        var i;
+                var filesLength = files.length;
         if (filesLength > 0)
 				if (NO_LIBAR == true){
-					filesLength -= 1;
-				}
-            for (var i = 0; i < filesLength; i++) {
+                    i=1;
+				} else { i=0; }
+            for ( ;i < filesLength; i++) {
                 var filePath = OUTPUT_PATH + '/' + files[i];
                 if (fs.statSync(filePath).isFile())
                     fs.unlinkSync(filePath);
@@ -250,8 +259,8 @@ function clean_builds() {
 }
 
 var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
-    //+ ar_sources.join(' ')
-		+ webarkit_sources.join(' ')
+    + ar_sources.join(' ')
+	//+ webarkit_sources.join(' ')
     + FLAGS + ' ' + DEFINES + ' -r -o {OUTPUT_PATH}libwebarkit.bc ',
     OUTPUT_PATH);
 
@@ -274,7 +283,7 @@ var compile_wasm = format(EMCC + ' ' + INCLUDES + ' '
 
 var compile_wasm_es6 = format(EMCC + ' ' + INCLUDES + ' '
 		 + ALL_BC + MAIN_SOURCES
-		 + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
+		 + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + DEBUG_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
 		 OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_ES6_FILE);
 
 /*

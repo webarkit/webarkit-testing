@@ -5,7 +5,7 @@ export default class WebARKit {
   constructor () {
     // reference to WASM module
     this.instance
-    this.version = '0.0.0'
+    this.version = '0.1.0'
     console.info('WebARKit ', this.version)
   }
   // ---------------------------------------------------------------------------
@@ -23,8 +23,14 @@ export default class WebARKit {
   _decorate () {
     // add delegate methods
     [
-      'test',
-      'initTracking'
+      'setup',      
+      'readJpeg',
+      'resetTracking',
+      'track',
+      'processFrame',
+      'FS',
+      'getValue',
+      'getVideo'
     ].forEach(method => {
       this[method] = this.instance[method]
     })
