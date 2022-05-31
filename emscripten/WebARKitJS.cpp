@@ -136,21 +136,15 @@ int initTracking(int id, const char* filename) {
     return 0;
   }
 
-  int resetTracking(int id, size_t refCols, size_t refRows) {
+  int processFrame(int id) { 
     if (webARKitControllers.find(id) == webARKitControllers.end()) {
       return 0;
     }
     webARKitController *warc = &(webARKitControllers[id]);
 
-    EM_ASM(console.log('Reset tracking...'););
-    bool valid;
-
-    valid = warc->m_tracker->resetTracking(warc->videoFrame, refCols, refRows);
-
-    //EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
-    EM_ASM(console.log('Reset done.'););
-    return valid;
-  }
+    warc->m_tracker->processFrameData(warc->videoFrame, warc->videoWidth, warc->videoHeight);
+    return 1;
+  };
 
   val getVideo(int id, int width, int height) {
      if (webARKitControllers.find(id) == webARKitControllers.end()) {
@@ -159,19 +153,6 @@ int initTracking(int id, const char* filename) {
     webARKitController *warc = &(webARKitControllers[id]);
     val js_result = Uint8ClampedArray.new_(typed_memory_view(width * height * 4, warc->videoFrame));
     return js_result;
-  }
-
-  int track(int id, size_t refCols, size_t refRows) {
-    if (webARKitControllers.find(id) == webARKitControllers.end()) {
-      return 0;
-    }
-    webARKitController *warc = &(webARKitControllers[id]);
-
-    EM_ASM(console.log('Start to initialize tracking...'););
-    warc->m_tracker->track(warc->videoFrame, refCols, refRows);
-
-    //EM_ASM({ console.log("Output from tracker: %d\n", $0); }, out);
-    return 0;
   }
 }
 

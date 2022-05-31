@@ -27,6 +27,7 @@ export default class WebARKit {
       'readJpeg',
       'resetTracking',
       'track',
+      'processFrame',
       'FS',
       'getValue',
       'getVideo'

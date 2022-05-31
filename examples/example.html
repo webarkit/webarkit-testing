@@ -26,9 +26,7 @@
             rm.remove();
 
             function updateT() {
-              if (wark.resetTracking()) {
-              wark.track();
-              }
+              wark.processFrame();
               requestAnimationFrame(updateT)
             }
             

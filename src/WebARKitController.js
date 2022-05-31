@@ -182,12 +182,8 @@ export default class WebARKitController {
     return this.webarkit.getVideo(this.id, this.videoWidth, this.videoHeight);
   }
 
-  resetTracking () {
-    this.webarkit.resetTracking(this.id, this.videoWidth, this.videoHeight)
-  }
-
-  track () {
-    this.webarkit.track(this.id, this.videoWidth, this.videoHeight)
+  processFrame() {
+    this.webarkit.processFrame(this.id);
   }
 
   addEventListener(name, callback) {
