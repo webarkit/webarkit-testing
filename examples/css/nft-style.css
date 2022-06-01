@@ -106,6 +106,18 @@ html {
   object-fit: cover;
 }
 
+#overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 110;
+
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
 
 #arvideo {
   display: none;
