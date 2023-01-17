@@ -1,43 +1,68 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Simple example with WebARKit</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
-    <link rel="stylesheet" href="css/nft-style.css">
-  </head>
-  <body>
-    <script src="../dist/WebARKit.js"></script>
-    <script>
-       WebARKit.WebARKitController.init(640, 480,'../examples/config.json').then(wark => {
-        wark.loadTracker('data/pinball.jpg').then(_ => {   
-          var res;
-          wark.startVideo(function(video){
-            console.log(video);
-            function update() {
-              var canvas = document.getElementById("overlay");
-                var ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, 640, 580);
-              wark.process(video)
-              requestAnimationFrame(update)
-            }
-            update(video);
-          })
-  
-          window.addEventListener('loadedvideo', function(e){
-            var rm = document.getElementById('loading');
-            rm.remove();
 
-           /* function updateT() {
-              wark.processFrame();
-              requestAnimationFrame(updateT)
-            }
-            
-            updateT();*/
-          })
+<head>
+  <meta charset="utf-8">
+  <title>Simple example with WebARKit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
+  <link rel="stylesheet" href="css/nft-style.css">
+</head>
+
+<body>
+  <canvas id="overlay" width="640" height="480"></canvas>
+  <script src="../dist/WebARKit.js"></script>
+  <script>
+    var width = 640;
+    var height = 480;
+    const overlayCanvas = document.getElementById('overlay')
+    WebARKit.WebARKitController.init(640, 480, '../examples/config.json').then(wark => {
+      wark.loadTracker('data/pinball.jpg').then(_ => {
+        var res;
+        wark.startVideo(function (video) {
+          console.log(video);
+
+          function update() {
+            //var canvas = document.getElementById("overlay");
+            var ctx = overlayCanvas.getContext('2d');
+            ctx.clearRect(0, 0, 640, 580);
+            wark.process(video)
+            drawCorners(wark.getHomography());
+            requestAnimationFrame(update)
+          }
+          update(video);
+        })
+
+        window.addEventListener('loadedvideo', function (e) {
+          var rm = document.getElementById('loading');
+          rm.remove();
         })
       })
-    </script>
-    <canvas id="overlay" width="640" height="480"></canvas>
-  </body>
+    })
+
+    function clearOverlayCtx() {
+      const overlayCtx = overlayCanvas.getContext("2d");
+      overlayCtx.clearRect(0, 0, width, height);
+    }
+
+    function drawCorners(corners) {
+      const overlayCtx = overlayCanvas.getContext("2d");
+      clearOverlayCtx();
+
+      overlayCtx.beginPath();
+      overlayCtx.strokeStyle = "blue";
+      overlayCtx.lineWidth = 3;
+
+      // [x1,y1,x2,y2,x3,y3,x4,y4]
+      overlayCtx.moveTo(corners[0], corners[1]);
+      overlayCtx.lineTo(corners[2], corners[3]);
+      overlayCtx.lineTo(corners[4], corners[5]);
+      overlayCtx.lineTo(corners[6], corners[7]);
+      overlayCtx.lineTo(corners[0], corners[1]);
+
+      overlayCtx.stroke();
+    }
+  </script>
+  
+</body>
+
 </html>

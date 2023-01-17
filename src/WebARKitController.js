@@ -107,7 +107,7 @@ export default class WebARKitController {
   }
 
   process(video) {
-    this._copyImageToHeap(video)
+    this._imageToProcess(video)
   }
 
   async loadTracker(urlOrData) {
@@ -133,7 +133,7 @@ export default class WebARKitController {
     return this.webarkit.readJpeg(this.id, target)
   }
 
-  _copyImageToHeap(video) {
+  _imageToProcess(video) {
     this.ctx = this.canvasHeap.getContext('2d')
     this.ctx.save()
     this.ctx.drawImage(video, 0, 0, this.videoWidth, this.videoHeight) // draw video
@@ -144,7 +144,6 @@ export default class WebARKitController {
       let data = imageData.data
       if(data) {
         this.processFrame(data);
-        console.log(this.webarkit.getHomography(this.id));
         return true;
       }
     }
@@ -156,6 +155,10 @@ export default class WebARKitController {
 
   processFrame(imageData) {
     this.webarkit.processFrame(this.id, imageData);
+  }
+
+  getHomography() {
+    return this.webarkit.getHomography(this.id);
   }
 
   addEventListener(name, callback) {
