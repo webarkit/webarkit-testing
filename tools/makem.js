@@ -173,7 +173,7 @@ FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
 FLAGS += ' -s USE_ZLIB=1';
 FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
-FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\', \'getValue\']"';
+FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 //FLAGS += ' -gsource-map -fsanitize=address '
 //FLAGS += ' -s ASSERTIONS=1 '

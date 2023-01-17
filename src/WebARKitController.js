@@ -1,7 +1,7 @@
 import WebARKit from './WebARKit'
 import Utils from './utils/Utils'
 import Container from './utils/html/Container'
-import { createCanvas, loadImage } from 'canvas'
+import { createCanvas } from 'canvas'
 import ThreejsRenderer from './renderers/ThreejsRenderer'
 
 export default class WebARKitController {
@@ -144,6 +144,7 @@ export default class WebARKitController {
       let data = imageData.data
       if(data) {
         this.processFrame(data);
+        console.log(this.webarkit.getHomography(this.id));
         return true;
       }
     }
@@ -151,21 +152,6 @@ export default class WebARKitController {
     getImageData()
 
     return false
-  }
-
-  parseResult(ptr) {
-    const valid = this.webarkit.getValue(ptr, "i8");
-    const dataPtr = this.webarkit.getValue(ptr + 4, "*");
-    let data = new Float64Array(this.webarkit.HEAPF64.buffer, dataPtr, 17);
-
-    const h = data.slice(0, 9);
-    const warped = data.slice(9, 17);
-
-    return {
-        valid: valid,
-        H: h,
-        corners: warped
-    };
   }
 
   processFrame(imageData) {

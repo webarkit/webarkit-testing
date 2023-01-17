@@ -120,6 +120,14 @@ int initTracking(int id, const char* filename) {
     warc->m_tracker->processFrameData(u8.data(), warc->videoWidth, warc->videoHeight);
     return 1;
   }
+
+  emscripten::val getHomography(int id) {
+    if (webARKitControllers.find(id) == webARKitControllers.end()) {
+      return emscripten::val::null();
+    }
+    webARKitController *warc = &(webARKitControllers[id]);
+    return  warc->m_tracker->getHomography();
+  }
 }
 
 #include "bindings.cpp"
