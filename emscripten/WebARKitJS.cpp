@@ -21,22 +21,10 @@ struct webARKitController {
   int id;
   int videoWidth;
   int videoHeight;
-  //int videoSize;
-  //unsigned char *videoFrame;
-  /*int width;
-  int height;
-  int image2DSize;
-  unsigned char *image2DFrame;*/
-  //WebARKitOrbTracker tracker;
-  //std::shared_ptr<WebARKitOrbTracker> m_tracker;
   std::unique_ptr<WebARKitOrbTracker> m_tracker;
 };
 
-//std::unique_ptr<WebARKitOrbTracker> m_tracker;
-
 std::unordered_map<int, webARKitController> webARKitControllers;
-
-thread_local const val Uint8ClampedArray = val::global("Uint8ClampedArray");
 
 static int gwebARKitControllerID = 0;
 
