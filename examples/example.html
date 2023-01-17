@@ -4,7 +4,8 @@
 <head>
   <meta charset="utf-8">
   <title>Simple example with WebARKit</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/nft-style.css">
 </head>
 
@@ -16,6 +17,8 @@
     var width = 640;
     var height = 480;
     const overlayCanvas = document.getElementById('overlay')
+    overlayCanvas.width = width;
+    overlayCanvas.height = height;
     WebARKit.WebARKitController.init(640, 480, '../examples/config.json').then(wark => {
       wark.loadTracker('data/pinball.jpg').then(_ => {
         var res;
@@ -23,11 +26,9 @@
           console.log(video);
 
           function update() {
-            //var canvas = document.getElementById("overlay");
-            var ctx = overlayCanvas.getContext('2d');
-            ctx.clearRect(0, 0, 640, 580);
             wark.process(video)
-            drawCorners(wark.getHomography());
+            drawCorners(wark.getCorners());
+            console.log(wark.getCorners());
             var arElem = document.getElementById("arElem");
             arElem.style.display = "block";
             arElem.style["transform-origin"] = "top left"; // default is center

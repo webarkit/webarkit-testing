@@ -29,6 +29,7 @@ export default class WebARKit {
       'track',
       'processFrame',
       'FS',
+      'getCorners',
       'getHomography'
     ].forEach(method => {
       this[method] = this.instance[method]

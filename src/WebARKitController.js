@@ -161,6 +161,10 @@ export default class WebARKitController {
     return this.webarkit.getHomography(this.id);
   }
 
+  getCorners() {
+    return this.webarkit.getCorners(this.id);
+  }
+
   addEventListener(name, callback) {
     if(!this.listeners[name]) {
       this.listeners[name] = [];
