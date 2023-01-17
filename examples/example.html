@@ -10,6 +10,7 @@
 
 <body>
   <canvas id="overlay" width="640" height="480"></canvas>
+  <iframe id="arElem" src="https://en.wikipedia.org/wiki/Homography"></iframe>
   <script src="../dist/WebARKit.js"></script>
   <script>
     var width = 640;
@@ -27,6 +28,11 @@
             ctx.clearRect(0, 0, 640, 580);
             wark.process(video)
             drawCorners(wark.getHomography());
+            var arElem = document.getElementById("arElem");
+            arElem.style.display = "block";
+            arElem.style["transform-origin"] = "top left"; // default is center
+            arElem.style.zIndex = 200;
+            transformElem(wark.getHomography(), arElem)
             requestAnimationFrame(update)
           }
           update(video);
@@ -38,6 +44,22 @@
         })
       })
     })
+
+    function transformElem(h, elem) {
+      // column major order
+      let transform = [h[0], h[3], 0, h[6],
+        h[1], h[4], 0, h[7],
+        0, 0, 1, 0,
+        h[2], h[5], 0, h[8]
+      ];
+      transform = "matrix3d(" + transform.join(",") + ")";
+      elem.style["-ms-transform"] = transform;
+      elem.style["-webkit-transform"] = transform;
+      elem.style["-moz-transform"] = transform;
+      elem.style["-o-transform"] = transform;
+      elem.style.transform = transform;
+      elem.style.display = "block";
+    }
 
     function clearOverlayCtx() {
       const overlayCtx = overlayCanvas.getContext("2d");
@@ -62,7 +84,7 @@
       overlayCtx.stroke();
     }
   </script>
-  
+
 </body>
 
 </html>
