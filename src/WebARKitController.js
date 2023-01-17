@@ -10,10 +10,6 @@ export default class WebARKitController {
     this.jpegCount = 0
     this.videoWidth = 640
     this.videoHeight = 480
-    //pointers
-    this.framepointer = null
-    this.framesize = null
-    this.dataHeap = null
 
     this.listeners = {}
     this.params
@@ -42,12 +38,6 @@ export default class WebARKitController {
 
     this.id = this.webarkit.setup(this.videoWidth, this.videoHeight)
     console.log('[WebARKitController]', 'Got ID from setup', this.id)
-
-    this.params = this.webarkit.frameMalloc
-    this.framepointer = this.params.framevideopointer
-    this.framesize = this.params.framevideosize
-
-    this.dataHeap = new Uint8Array(this.webarkit.instance.HEAPU8.buffer, this.framepointer, this.framesize)
 
     this.config = {
       "addPath": "",
@@ -152,9 +142,9 @@ export default class WebARKitController {
     const getImageData = () => {
       let imageData = this.ctx.getImageData(0, 0, this.videoWidth, this.videoHeight)
       let data = imageData.data
-      if (this.dataHeap) {
-        this.dataHeap.set(data)
-        return true
+      if(data) {
+        this.processFrame(data);
+        return true;
       }
     }
 
@@ -178,12 +168,8 @@ export default class WebARKitController {
     };
   }
 
-  getVideo() {
-    return this.webarkit.getVideo(this.id, this.videoWidth, this.videoHeight);
-  }
-
-  processFrame() {
-    this.webarkit.processFrame(this.id);
+  processFrame(imageData) {
+    this.webarkit.processFrame(this.id, imageData);
   }
 
   addEventListener(name, callback) {

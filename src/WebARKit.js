@@ -29,8 +29,7 @@ export default class WebARKit {
       'track',
       'processFrame',
       'FS',
-      'getValue',
-      'getVideo'
+      'getValue'
     ].forEach(method => {
       this[method] = this.instance[method]
     })

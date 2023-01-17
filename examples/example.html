@@ -15,6 +15,9 @@
           wark.startVideo(function(video){
             console.log(video);
             function update() {
+              var canvas = document.getElementById("overlay");
+                var ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, 640, 580);
               wark.process(video)
               requestAnimationFrame(update)
             }
@@ -25,12 +28,12 @@
             var rm = document.getElementById('loading');
             rm.remove();
 
-            function updateT() {
+           /* function updateT() {
               wark.processFrame();
               requestAnimationFrame(updateT)
             }
             
-            updateT();
+            updateT();*/
           })
         })
       })

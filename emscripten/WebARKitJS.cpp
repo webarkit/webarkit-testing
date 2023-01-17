@@ -21,15 +21,18 @@ struct webARKitController {
   int id;
   int videoWidth;
   int videoHeight;
-  int videoSize;
-  unsigned char *videoFrame;
-  int width;
+  //int videoSize;
+  //unsigned char *videoFrame;
+  /*int width;
   int height;
   int image2DSize;
-  unsigned char *image2DFrame;
+  unsigned char *image2DFrame;*/
   //WebARKitOrbTracker tracker;
-  std::shared_ptr<WebARKitOrbTracker> m_tracker;
+  //std::shared_ptr<WebARKitOrbTracker> m_tracker;
+  std::unique_ptr<WebARKitOrbTracker> m_tracker;
 };
+
+//std::unique_ptr<WebARKitOrbTracker> m_tracker;
 
 std::unordered_map<int, webARKitController> webARKitControllers;
 
@@ -40,42 +43,20 @@ static int gwebARKitControllerID = 0;
 extern "C" {
 
   int setup(int videoWidth, int videoHeight) {
- 	  int id = gwebARKitControllerID++;
+    int id = gwebARKitControllerID++;
+    
  		webARKitController *warc = &(webARKitControllers[id]);
  		warc->id = id;
 
     warc->videoWidth = videoWidth;
  		warc->videoHeight = videoHeight;
 
- 		warc->videoSize = videoWidth * videoHeight * 4 * sizeof(unsigned char);
- 		warc->videoFrame = (unsigned char*) malloc(warc->videoSize);
-
     if(!warc->m_tracker){
-      warc->m_tracker =  std::make_shared<WebARKitOrbTracker>(WebARKitOrbTracker());
+      warc->m_tracker =  std::make_unique<WebARKitOrbTracker>(WebARKitOrbTracker());
+    } else {
+      EM_ASM({ console.log("Failed to init WebARKitOrbTracker!")});
+      return 0;
     }
-
-
-
-    EM_ASM({
-      console.log("Allocated videoSize: %d\n", $0);
-      console.log("Allocated videoFrame, pointer is: %d\n", $1);
-    },
-      warc->videoSize,
-      warc->videoFrame
-    );
-
- 		EM_ASM_({
- 			if (!webarkit["frameMalloc"]) {
- 				webarkit["frameMalloc"] = ({});
- 			}
- 			var frameMalloc = webarkit["frameMalloc"];
- 			frameMalloc["framevideopointer"] = $1;
- 			frameMalloc["framevideosize"] = $2;
- 		},
- 			warc->id,
-      warc->videoFrame,
-      warc->videoSize
- 		);
 
  		return warc->id;
  	}
@@ -124,6 +105,7 @@ int initTracking(int id, const char* filename) {
     EM_ASM(console.log('Start to initialize tracker...'););
 
     warc->m_tracker->initialize((unsigned char*)jpegImage->image, refCols, refRows);
+
     free(jpegImage);
     free(ext);
     }
@@ -132,27 +114,23 @@ int initTracking(int id, const char* filename) {
 
   int readJpeg(int id, std::string filename) {
     ARLOGi("Filename is: '%s'\n", filename.c_str());
-    initTracking(id, filename.c_str());
+    if(initTracking(id, filename.c_str()) < 0) {
+      ARLOGe("Error loading tracker image!");
+    };
     return 0;
   }
 
-  int processFrame(int id) { 
+  int processFrame(int id, val data_buffer) { 
     if (webARKitControllers.find(id) == webARKitControllers.end()) {
       return 0;
     }
     webARKitController *warc = &(webARKitControllers[id]);
 
-    warc->m_tracker->processFrameData(warc->videoFrame, warc->videoWidth, warc->videoHeight);
-    return 1;
-  };
+     std::vector<uint8_t> u8 =
+      emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
 
-  val getVideo(int id, int width, int height) {
-     if (webARKitControllers.find(id) == webARKitControllers.end()) {
-      return val(false);
-    }
-    webARKitController *warc = &(webARKitControllers[id]);
-    val js_result = Uint8ClampedArray.new_(typed_memory_view(width * height * 4, warc->videoFrame));
-    return js_result;
+    warc->m_tracker->processFrameData(u8.data(), warc->videoWidth, warc->videoHeight);
+    return 1;
   }
 }
 
