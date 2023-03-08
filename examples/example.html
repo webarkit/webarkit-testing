@@ -19,7 +19,7 @@
     const overlayCanvas = document.getElementById('overlay')
     overlayCanvas.width = width;
     overlayCanvas.height = height;
-    WebARKit.WebARKitController.init(640, 480, '../examples/config.json').then(wark => {
+    WebARKit.WebARKitController.init(width, height, '../examples/config.json').then(wark => {
       wark.loadTracker('data/pinball.jpg').then(_ => {
         var res;
         wark.startVideo(function (video) {
