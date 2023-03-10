@@ -94,6 +94,8 @@ int initTracking(int id, const char *filename) {
     refCols = jpegImage->xsize;
     refRows = jpegImage->ysize;
 
+    ARLOGi("Number of channels: %d\n", jpegImage->nc);
+
     EM_ASM(console.log('Start to initialize tracker...'););
 
     warc->m_tracker->initialize((unsigned char *)jpegImage->image, refCols,
