@@ -115,6 +115,22 @@ int readJpeg(int id, std::string filename) {
   return 0;
 }
 
+int readImage(int id, emscripten::val data_buffer, int width, int height) {
+   if (webARKitControllers.find(id) == webARKitControllers.end()) {
+    return 0;
+  }
+  webARKitController *warc = &(webARKitControllers[id]);
+
+  EM_ASM(console.log('Start WebARKitOrbTracker tracker...'););
+  std::vector<uint8_t> u8 =
+      emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
+
+  warc->m_tracker->initialize_raw(u8.data(), width, height);
+  
+  return 0;
+}
+
+
 int processFrame(int id, val data_buffer) {
   if (webARKitControllers.find(id) == webARKitControllers.end()) {
     return 0;

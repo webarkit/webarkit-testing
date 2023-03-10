@@ -133,6 +133,30 @@ export default class WebARKitController {
     return this.webarkit.readJpeg(this.id, target)
   }
 
+  async loadTrackerImage(urlOrData) {
+    const targetPrefix = '/load_jpeg_' + this.jpegCount++
+
+    let data
+    let ext = 'jpg'
+    const fullUrl = urlOrData + '.' + ext
+    const target = targetPrefix + '.' + ext
+
+    if (urlOrData instanceof Uint8Array) {
+      // assume preloaded camera params
+      data = urlOrData
+      
+    } else {
+      // fetch data via HTTP
+      try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
+    }
+
+    this._storeDataFile(data, target)
+
+    // return the internal marker ID
+    return this.webarkit.readImage(this.id, data, 1637, 2048);
+  }
+
+
   _imageToProcess(video) {
     this.ctx = this.canvasHeap.getContext('2d')
     this.ctx.save()

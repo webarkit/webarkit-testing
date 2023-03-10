@@ -5,6 +5,7 @@ using namespace emscripten;
 EMSCRIPTEN_BINDINGS(constant_bindings) {
     function("setup", &setup);
     function("readJpeg", &readJpeg);
+    function("readImage", &readImage);
     function("processFrame", &processFrame);
     function("getHomography", &getHomography);
     function("getCorners", &getCorners);

@@ -25,6 +25,7 @@ export default class WebARKit {
     [
       'setup',      
       'readJpeg',
+      'readImage',
       'resetTracking',
       'track',
       'processFrame',
