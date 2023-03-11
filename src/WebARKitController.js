@@ -5,7 +5,7 @@ import { createCanvas } from 'canvas'
 import ThreejsRenderer from './renderers/ThreejsRenderer'
 
 export default class WebARKitController {
-  constructor(){
+  constructor() {
     this.id
     this.jpegCount = 0
     this.videoWidth = 640
@@ -21,7 +21,7 @@ export default class WebARKitController {
     this.config
   }
 
-  static async init (videoWidth, videoHeight, config) {
+  static async init(videoWidth, videoHeight, config) {
     this.videoWidth = videoWidth
     this.videoHeight = videoHeight
     this.config = config
@@ -30,7 +30,7 @@ export default class WebARKitController {
     return await webARC._initialize()
   }
 
-  async _initialize () {
+  async _initialize() {
     const root = this.root
     // Create an instance of the WebARKit Emscripten C++ code.
     this.instance = await WARKit()
@@ -123,7 +123,7 @@ export default class WebARKitController {
     if (urlOrData instanceof Uint8Array) {
       // assume preloaded camera params
       data = urlOrData
-      
+
     } else {
       // fetch data via HTTP
       try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
@@ -146,7 +146,7 @@ export default class WebARKitController {
     if (urlOrData instanceof Uint8Array) {
       // assume preloaded camera params
       data = urlOrData
-      
+
     } else {
       // fetch data via HTTP
       try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
@@ -156,6 +156,34 @@ export default class WebARKitController {
 
     // return the internal marker ID
     return this.webarkit.initTracker(data, 1637, 2048);
+  }
+
+  async loadTrackerImage2(imageSource) {
+    var img = null;
+    if (typeof imageSource === 'string') {
+      img = document.getElementById(imageSource);
+    } else {
+      img = imageSource;
+    }
+    var canvas = null;
+    var ctx = null;
+    if (img instanceof HTMLImageElement) {
+      canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+    } else if (img instanceof HTMLCanvasElement) {
+      canvas = img;
+      ctx = canvas.getContext('2d');
+    } else {
+      throw new Error('Please input the valid canvas or img id.');
+      return;
+    }
+
+    var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    return this.webarkit.initTracker(imgData.data, canvas.width, canvas.height);
   }
 
 
@@ -168,7 +196,7 @@ export default class WebARKitController {
     const getImageData = () => {
       let imageData = this.ctx.getImageData(0, 0, this.videoWidth, this.videoHeight)
       let data = imageData.data
-      if(data) {
+      if (data) {
         this.processFrame(data);
         return true;
       }
@@ -192,16 +220,16 @@ export default class WebARKitController {
   }
 
   addEventListener(name, callback) {
-    if(!this.listeners[name]) {
+    if (!this.listeners[name]) {
       this.listeners[name] = [];
     }
     this.listeners[name].push(callback);
   };
 
   removeEventListener(name, callback) {
-    if(this.listeners[name]) {
+    if (this.listeners[name]) {
       let index = this.listeners[name].indexOf(callback);
-      if(index > -1) {
+      if (index > -1) {
         this.listeners[name].splice(index, 1);
       }
     }
@@ -209,14 +237,14 @@ export default class WebARKitController {
 
   dispatchEvent(event) {
     let listeners = this.listeners[event.name];
-    if(listeners) {
-      for(let i = 0; i < listeners.length; i++) {
+    if (listeners) {
+      for (let i = 0; i < listeners.length; i++) {
         listeners[i].call(this, event);
       }
     }
   };
 
-  _storeDataFile (data, target) {
+  _storeDataFile(data, target) {
     // FS is provided by emscripten
     // Note: valid data must be in binary format encoded as Uint8Array
     this.instance.FS.writeFile(target, data, {

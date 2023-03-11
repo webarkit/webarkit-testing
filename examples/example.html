@@ -11,6 +11,7 @@
 
 <body>
   <canvas id="overlay" width="640" height="480"></canvas>
+  <img id="refIm" src="./data/pinball.jpg" width="1637" height="2048" style="display:none;">
   <iframe id="arElem" src="https://en.wikipedia.org/wiki/Homography"></iframe>
   <script src="../dist/WebARKit.js"></script>
   <script>
@@ -21,7 +22,7 @@
     overlayCanvas.height = height;
     WebARKit.WebARKitController.init(width, height, '../examples/config.json').then(wark => {
       console.log(wark);
-      wark.loadTrackerImage('data/pinball.jpg').then(_ => {
+      wark.loadTrackerImage2('refIm').then(_ => {
         var res;
         wark.startVideo(function (video) {
           console.log(video);
