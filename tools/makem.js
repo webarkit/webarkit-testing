@@ -150,6 +150,7 @@ var kpm_sources = [
 });
 
 var webarkit_sources = [
+    'WebARKitOpticalTracking/WebARKitAkazeTracker.cpp',
 	'WebARKitOpticalTracking/WebARKitOrbTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp'
 ].map(function(src) {

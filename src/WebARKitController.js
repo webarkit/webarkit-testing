@@ -1,4 +1,4 @@
-import WebARKit from './WebARKit'
+import WARKit from '../build/webarkit_ES6_wasm'
 import Utils from './utils/Utils'
 import Container from './utils/html/Container'
 import { createCanvas } from 'canvas'
@@ -32,12 +32,14 @@ export default class WebARKitController {
 
   async _initialize () {
     const root = this.root
-    // initialize the toolkit
-    this.webarkit = await new WebARKit().init()
+    // Create an instance of the WebARKit Emscripten C++ code.
+    this.instance = await WARKit()
+    // Initialize the WebARKit class.
+    this.webarkit = new this.instance.WebARKit(this.videoWidth, this.videoHeight, this.instance.TRACKER_TYPE.TRACKER_ORB)
     console.log('[WebARKitController]', 'WebARKit initialized')
 
-    this.id = this.webarkit.setup(this.videoWidth, this.videoHeight)
-    console.log('[WebARKitController]', 'Got ID from setup', this.id)
+    this.version = '0.1.0'
+    console.info('WebARKit ', this.version)
 
     this.config = {
       "addPath": "",
@@ -150,10 +152,10 @@ export default class WebARKitController {
       try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
     }
 
-    this._storeDataFile(data, target)
+    //this._storeDataFile(data, target)
 
     // return the internal marker ID
-    return this.webarkit.readImage(this.id, data, 1637, 2048);
+    return this.webarkit.initTracker(data, 1637, 2048);
   }
 
 
@@ -178,15 +180,15 @@ export default class WebARKitController {
   }
 
   processFrame(imageData) {
-    this.webarkit.processFrame(this.id, imageData);
+    this.webarkit.processFrame(imageData);
   }
 
   getHomography() {
-    return this.webarkit.getHomography(this.id);
+    return this.webarkit.getHomography();
   }
 
   getCorners() {
-    return this.webarkit.getCorners(this.id);
+    return this.webarkit.getCorners();
   }
 
   addEventListener(name, callback) {
@@ -217,7 +219,7 @@ export default class WebARKitController {
   _storeDataFile (data, target) {
     // FS is provided by emscripten
     // Note: valid data must be in binary format encoded as Uint8Array
-    this.webarkit.FS.writeFile(target, data, {
+    this.instance.FS.writeFile(target, data, {
       encoding: 'binary'
     })
   }

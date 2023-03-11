@@ -3,10 +3,15 @@
 using namespace emscripten;
 
 EMSCRIPTEN_BINDINGS(constant_bindings) {
-    function("setup", &setup);
-    function("readJpeg", &readJpeg);
-    function("readImage", &readImage);
-    function("processFrame", &processFrame);
-    function("getHomography", &getHomography);
-    function("getCorners", &getCorners);
+    enum_<TRACKER_TYPE>("TRACKER_TYPE")
+        .value("TRACKER_AKAZE", AKAZE_TRACKER)
+        .value("TRACKER_ORB", ORB_TRACKER);
+
+    class_<WebARKit>("WebARKit")
+        .constructor<>()
+        .constructor<int,int,TRACKER_TYPE>()
+        .function("initTracker", &WebARKit::initTracker)
+        .function("processFrame", &WebARKit::processFrame)
+        .function("getHomography", &WebARKit::getHomography)
+        .function("getCorners", &WebARKit::getCorners);
 };
