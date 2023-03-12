@@ -29,13 +29,13 @@
 
           function update() {
             wark.process(video)
-            drawCorners(wark.getCorners());
-            console.log(wark.getCorners());
+            drawCorners(wark.getCorners2());
+            console.log(wark.getCorners2());
             var arElem = document.getElementById("arElem");
             arElem.style.display = "block";
             arElem.style["transform-origin"] = "top left"; // default is center
             arElem.style.zIndex = 200;
-            transformElem(wark.getHomography(), arElem)
+            // transformElem(wark.getHomography(), arElem)
             requestAnimationFrame(update)
           }
           update(video);

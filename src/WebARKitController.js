@@ -219,6 +219,10 @@ export default class WebARKitController {
     return this.webarkit.getCorners();
   }
 
+  getCorners2() {
+    return this.webarkit.getCorners2();
+  }
+
   addEventListener(name, callback) {
     if (!this.listeners[name]) {
       this.listeners[name] = [];

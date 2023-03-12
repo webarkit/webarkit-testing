@@ -58,4 +58,16 @@ emscripten::val WebARKit::getCorners() {
   return corners;
 }
 
+emscripten::val WebARKit::getCorners2() {
+   emscripten::val corners = emscripten::val::array();
+  if (this->m_trackerType == TRACKER_TYPE::AKAZE_TRACKER) {
+    throw std::invalid_argument("Invalid tracker type");
+  } else if (this->m_trackerType == TRACKER_TYPE::ORB_TRACKER) {
+    corners = m_orb_tracker->getCorners();
+  } else {
+    throw std::invalid_argument("Invalid tracker type");
+  }
+  return corners;
+}
+
 #include "bindings.cpp"

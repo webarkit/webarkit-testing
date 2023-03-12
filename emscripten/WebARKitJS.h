@@ -39,6 +39,7 @@ public:
   void processFrame(emscripten::val data_buffer);
   emscripten::val getHomography();
   emscripten::val getCorners();
+  emscripten::val getCorners2();
 
 private:
   int videoWidth;
