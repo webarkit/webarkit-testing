@@ -176,6 +176,7 @@ FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
+FLAGS += ' -s DISABLE_EXCEPTION_CATCHING=0 ';
 //FLAGS += ' -gsource-map -fsanitize=address '
 //FLAGS += ' -s ASSERTIONS=1 '
 //FLAGS += ' -s SAFE_HEAP=1 '
