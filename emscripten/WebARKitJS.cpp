@@ -61,7 +61,7 @@ emscripten::val WebARKit::getCorners() {
 emscripten::val WebARKit::getCorners2() {
    emscripten::val corners = emscripten::val::array();
   if (this->m_trackerType == TRACKER_TYPE::AKAZE_TRACKER) {
-    throw std::invalid_argument("Invalid tracker type");
+    corners = m_akaze_tracker->getCorners();
   } else if (this->m_trackerType == TRACKER_TYPE::ORB_TRACKER) {
     corners = m_orb_tracker->getCorners();
   } else {
