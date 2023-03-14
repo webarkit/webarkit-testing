@@ -11,6 +11,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
         .constructor<>()
         .constructor<int,int,TRACKER_TYPE>()
         .function("initTracker", &WebARKit::initTracker)
+        .function("initTrackerGray", &WebARKit::initTrackerGray)
         .function("processFrame", &WebARKit::processFrame)
         .function("getHomography", &WebARKit::getHomography)
         .function("getCorners", &WebARKit::getCorners)

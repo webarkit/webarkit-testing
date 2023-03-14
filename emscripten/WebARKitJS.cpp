@@ -12,6 +12,18 @@ void WebARKit::initTracker(emscripten::val data_buffer, int width, int height) {
   }
 }
 
+void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int height) {
+  std::vector<uint8_t> u8 =
+      emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
+  if (this->m_trackerType == TRACKER_TYPE::AKAZE_TRACKER) {
+    m_akaze_tracker->initialize_raw(u8.data(), width, height);
+  } else if (this->m_trackerType == TRACKER_TYPE::ORB_TRACKER) {
+    m_orb_tracker->initialize_gray_raw(u8.data(), width, height);
+  } else {
+    throw std::invalid_argument("Invalid tracker type");
+  }
+}
+
 void WebARKit::processFrame(emscripten::val data_buffer) {
   std::vector<uint8_t> u8 =
       emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);

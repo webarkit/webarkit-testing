@@ -20,9 +20,15 @@
     const overlayCanvas = document.getElementById('overlay')
     overlayCanvas.width = width;
     overlayCanvas.height = height;
+    console.log(WebARKit);
     WebARKit.WebARKitController.init(width, height, '../examples/config.json').then(wark => {
       console.log(wark);
-      wark.loadTrackerImage2('refIm').then(_ => {
+      const refIm = document.getElementById("refIm");
+      const gray = new WebARKit.GrayScaleMedia(refIm, 640, 480)
+      console.log(gray);
+      const imageData = gray.getFrame();
+      console.log(imageData);
+      wark.loadTrackerGrayImage(imageData, refIm.width, refIm.height).then(_ => {
         var res;
         wark.startVideo(function (video) {
           console.log(video);
@@ -35,7 +41,7 @@
             arElem.style.display = "block";
             arElem.style["transform-origin"] = "top left"; // default is center
             arElem.style.zIndex = 200;
-            // transformElem(wark.getHomography(), arElem)
+            transformElem(wark.getHomography(), arElem)
             requestAnimationFrame(update)
           }
           update(video);

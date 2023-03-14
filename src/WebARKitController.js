@@ -46,13 +46,16 @@ export default class WebARKitController {
       "cameraPara": "examples/Data/camera_para.dat",
       "videoSettings": {
         "width": {
-          "min": 640,
-          "max": 800
+          //"min": 640,
+          //"max": 800
+          "ideal": 640
         },
         "height": {
-          "min": 480,
-          "max": 600
+          //"min": 480,
+          //"max": 600
+          "ideal": 480
         },
+        "aspectRatio": { "ideal": 640/480 },
         "facingMode": "environment"
       },
       "loading": {
@@ -156,6 +159,29 @@ export default class WebARKitController {
 
     // return the internal marker ID
     return this.webarkit.initTracker(data, 1637, 2048);
+  }
+
+  async loadTrackerGrayImage(urlOrData, width, height) {
+    const targetPrefix = '/load_jpeg_' + this.jpegCount++
+
+    let data
+    let ext = 'jpg'
+    const fullUrl = urlOrData + '.' + ext
+    const target = targetPrefix + '.' + ext
+
+    if (urlOrData instanceof Uint8Array) {
+      // assume preloaded camera params
+      data = urlOrData
+
+    } else {
+      // fetch data via HTTP
+      try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
+    }
+
+    //this._storeDataFile(data, target)
+
+    // return the internal marker ID
+    return this.webarkit.initTrackerGray(urlOrData, width, height);
   }
 
   async loadTrackerImage2(imageSource) {
