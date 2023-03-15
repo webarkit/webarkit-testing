@@ -24,15 +24,15 @@ void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int heigh
   }
 }
 
-void WebARKit::processFrame(emscripten::val data_buffer) {
+void WebARKit::processFrame(emscripten::val data_buffer, ColorSpace colorSpace) {
   std::vector<uint8_t> u8 =
       emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
   if (this->m_trackerType == TRACKER_TYPE::AKAZE_TRACKER) {
     m_akaze_tracker->processFrameData(u8.data(), this->videoWidth,
-                                      this->videoHeight);
+                                      this->videoHeight, colorSpace);
   } else if (this->m_trackerType == TRACKER_TYPE::ORB_TRACKER) {
     m_orb_tracker->processFrameData(u8.data(), this->videoWidth,
-                                    this->videoHeight);
+                                    this->videoHeight, colorSpace);
   } else {
     throw std::invalid_argument("Invalid tracker type");
   }

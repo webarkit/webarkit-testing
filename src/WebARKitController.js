@@ -3,8 +3,10 @@ import Utils from './utils/Utils'
 import Container from './utils/html/Container'
 import { createCanvas } from 'canvas'
 import ThreejsRenderer from './renderers/ThreejsRenderer'
+import { GrayScaleMedia } from './utils/Grayscale'
 
 export default class WebARKitController {
+  static GRAY
   constructor() {
     this.id
     this.jpegCount = 0
@@ -18,6 +20,8 @@ export default class WebARKitController {
     this.canvas
     this.canvasHeap
     this.root
+    this.video
+    this.grayVideo
     this.config
   }
 
@@ -37,6 +41,7 @@ export default class WebARKitController {
     // Initialize the WebARKit class.
     this.webarkit = new this.instance.WebARKit(this.videoWidth, this.videoHeight, this.instance.TRACKER_TYPE.TRACKER_ORB)
     console.log('[WebARKitController]', 'WebARKit initialized')
+    WebARKitController.GRAY = this.instance.ColorSpace.GRAY
 
     this.version = '0.1.0'
     console.info('WebARKit ', this.version)
@@ -73,12 +78,21 @@ export default class WebARKitController {
       }
     }
 
+
+
+   
+
     Container.createLoading(this.config)
     //Container.createStats(stats)
     const containerObj = Container.createContainer()
     const container = containerObj.container
     this.canvas = containerObj.canvas
     this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight)
+
+    this.video = document.getElementById("video")
+    console.log(this.video);
+    this.grayVideo = new GrayScaleMedia(this.video, this.videoWidth, this.videoHeight)
+    
 
     // the jsonParser need to be fixed, for now we load the configs in the old way...
     // const data = Utils.jsonParser(config)
@@ -106,9 +120,18 @@ export default class WebARKitController {
   }
 
   startVideo(callback) {
-    Utils.getUserMedia(this.config).then((video) => {
+    /*Utils.getUserMedia(this.config).then((video) => {
       callback(video)
-    })
+    })*/
+    this.grayVideo.requestStream()
+        .then(source => {
+            
+            //onInit(source);
+            callback(source)
+        })
+        .catch(err => {
+            console.warn("ERROR: " + err);
+        });
   }
 
   process(video) {
@@ -214,14 +237,15 @@ export default class WebARKitController {
 
 
   _imageToProcess(video) {
-    this.ctx = this.canvasHeap.getContext('2d')
+    /*this.ctx = this.canvasHeap.getContext('2d')
     this.ctx.save()
     this.ctx.drawImage(video, 0, 0, this.videoWidth, this.videoHeight) // draw video
-    this.ctx.restore()
+    this.ctx.restore()*/
 
     const getImageData = () => {
-      let imageData = this.ctx.getImageData(0, 0, this.videoWidth, this.videoHeight)
-      let data = imageData.data
+      //let imageData = this.ctx.getImageData(0, 0, this.videoWidth, this.videoHeight)
+      //let data = imageData.data
+      let data = this.grayVideo.getFrame()
       if (data) {
         this.processFrame(data);
         return true;
@@ -234,7 +258,7 @@ export default class WebARKitController {
   }
 
   processFrame(imageData) {
-    this.webarkit.processFrame(imageData);
+    this.webarkit.processFrame(imageData, WebARKitController.GRAY);
   }
 
   getHomography() {
