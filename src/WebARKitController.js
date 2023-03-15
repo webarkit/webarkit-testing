@@ -120,13 +120,8 @@ export default class WebARKitController {
   }
 
   startVideo(callback) {
-    /*Utils.getUserMedia(this.config).then((video) => {
-      callback(video)
-    })*/
     this.grayVideo.requestStream()
         .then(source => {
-            
-            //onInit(source);
             callback(source)
         })
         .catch(err => {
@@ -178,33 +173,13 @@ export default class WebARKitController {
       try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
     }
 
-    //this._storeDataFile(data, target)
-
     // return the internal marker ID
     return this.webarkit.initTracker(data, 1637, 2048);
   }
 
-  async loadTrackerGrayImage(urlOrData, width, height) {
-    const targetPrefix = '/load_jpeg_' + this.jpegCount++
-
-    let data
-    let ext = 'jpg'
-    const fullUrl = urlOrData + '.' + ext
-    const target = targetPrefix + '.' + ext
-
-    if (urlOrData instanceof Uint8Array) {
-      // assume preloaded camera params
-      data = urlOrData
-
-    } else {
-      // fetch data via HTTP
-      try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
-    }
-
-    //this._storeDataFile(data, target)
-
+  async loadTrackerGrayImage(imgData, width, height) {
     // return the internal marker ID
-    return this.webarkit.initTrackerGray(urlOrData, width, height);
+    return this.webarkit.initTrackerGray(imgData, width, height);
   }
 
   async loadTrackerImage2(imageSource) {

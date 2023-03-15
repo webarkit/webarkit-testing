@@ -24,7 +24,7 @@
     WebARKit.WebARKitController.init(width, height, '../examples/config.json').then(wark => {
       console.log(wark);
       const refIm = document.getElementById("refIm");
-      const gray = new WebARKit.GrayScaleMedia(refIm, 640, 480)
+      const gray = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height)
       console.log(gray);
       const imageData = gray.getFrame();
       console.log(imageData);
@@ -41,6 +41,7 @@
             arElem.style.display = "block";
             arElem.style["transform-origin"] = "top left"; // default is center
             arElem.style.zIndex = 200;
+            console.log(wark.getHomography());
             transformElem(wark.getHomography(), arElem)
             requestAnimationFrame(update)
           }
