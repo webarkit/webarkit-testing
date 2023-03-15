@@ -10,8 +10,8 @@ export default class WebARKitController {
   constructor() {
     this.id
     this.jpegCount = 0
-    this.videoWidth = 640
-    this.videoHeight = 480
+    this.videoWidth = window.innerWidth
+    this.videoHeight = window.innerHeight
 
     this.listeners = {}
     this.params
