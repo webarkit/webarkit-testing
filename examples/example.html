@@ -17,9 +17,11 @@
   <script>
     var width = 640;
     var height = 480;
+    var oWidth = window.innerWidth;
+    var oHeight = window.innerHeight;
     const overlayCanvas = document.getElementById('overlay')
-    overlayCanvas.width = width;
-    overlayCanvas.height = height;
+    overlayCanvas.width = oWidth;
+    overlayCanvas.height = oHeight;
     console.log(WebARKit);
     WebARKit.WebARKitController.init(width, height, '../examples/config.json', 'orb').then(wark => {
       console.log(wark);
@@ -73,7 +75,7 @@
 
     function clearOverlayCtx() {
       const overlayCtx = overlayCanvas.getContext("2d");
-      overlayCtx.clearRect(0, 0, width, height);
+      overlayCtx.clearRect(0, 0, oWidth, oHeight);
     }
 
     function drawCorners(corners) {

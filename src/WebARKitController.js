@@ -115,13 +115,13 @@ export default class WebARKitController {
     //})
 
     if (this.config.renderer.type === "three") {
-      const renderer = new ThreejsRenderer(this.config, canvas, root);
+      /*const renderer = new ThreejsRenderer(this.config, canvas, root);
       renderer.initRenderer();
       const tick = () => {
         renderer.draw();
         window.requestAnimationFrame(tick);
       };
-      tick();
+      tick();*/
     }
 
     setTimeout(() => {

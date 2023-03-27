@@ -2,9 +2,13 @@
 
 export default class Container {
   static createContainer () {
+    var width = window.innerWidth;
+    var height = window.innerHeight;
     const container = document.createElement('div')
     container.id = 'app'
     const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
     canvas.id = 'canvas'
     const video = document.createElement('video')
     video.id = 'video'
@@ -13,8 +17,10 @@ export default class Container {
     video.setAttribute('playsinline', '')
     container.appendChild(video)
     container.appendChild(canvas)
-    const loading = document.getElementById('loading')
-    document.body.insertBefore(container, loading)
+    //const loading = document.getElementById('loading')
+    //document.body.insertBefore(container, loading)
+    document.body.appendChild(video);
+    document.body.appendChild(canvas);
     const obj = { container: container, canvas: canvas, video: video }
     return obj
   }
