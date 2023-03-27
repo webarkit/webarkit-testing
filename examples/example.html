@@ -21,7 +21,7 @@
     overlayCanvas.width = width;
     overlayCanvas.height = height;
     console.log(WebARKit);
-    WebARKit.WebARKitController.init(width, height, '../examples/config.json').then(wark => {
+    WebARKit.WebARKitController.init(width, height, '../examples/config.json', 'orb').then(wark => {
       console.log(wark);
       const refIm = document.getElementById("refIm");
       const gray = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height)

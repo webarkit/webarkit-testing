@@ -1,98 +1,112 @@
-import WARKit from '../build/webarkit_ES6_wasm'
-import Utils from './utils/Utils'
-import Container from './utils/html/Container'
-import { createCanvas } from 'canvas'
-import ThreejsRenderer from './renderers/ThreejsRenderer'
-import { GrayScaleMedia } from './utils/Grayscale'
+import WARKit from "../build/webarkit_ES6_wasm";
+import Utils from "./utils/Utils";
+import Container from "./utils/html/Container";
+import { createCanvas } from "canvas";
+import ThreejsRenderer from "./renderers/ThreejsRenderer";
+import { GrayScaleMedia } from "./utils/Grayscale";
 
 export default class WebARKitController {
-  static GRAY
+  static GRAY;
+  static ORB_TRACKER;
+  static AKAZE_TRACKER;
   constructor() {
-    this.id
-    this.jpegCount = 0
-    this.videoWidth = window.innerWidth
-    this.videoHeight = window.innerHeight
+    this.id;
+    this.jpegCount = 0;
+    this.videoWidth = window.innerWidth;
+    this.videoHeight = window.innerHeight;
 
-    this.listeners = {}
-    this.params
-    this.webarkit
-    this.config
-    this.canvas
-    this.canvasHeap
-    this.root
-    this.video
-    this.grayVideo
-    this.config
+    this.listeners = {};
+    this.params;
+    this.webarkit;
+    this.config;
+    this.canvas;
+    this.canvasHeap;
+    this.root;
+    this.video;
+    this.grayVideo;
+    this.config;
+    this.trackerType;
   }
 
-  static async init(videoWidth, videoHeight, config) {
-    this.videoWidth = videoWidth
-    this.videoHeight = videoHeight
-    this.config = config
+  static async init(videoWidth, videoHeight, config, trackerType) {
+    this.videoWidth = videoWidth;
+    this.videoHeight = videoHeight;
+    this.config = config;
+
     // directly init with given width / height
-    const webARC = new WebARKitController()
-    return await webARC._initialize()
+    const webARC = new WebARKitController();
+
+    return await webARC._initialize(trackerType);
   }
 
-  async _initialize() {
-    const root = this.root
+  async _initialize(trackerType) {
+    const root = this.root;
     // Create an instance of the WebARKit Emscripten C++ code.
-    this.instance = await WARKit()
-    // Initialize the WebARKit class.
-    this.webarkit = new this.instance.WebARKit(this.videoWidth, this.videoHeight, this.instance.TRACKER_TYPE.TRACKER_AKAZE)
-    console.log('[WebARKitController]', 'WebARKit initialized')
-    WebARKitController.GRAY = this.instance.ColorSpace.GRAY
+    this.instance = await WARKit();
 
-    this.version = '0.1.0'
-    console.info('WebARKit ', this.version)
+    // Set the tracker types for the WebARKitController class.
+    WebARKitController.ORB_TRACKER = this.instance.TRACKER_TYPE.TRACKER_ORB;
+    WebARKitController.AKAZE_TRACKER = this.instance.TRACKER_TYPE.TRACKER_AKAZE;
+    this.trackerType = this.setTrackerType(trackerType);
+
+    // Initialize the WebARKit class.
+    this.webarkit = new this.instance.WebARKit(
+      this.videoWidth,
+      this.videoHeight,
+      this.trackerType
+    );
+    console.log("[WebARKitController]", "WebARKit initialized");
+    WebARKitController.GRAY = this.instance.ColorSpace.GRAY;
+
+    this.version = "0.1.0";
+    console.info("WebARKit ", this.version);
 
     this.config = {
-      "addPath": "",
-      "cameraPara": "examples/Data/camera_para.dat",
-      "videoSettings": {
-        "width": {
+      addPath: "",
+      cameraPara: "examples/Data/camera_para.dat",
+      videoSettings: {
+        width: {
           //"min": 640,
           //"max": 800
-          "ideal": 640
+          ideal: 640,
         },
-        "height": {
+        height: {
           //"min": 480,
           //"max": 600
-          "ideal": 480
+          ideal: 480,
         },
-        "aspectRatio": { "ideal": 640/480 },
-        "facingMode": "environment"
+        aspectRatio: { ideal: 640 / 480 },
+        facingMode: "environment",
       },
-      "loading": {
-        "logo": {
-          "src": "data/arNFT-logo.gif",
-          "alt": "arNFT.js logo"
+      loading: {
+        logo: {
+          src: "data/arNFT-logo.gif",
+          alt: "arNFT.js logo",
         },
-        "loadingMessage": "Loading, please wait..."
+        loadingMessage: "Loading, please wait...",
       },
-      "renderer": {
-        "type": "three",
-        "alpha": true,
-        "antialias": true,
-        "precision": "mediump"
-      }
-    }
+      renderer: {
+        type: "three",
+        alpha: true,
+        antialias: true,
+        precision: "mediump",
+      },
+    };
 
-
-
-   
-
-    Container.createLoading(this.config)
+    Container.createLoading(this.config);
     //Container.createStats(stats)
-    const containerObj = Container.createContainer()
-    const container = containerObj.container
-    this.canvas = containerObj.canvas
-    this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight)
+    const containerObj = Container.createContainer();
+    const container = containerObj.container;
+    this.canvas = containerObj.canvas;
+    this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight);
 
-    this.video = document.getElementById("video")
+    this.video = document.getElementById("video");
     console.log(this.video);
-    this.grayVideo = new GrayScaleMedia(this.video, this.videoWidth, this.videoHeight)
-    
+    this.grayVideo = new GrayScaleMedia(
+      this.video,
+      this.videoWidth,
+      this.videoHeight
+    );
 
     // the jsonParser need to be fixed, for now we load the configs in the old way...
     // const data = Utils.jsonParser(config)
@@ -100,77 +114,97 @@ export default class WebARKitController {
 
     //})
 
-    if (this.config.renderer.type === 'three') {
-      const renderer = new ThreejsRenderer(this.config, canvas, root)
-      renderer.initRenderer()
+    if (this.config.renderer.type === "three") {
+      const renderer = new ThreejsRenderer(this.config, canvas, root);
+      renderer.initRenderer();
       const tick = () => {
-        renderer.draw()
-        window.requestAnimationFrame(tick)
-      }
-      tick()
+        renderer.draw();
+        window.requestAnimationFrame(tick);
+      };
+      tick();
     }
 
     setTimeout(() => {
       this.dispatchEvent({
-        name: 'load',
-        target: this
-      })
-    }, 1)
-    return this
+        name: "load",
+        target: this,
+      });
+    }, 1);
+    return this;
+  }
+
+  setTrackerType(trackerType) {
+    let trackerT;
+    if (trackerType === undefined || trackerType === null) {
+      throw new Error("Tracker type is not defined");
+    }
+    if (trackerType === "orb") {
+      trackerT = WebARKitController.ORB_TRACKER;
+    } else if (trackerType === "akaze") {
+      trackerT = WebARKitController.AKAZE_TRACKER;
+    }
+    return trackerT;
   }
 
   startVideo(callback) {
-    this.grayVideo.requestStream()
-        .then(source => {
-            callback(source)
-        })
-        .catch(err => {
-            console.warn("ERROR: " + err);
-        });
+    this.grayVideo
+      .requestStream()
+      .then((source) => {
+        callback(source);
+      })
+      .catch((err) => {
+        console.warn("ERROR: " + err);
+      });
   }
 
   process(video) {
-    this._imageToProcess(video)
+    this._imageToProcess(video);
   }
 
   async loadTracker(urlOrData) {
-    const targetPrefix = '/load_jpeg_' + this.jpegCount++
+    const targetPrefix = "/load_jpeg_" + this.jpegCount++;
 
-    let data
-    let ext = 'jpg'
-    const fullUrl = urlOrData + '.' + ext
-    const target = targetPrefix + '.' + ext
+    let data;
+    let ext = "jpg";
+    const fullUrl = urlOrData + "." + ext;
+    const target = targetPrefix + "." + ext;
 
     if (urlOrData instanceof Uint8Array) {
       // assume preloaded camera params
-      data = urlOrData
-
+      data = urlOrData;
     } else {
       // fetch data via HTTP
-      try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
+      try {
+        data = await Utils.fetchRemoteData(urlOrData);
+      } catch (error) {
+        throw error;
+      }
     }
 
-    this._storeDataFile(data, target)
+    this._storeDataFile(data, target);
 
     // return the internal marker ID
-    return this.webarkit.readJpeg(this.id, target)
+    return this.webarkit.readJpeg(this.id, target);
   }
 
   async loadTrackerImage(urlOrData) {
-    const targetPrefix = '/load_jpeg_' + this.jpegCount++
+    const targetPrefix = "/load_jpeg_" + this.jpegCount++;
 
-    let data
-    let ext = 'jpg'
-    const fullUrl = urlOrData + '.' + ext
-    const target = targetPrefix + '.' + ext
+    let data;
+    let ext = "jpg";
+    const fullUrl = urlOrData + "." + ext;
+    const target = targetPrefix + "." + ext;
 
     if (urlOrData instanceof Uint8Array) {
       // assume preloaded camera params
-      data = urlOrData
-
+      data = urlOrData;
     } else {
       // fetch data via HTTP
-      try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
+      try {
+        data = await Utils.fetchRemoteData(urlOrData);
+      } catch (error) {
+        throw error;
+      }
     }
 
     // return the internal marker ID
@@ -185,7 +219,7 @@ export default class WebARKitController {
 
   async loadTrackerImage2(imageSource) {
     var img = null;
-    if (typeof imageSource === 'string') {
+    if (typeof imageSource === "string") {
       img = document.getElementById(imageSource);
     } else {
       img = imageSource;
@@ -193,16 +227,16 @@ export default class WebARKitController {
     var canvas = null;
     var ctx = null;
     if (img instanceof HTMLImageElement) {
-      canvas = document.createElement('canvas');
+      canvas = document.createElement("canvas");
       canvas.width = img.width;
       canvas.height = img.height;
-      ctx = canvas.getContext('2d');
+      ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0, img.width, img.height);
     } else if (img instanceof HTMLCanvasElement) {
       canvas = img;
-      ctx = canvas.getContext('2d');
+      ctx = canvas.getContext("2d");
     } else {
-      throw new Error('Please input the valid canvas or img id.');
+      throw new Error("Please input the valid canvas or img id.");
       return;
     }
 
@@ -211,14 +245,13 @@ export default class WebARKitController {
   }
 
   removeLoading() {
-    var loading = document.getElementById('loading');
+    var loading = document.getElementById("loading");
 
     if (loading) {
-      console.log('Remove loading');
+      console.log("Remove loading");
       loading.parentElement.removeChild(loading);
     }
   }
-
 
   _imageToProcess(video) {
     /*this.ctx = this.canvasHeap.getContext('2d')
@@ -229,16 +262,16 @@ export default class WebARKitController {
     const getImageData = () => {
       //let imageData = this.ctx.getImageData(0, 0, this.videoWidth, this.videoHeight)
       //let data = imageData.data
-      let data = this.grayVideo.getFrame()
+      let data = this.grayVideo.getFrame();
       if (data) {
         this.processFrame(data);
         return true;
       }
-    }
+    };
 
-    getImageData()
+    getImageData();
 
-    return false
+    return false;
   }
 
   processFrame(imageData) {
@@ -262,7 +295,7 @@ export default class WebARKitController {
       this.listeners[name] = [];
     }
     this.listeners[name].push(callback);
-  };
+  }
 
   removeEventListener(name, callback) {
     if (this.listeners[name]) {
@@ -271,7 +304,7 @@ export default class WebARKitController {
         this.listeners[name].splice(index, 1);
       }
     }
-  };
+  }
 
   dispatchEvent(event) {
     let listeners = this.listeners[event.name];
@@ -280,13 +313,13 @@ export default class WebARKitController {
         listeners[i].call(this, event);
       }
     }
-  };
+  }
 
   _storeDataFile(data, target) {
     // FS is provided by emscripten
     // Note: valid data must be in binary format encoded as Uint8Array
     this.instance.FS.writeFile(target, data, {
-      encoding: 'binary'
-    })
+      encoding: "binary",
+    });
   }
 }
