@@ -16,7 +16,7 @@ void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int heigh
   std::vector<uint8_t> u8 =
       emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
   if (this->m_trackerType == TRACKER_TYPE::AKAZE_TRACKER) {
-    m_akaze_tracker->initialize_raw(u8.data(), width, height);
+    m_akaze_tracker->initialize_gray_raw(u8.data(), width, height);
   } else if (this->m_trackerType == TRACKER_TYPE::ORB_TRACKER) {
     m_orb_tracker->initialize_gray_raw(u8.data(), width, height);
   } else {
