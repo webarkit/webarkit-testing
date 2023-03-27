@@ -179,6 +179,7 @@ export default class WebARKitController {
 
   async loadTrackerGrayImage(imgData, width, height) {
     // return the internal marker ID
+    this.removeLoading();
     return this.webarkit.initTrackerGray(imgData, width, height);
   }
 
@@ -206,8 +207,16 @@ export default class WebARKitController {
     }
 
     var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
     return this.webarkit.initTracker(imgData.data, canvas.width, canvas.height);
+  }
+
+  removeLoading() {
+    var loading = document.getElementById('loading');
+
+    if (loading) {
+      console.log('Remove loading');
+      loading.parentElement.removeChild(loading);
+    }
   }
 
 
