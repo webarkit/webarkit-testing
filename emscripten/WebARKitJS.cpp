@@ -42,7 +42,7 @@ emscripten::val WebARKit::getHomography() {
   //double *output;
   std::vector<double> output;
   if (this->m_trackerType == TRACKER_TYPE::AKAZE_TRACKER) {
-   // output = m_akaze_tracker->getOutputData();
+    output = m_akaze_tracker->getOutputData();
   } else if (this->m_trackerType == TRACKER_TYPE::ORB_TRACKER) {
     output = m_orb_tracker->getOutputData();
   } else {

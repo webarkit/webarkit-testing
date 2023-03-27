@@ -39,7 +39,7 @@ export default class WebARKitController {
     // Create an instance of the WebARKit Emscripten C++ code.
     this.instance = await WARKit()
     // Initialize the WebARKit class.
-    this.webarkit = new this.instance.WebARKit(this.videoWidth, this.videoHeight, this.instance.TRACKER_TYPE.TRACKER_ORB)
+    this.webarkit = new this.instance.WebARKit(this.videoWidth, this.videoHeight, this.instance.TRACKER_TYPE.TRACKER_AKAZE)
     console.log('[WebARKitController]', 'WebARKit initialized')
     WebARKitController.GRAY = this.instance.ColorSpace.GRAY
 
