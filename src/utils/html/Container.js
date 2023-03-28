@@ -1,5 +1,3 @@
-//import { createCanvas, loadImage } from 'canvas'
-
 export default class Container {
   static createContainer () {
     var width = window.innerWidth;

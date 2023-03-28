@@ -40,8 +40,8 @@
 
           function update() {
             wark.process(video)
-            drawCorners(wark.getCorners2());
-            console.log(wark.getCorners2());
+            drawCorners(wark.getCorners());
+            console.log(wark.getCorners());
             arElem.style.display = "block";
             console.log(wark.getHomography());
             transformElem(wark.getHomography(), arElem)

@@ -1,5 +1,4 @@
 import axios from 'axios'
-//import CustomEvent from 'custom-event'
 
 export default class Utils {
   static async getUserMedia (configData) {
