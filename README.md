@@ -6,7 +6,7 @@ This is a repository testing for WebARKit. This will not became the official rep
 
 ### Pre-requisites
 
-You need emscripten `3.1.7` because openCV may be built with this version.
+You need emscripten `3.1.26` because openCV may be built with this version.
 
 ### Instructions
 
@@ -23,3 +23,4 @@ You are ready to modify the code and remember to re-build the project every time
 ## Example
 
 Go in examples folder try the example... point the pinball.jpg image and you will see some messages.
+At teh moment support Akaze or Orb, when the pinball image is detected and tracked it should display a Wikipedia web page and blue rect border around.

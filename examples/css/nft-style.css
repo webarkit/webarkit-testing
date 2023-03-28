@@ -4,28 +4,36 @@ body {
   overflow: hidden;
 }
 
-html {
-  font-family: sans-serif;
+#arElem {
+  position: absolute;
+  width: 200px;
+  height: 285px;
+  display: none;
+  border: 1px solid black;
+  background: white;
 }
 
 #loading {
-  width: 100%;
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.45);
-  z-index: 9999999;
+  visibility: hidden;
+  left: 50%;
+  width: 200px;
+  margin-left: -100px;
+  background-color: #eee;
+  text-align: center;
+  border-radius: 10px;
+  padding: 10px;
+  position: fixed;
+  z-index: 9999;
+  bottom: 20px;
+  font-size: 15px;
+  word-wrap: break-word;
 }
 
 #loading img {
-    height: 5em;
+  height: 5em;
 }
 
-#loading span{
+#loading span {
   color: black;
   font-weight: bold;
 }
@@ -35,7 +43,7 @@ html {
 
   margin: 0.5rem;
 
-  background-color: rgba( 255,255,255,0.6 );
+  background-color: rgba(255, 255, 255, 0.6);
   border-radius: 6px;
 }
 
@@ -83,7 +91,7 @@ html {
   height: 100%;
 }
 
-#video {
+/*#video {
   position: absolute;
   top: 0;
   left: 0;
@@ -92,7 +100,7 @@ html {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover;
-}
+}*/
 
 #canvas {
   position: absolute;
@@ -100,10 +108,22 @@ html {
   top: 0;
   z-index: 100;
 
-  display: block;
+  /* display: block;
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover;
+  object-fit: cover;*/
+}
+
+#overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 110;
+
+  /* display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;*/
 }
 
 

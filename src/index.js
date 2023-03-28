@@ -1,6 +1,7 @@
-import WebARKit from './WebARKit'
 import WebARKitController from './WebARKitController'
+import {GrayScaleMedia} from './utils/Grayscale'
 
 export default {
-  WebARKit, WebARKitController
+  GrayScaleMedia,
+  WebARKitController
 }

@@ -38,7 +38,7 @@ if (!EMSCRIPTEN_ROOT) {
 
 var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'emcc') : 'emcc';
 var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'em++') : 'em++';
-var OPTIMIZE_FLAGS = ' -Oz '; // -Oz for smallest size
+var OPTIMIZE_FLAGS = ' -O1 '; // -Oz for smallest size
 var MEM = 512 * 1024 * 1024; // 64MB
 
 
@@ -150,6 +150,7 @@ var kpm_sources = [
 });
 
 var webarkit_sources = [
+    'WebARKitOpticalTracking/WebARKitAkazeTracker.cpp',
 	'WebARKitOpticalTracking/WebARKitOrbTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp'
 ].map(function(src) {
@@ -173,11 +174,14 @@ FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
 FLAGS += ' -s USE_ZLIB=1';
 FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
-FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\', \'getValue\']"';
+FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
+FLAGS += ' -s DISABLE_EXCEPTION_CATCHING=0 ';
 FLAGS += ' -gsource-map -fsanitize=address '
-FLAGS += ' -s ASSERTIONS=1 '
-//FLAGS += ' -s SAFE_HEAP=1 '
+FLAGS += ' -s ASSERTIONS=2 '
+FLAGS += '  -s DEMANGLE_SUPPORT=1 '; 
+FLAGS += ' --profiling '
+// FLAGS += ' -s SAFE_HEAP=1 '
 
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
