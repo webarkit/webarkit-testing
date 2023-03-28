@@ -20,10 +20,11 @@
     var oWidth = window.innerWidth;
     var oHeight = window.innerHeight;
     const overlayCanvas = document.getElementById('overlay')
+    var arElem = document.getElementById("arElem");
     overlayCanvas.width = oWidth;
     overlayCanvas.height = oHeight;
     console.log(WebARKit);
-    WebARKit.WebARKitController.init(width, height, '../examples/config.json', 'orb').then(wark => {
+    WebARKit.WebARKitController.init(width, height, '../examples/config.json', 'akaze').then(wark => {
       console.log(wark);
       const refIm = document.getElementById("refIm");
       const gray = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height)
@@ -34,15 +35,14 @@
         var res;
         wark.startVideo(function (video) {
           //console.log(video);
+          arElem.style["transform-origin"] = "top left"; // default is center
+          arElem.style.zIndex = 200;
 
           function update() {
             wark.process(video)
             drawCorners(wark.getCorners2());
             console.log(wark.getCorners2());
-            var arElem = document.getElementById("arElem");
             arElem.style.display = "block";
-            arElem.style["transform-origin"] = "top left"; // default is center
-            arElem.style.zIndex = 200;
             console.log(wark.getHomography());
             transformElem(wark.getHomography(), arElem)
             requestAnimationFrame(update)

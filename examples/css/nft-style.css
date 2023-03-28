@@ -1,18 +1,17 @@
 html,
 body {
-    margin: 0;
-    overflow: hidden;
+  margin: 0;
+  overflow: hidden;
 }
 
 #arElem {
-    position: absolute;
-    width: 200px;
-    height: 285px;
-    display: none;
-    border: 1px solid black;
-    background: white;
+  position: absolute;
+  width: 200px;
+  height: 285px;
+  display: none;
+  border: 1px solid black;
+  background: white;
 }
-
 
 #loading {
   visibility: hidden;
@@ -31,10 +30,10 @@ body {
 }
 
 #loading img {
-    height: 5em;
+  height: 5em;
 }
 
-#loading span{
+#loading span {
   color: black;
   font-weight: bold;
 }
@@ -44,7 +43,7 @@ body {
 
   margin: 0.5rem;
 
-  background-color: rgba( 255,255,255,0.6 );
+  background-color: rgba(255, 255, 255, 0.6);
   border-radius: 6px;
 }
 
@@ -92,7 +91,7 @@ body {
   height: 100%;
 }
 
-#video {
+/*#video {
   position: absolute;
   top: 0;
   left: 0;
@@ -101,7 +100,7 @@ body {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover;
-}
+}*/
 
 #canvas {
   position: absolute;
@@ -109,10 +108,10 @@ body {
   top: 0;
   z-index: 100;
 
-  display: block;
+  /* display: block;
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover;
+  object-fit: cover;*/
 }
 
 #overlay {
@@ -121,10 +120,10 @@ body {
   top: 0;
   z-index: 110;
 
-  display: block;
+  /* display: block;
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover;
+  object-fit: cover;*/
 }
 
 
