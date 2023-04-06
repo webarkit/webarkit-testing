@@ -1,11 +1,11 @@
-var width = 640;
-var height = 480;
 var oWidth = window.innerWidth;
 var oHeight = window.innerHeight;
 var overlayCanvas;
 var arElem;
 console.log(WebARKit);
-WebARKit.WebARKitController.init(width, height, '../examples/config.json', 'akaze').then(wark => {
+var videoEl = createVideo();
+console.log(videoEl);
+WebARKit.WebARKitController.init(videoEl, oWidth, oHeight, '../examples/config.json', 'akaze').then(wark => {
     console.log(wark);
     const refIm = document.getElementById("refIm");
     const gray = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height)
@@ -14,12 +14,10 @@ WebARKit.WebARKitController.init(width, height, '../examples/config.json', 'akaz
     console.log(imageData);
     createOverlayCanvas()
     arElem = document.getElementById("arElem");
-    videoEl = document.getElementById("video");
-    setVideoStyle(videoEl);
+    //setVideoStyle(videoEl);
     wark.loadTrackerGrayImage(imageData, refIm.width, refIm.height).then(_ => {
         var res;
         wark.startVideo(function (video) {
-            // console.log(video);
             initStats()
             arElem.style["transform-origin"] = "top left"; // default is center
             arElem.style.zIndex = 200;
@@ -38,7 +36,7 @@ WebARKit.WebARKitController.init(width, height, '../examples/config.json', 'akaz
 
         window.addEventListener('loadedvideo', function (e) {
             var rm = document.getElementById('loading');
-           // rm.remove();
+            // rm.remove();
         })
     })
 })
@@ -53,6 +51,15 @@ function setVideoStyle(elem) {
     elem.style.position = "absolute";
     elem.style.top = 0;
     elem.style.left = 0;
+}
+
+function createVideo() {
+    var video = document.createElement("video");
+    video.id = "video";
+    video.setAttribute("autoplay", "");
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    return video;
 }
 
 function createOverlayCanvas() {

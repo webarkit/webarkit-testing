@@ -8,7 +8,8 @@ export default class WebARKitController {
   static GRAY;
   static ORB_TRACKER;
   static AKAZE_TRACKER;
-  constructor() {
+
+  constructor(video) {
     this.id;
     this.jpegCount = 0;
     this.videoWidth = window.innerWidth;
@@ -21,19 +22,19 @@ export default class WebARKitController {
     this.canvas;
     this.canvasHeap;
     this.root;
-    this.video;
+    this.video = video;
     this.grayVideo;
     this.config;
     this.trackerType;
   }
 
-  static async init(videoWidth, videoHeight, config, trackerType) {
+  static async init(video, videoWidth, videoHeight, config, trackerType) {
     this.videoWidth = videoWidth;
     this.videoHeight = videoHeight;
     this.config = config;
 
     // directly init with given width / height
-    const webARC = new WebARKitController();
+    const webARC = new WebARKitController(video);
 
     return await webARC._initialize(trackerType);
   }
@@ -63,20 +64,6 @@ export default class WebARKitController {
     this.config = {
       addPath: "",
       cameraPara: "examples/Data/camera_para.dat",
-      videoSettings: {
-        width: {
-          //"min": 640,
-          //"max": 800
-          ideal: 640,
-        },
-        height: {
-          //"min": 480,
-          //"max": 600
-          ideal: 480,
-        },
-        aspectRatio: { ideal: 640 / 480 },
-        facingMode: "environment",
-      },
       loading: {
         logo: {
           src: "data/arNFT-logo.gif",
@@ -92,8 +79,9 @@ export default class WebARKitController {
     const container = containerObj.container;
     this.canvas = containerObj.canvas;
     this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight);
+    console.log(this.videoWidth, this.videoHeight);
 
-    this.video = document.getElementById("video");
+    //this.video = document.getElementById("video");
     console.log(this.video);
     this.grayVideo = new GrayScaleMedia(
       this.video,
