@@ -97,18 +97,7 @@ export default class WebARKitController {
   }
 
   async loadTrackerGrayImage(imgData, width, height) {
-    // return the internal marker ID
-    this.removeLoading();
     return this.webarkit.initTrackerGray(imgData, width, height);
-  }
-
-  removeLoading() {
-    var loading = document.getElementById("loading");
-
-    if (loading) {
-      console.log("Remove loading");
-      loading.parentElement.removeChild(loading);
-    }
   }
 
   _imageToProcess(video) {
