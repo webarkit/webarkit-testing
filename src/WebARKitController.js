@@ -2,7 +2,6 @@ import WARKit from "../build/webarkit_ES6_wasm";
 import Utils from "./utils/Utils";
 import Container from "./utils/html/Container";
 import { createCanvas } from "canvas";
-//import ThreejsRenderer from "./renderers/ThreejsRenderer";
 import { GrayScaleMedia } from "./utils/Grayscale";
 
 export default class WebARKitController {
@@ -85,12 +84,6 @@ export default class WebARKitController {
         },
         loadingMessage: "Loading, please wait...",
       },
-      renderer: {
-        type: "three",
-        alpha: true,
-        antialias: true,
-        precision: "mediump",
-      },
     };
 
     //Container.createLoading(this.config);
@@ -107,24 +100,6 @@ export default class WebARKitController {
       this.videoWidth,
       this.videoHeight
     );
-
-    // the jsonParser need to be fixed, for now we load the configs in the old way...
-    // const data = Utils.jsonParser(config)
-    // data.then((configData) => {
-
-    //})
-
-    if (this.config.renderer.type === "three") {
-      // we don't need to init the renderer, we will use the canvas directly
-      // we will see if we need to init the renderer later
-      /*const renderer = new ThreejsRenderer(this.config, canvas, root);
-      renderer.initRenderer();
-      const tick = () => {
-        renderer.draw();
-        window.requestAnimationFrame(tick);
-      };
-      tick();*/
-    }
 
     setTimeout(() => {
       this.dispatchEvent({
