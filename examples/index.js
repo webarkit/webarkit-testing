@@ -1,45 +1,59 @@
 var oWidth = window.innerWidth;
 var oHeight = window.innerHeight;
 var overlayCanvas;
+var videoCanvas;
 var arElem;
+var videoEl;
 console.log(WebARKit);
-var videoEl = createVideo();
-console.log(videoEl);
-WebARKit.WebARKitController.init(videoEl, oWidth, oHeight, '../examples/config.json', 'akaze').then(wark => {
-    console.log(wark);
-    const refIm = document.getElementById("refIm");
-    const gray = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height)
-    console.log(gray);
-    const imageData = gray.getFrame();
-    console.log(imageData);
-    createOverlayCanvas()
-    arElem = document.getElementById("arElem");
-    //setVideoStyle(videoEl);
-    wark.loadTrackerGrayImage(imageData, refIm.width, refIm.height).then(_ => {
-        var res;
-        wark.startVideo(function (video) {
-            initStats()
-            arElem.style["transform-origin"] = "top left"; // default is center
-            arElem.style.zIndex = 200;
 
-            function update() {
-                wark.process(video)
-                drawCorners(wark.getCorners());
-                console.log(wark.getCorners());
-                arElem.style.display = "block";
-                console.log(wark.getHomography());
-                transformElem(wark.getHomography(), arElem)
-                requestAnimationFrame(update)
-            }
-            update(video);
-        })
+window.onload = function () {
+    videoEl = createVideo();
+    console.log(videoEl);
+    createVideoCanvas()
 
-        window.addEventListener('loadedvideo', function (e) {
-            var rm = document.getElementById('loading');
-            // rm.remove();
+    WebARKit.WebARKitController.init(videoEl, oWidth, oHeight, 'akaze').then(wark => {
+        console.log(wark);
+        const refIm = document.getElementById("refIm");
+        const gray = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height)
+        console.log(gray);
+        const imageData = gray.getFrame();
+        console.log(imageData);
+        createOverlayCanvas()
+        arElem = document.getElementById("arElem");
+
+        wark.loadTrackerGrayImage(imageData, refIm.width, refIm.height).then(_ => {
+            var res;
+            wark.startVideo(function (videoSource) {
+                initStats()
+                arElem.style["transform-origin"] = "top left"; // default is center
+                arElem.style.zIndex = 2;
+
+                function update() {
+                    stats.begin();
+                    wark.process(videoSource)
+                    const videoCanvasCtx = videoCanvas.getContext("2d");
+                    //console.log(994);
+                    videoCanvasCtx.drawImage(
+                        videoSource, 0, 0, oWidth, oHeight
+                    );
+                    drawCorners(wark.getCorners());
+                    console.log(wark.getCorners());
+                    arElem.style.display = "block";
+                    console.log(wark.getHomography());
+                    transformElem(wark.getHomography(), arElem);
+                    stats.end();
+                    requestAnimationFrame(update)
+                }
+                update(videoSource);
+            })
+
+            window.addEventListener('loadedvideo', function (e) {
+                var rm = document.getElementById('loading');
+                // rm.remove();
+            })
         })
     })
-})
+}
 
 function initStats() {
     stats = new Stats();
@@ -60,6 +74,15 @@ function createVideo() {
     video.setAttribute("muted", "");
     video.setAttribute("playsinline", "");
     return video;
+}
+
+function createVideoCanvas() {
+    videoCanvas = document.createElement("canvas");
+    setVideoStyle(videoCanvas);
+    videoCanvas.id = "video-canvas";
+    videoCanvas.width = oWidth;
+    videoCanvas.height = oHeight;
+    document.body.appendChild(videoCanvas);
 }
 
 function createOverlayCanvas() {

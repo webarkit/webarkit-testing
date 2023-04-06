@@ -1,7 +1,5 @@
 import WARKit from "../build/webarkit_ES6_wasm";
 import Utils from "./utils/Utils";
-import Container from "./utils/html/Container";
-import { createCanvas } from "canvas";
 import { GrayScaleMedia } from "./utils/Grayscale";
 
 export default class WebARKitController {
@@ -11,27 +9,21 @@ export default class WebARKitController {
 
   constructor(video) {
     this.id;
-    this.jpegCount = 0;
     this.videoWidth = window.innerWidth;
     this.videoHeight = window.innerHeight;
 
     this.listeners = {};
     this.params;
     this.webarkit;
-    this.config;
-    this.canvas;
-    this.canvasHeap;
-    this.root;
+
     this.video = video;
     this.grayVideo;
-    this.config;
     this.trackerType;
   }
 
-  static async init(video, videoWidth, videoHeight, config, trackerType) {
+  static async init(video, videoWidth, videoHeight, trackerType) {
     this.videoWidth = videoWidth;
     this.videoHeight = videoHeight;
-    this.config = config;
 
     // directly init with given width / height
     const webARC = new WebARKitController(video);
@@ -40,7 +32,7 @@ export default class WebARKitController {
   }
 
   async _initialize(trackerType) {
-    const root = this.root;
+    //const root = this.root;
     // Create an instance of the WebARKit Emscripten C++ code.
     this.instance = await WARKit();
 
@@ -61,24 +53,6 @@ export default class WebARKitController {
     this.version = "0.1.0";
     console.info("WebARKit ", this.version);
 
-    this.config = {
-      addPath: "",
-      cameraPara: "examples/Data/camera_para.dat",
-      loading: {
-        logo: {
-          src: "data/arNFT-logo.gif",
-          alt: "arNFT.js logo",
-        },
-        loadingMessage: "Loading, please wait...",
-      },
-    };
-
-    //Container.createLoading(this.config);
-    //Container.createStats(stats)
-    const containerObj = Container.createContainer();
-    const container = containerObj.container;
-    this.canvas = containerObj.canvas;
-    this.canvasHeap = createCanvas(this.videoWidth, this.videoHeight);
     console.log(this.videoWidth, this.videoHeight);
 
     //this.video = document.getElementById("video");
