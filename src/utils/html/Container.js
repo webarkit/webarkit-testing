@@ -13,8 +13,13 @@ export default class Container {
     video.setAttribute('autoplay', '')
     video.setAttribute('muted', '')
     video.setAttribute('playsinline', '')
-    container.appendChild(video)
-    container.appendChild(canvas)
+    video.width = width
+    video.height = height
+    video.style.position = 'absolute'
+    video.style.top = 0
+    video.style.left = 0
+    //container.appendChild(video)
+    //container.appendChild(canvas)
     //const loading = document.getElementById('loading')
     //document.body.insertBefore(container, loading)
     document.body.appendChild(video);
