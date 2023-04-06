@@ -4,25 +4,20 @@ var overlayCanvas;
 var videoCanvas;
 var arElem;
 var videoEl;
-console.log(WebARKit);
 
 window.onload = function () {
     videoEl = createVideo();
-    console.log(videoEl);
     createVideoCanvas()
 
     WebARKit.WebARKitController.init(videoEl, oWidth, oHeight, 'akaze').then(wark => {
-        console.log(wark);
         const refIm = document.getElementById("refIm");
         const gray = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height)
-        console.log(gray);
         const imageData = gray.getFrame();
-        console.log(imageData);
         createOverlayCanvas()
         arElem = document.getElementById("arElem");
 
         wark.loadTrackerGrayImage(imageData, refIm.width, refIm.height).then(_ => {
-            var res;
+            
             wark.startVideo(function (videoSource) {
                 initStats()
                 arElem.style["transform-origin"] = "top left"; // default is center
@@ -32,7 +27,6 @@ window.onload = function () {
                     stats.begin();
                     wark.process(videoSource)
                     const videoCanvasCtx = videoCanvas.getContext("2d");
-                    //console.log(994);
                     videoCanvasCtx.drawImage(
                         videoSource, 0, 0, oWidth, oHeight
                     );
