@@ -4,10 +4,13 @@ var overlayCanvas;
 var videoCanvas;
 var arElem;
 var videoEl;
+var loadingPopUp;
 
 window.onload = function () {
     videoEl = createVideo();
     createVideoCanvas()
+    loadingPopUp = document.getElementById("loading");
+    loadingPopUp.className = "show";
 
     WebARKit.WebARKitController.init(videoEl, oWidth, oHeight, 'akaze').then(wark => {
         const refIm = document.getElementById("refIm");
@@ -17,6 +20,7 @@ window.onload = function () {
         arElem = document.getElementById("arElem");
 
         wark.loadTrackerGrayImage(imageData, refIm.width, refIm.height).then(_ => {
+            loadingPopUp.className = "hide";
             
             wark.startVideo(function (videoSource) {
                 initStats()
@@ -41,10 +45,10 @@ window.onload = function () {
                 update(videoSource);
             })
 
-            window.addEventListener('loadedvideo', function (e) {
+           /* window.addEventListener('loadedvideo', function (e) {
                 var rm = document.getElementById('loading');
                 // rm.remove();
-            })
+            })*/
         })
     })
 }
