@@ -93,7 +93,7 @@ export default class WebARKitController {
       },
     };
 
-    Container.createLoading(this.config);
+    //Container.createLoading(this.config);
     //Container.createStats(stats)
     const containerObj = Container.createContainer();
     const container = containerObj.container;
