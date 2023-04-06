@@ -1,5 +1,6 @@
 import WARKit from "../build/webarkit_ES6_wasm";
 import { GrayScaleMedia } from "./utils/Grayscale";
+import packageInfo  from "../package.json"; 
 
 export default class WebARKitController {
   static GRAY;
@@ -49,13 +50,9 @@ export default class WebARKitController {
     console.log("[WebARKitController]", "WebARKit initialized");
     WebARKitController.GRAY = this.instance.ColorSpace.GRAY;
 
-    this.version = "0.1.0";
+    this.version = packageInfo.version;
     console.info("WebARKit ", this.version);
 
-    console.log(this.videoWidth, this.videoHeight);
-
-    //this.video = document.getElementById("video");
-    console.log(this.video);
     this.grayVideo = new GrayScaleMedia(
       this.video,
       this.videoWidth,
