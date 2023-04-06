@@ -1,5 +1,4 @@
 import WARKit from "../build/webarkit_ES6_wasm";
-import Utils from "./utils/Utils";
 import { GrayScaleMedia } from "./utils/Grayscale";
 
 export default class WebARKitController {
