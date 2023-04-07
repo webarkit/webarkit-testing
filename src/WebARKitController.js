@@ -1,6 +1,7 @@
 import WARKit from "../build/webarkit_ES6_wasm";
 import { GrayScaleMedia } from "./utils/Grayscale";
-import packageInfo  from "../package.json"; 
+import { WebARKitWorker } from "./WebARKitWorker";
+import packageInfo from "../package.json";
 
 export default class WebARKitController {
   static GRAY;
@@ -11,6 +12,8 @@ export default class WebARKitController {
     this.id;
     this.videoWidth = window.innerWidth;
     this.videoHeight = window.innerHeight;
+    this.imgWidth;
+    this.imgHeight;
 
     this.listeners = {};
     this.params;
@@ -31,8 +34,20 @@ export default class WebARKitController {
     return await webARC._initialize(trackerType);
   }
 
+  static async init2(video, grayImageData, videoWidth, videoHeight, imgWidth, imgHeight, trackerType) {
+    this.grayImageData = grayImageData;
+    this.videoWidth = videoWidth;
+    this.videoHeight = videoHeight;
+    this.imgWidth = imgWidth;
+    this.imgHeight = imgHeight;
+
+    // directly init with given width / height
+    const webARC = new WebARKitController(video);
+
+    return await webARC._initialize2(this.grayImageData, this.videoWidth, this.videoHeight, this.imgWidth, this.imgHeight, trackerType);
+  }
+
   async _initialize(trackerType) {
-    //const root = this.root;
     // Create an instance of the WebARKit Emscripten C++ code.
     this.instance = await WARKit();
 
@@ -58,6 +73,22 @@ export default class WebARKitController {
       this.videoWidth,
       this.videoHeight
     );
+
+    setTimeout(() => {
+      this.dispatchEvent({
+        name: "load",
+        target: this,
+      });
+    }, 1);
+    return this;
+  }
+
+  async _initialize2(grayImageData, videoWidth, videoHeight, imgWidth, imgHeight, trackerType) {
+    const worker = new WebARKitWorker(grayImageData, videoWidth, videoHeight, imgWidth, imgHeight, trackerType);
+    await worker.initialize();
+
+    this.version = packageInfo.version;
+    console.info("WebARKit ", this.version);
 
     setTimeout(() => {
       this.dispatchEvent({
