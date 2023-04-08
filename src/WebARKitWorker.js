@@ -15,7 +15,7 @@ export class WebARKitWorker {
         return await this.loadTracker()
     }
 
-    async loadTracker(){
+    async loadTracker() {
         this.worker.postMessage({
             type: "loadTracker",
             imgData: this.trackerGrayImage,
@@ -24,7 +24,11 @@ export class WebARKitWorker {
             imgWidth: this.imgWidth,
             imgHeight: this.imgHeight,
             trackerType: this.trackerType,
-          });
-          return Promise.resolve(true);
+        });
+        return Promise.resolve(true);
+    }
+
+    process(data) {
+        this.worker.postMessage({ type: "process", data });
     }
 }

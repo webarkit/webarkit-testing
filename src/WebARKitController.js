@@ -18,6 +18,7 @@ export default class WebARKitController {
     this.listeners = {};
     this.params;
     this.webarkit;
+    this.worker;
 
     this.video = video;
     this.grayVideo;
@@ -46,6 +47,8 @@ export default class WebARKitController {
 
     return await webARC._initialize2(this.grayImageData, this.videoWidth, this.videoHeight, this.imgWidth, this.imgHeight, trackerType);
   }
+
+
 
   async _initialize(trackerType) {
     // Create an instance of the WebARKit Emscripten C++ code.
@@ -87,6 +90,8 @@ export default class WebARKitController {
     const worker = new WebARKitWorker(grayImageData, videoWidth, videoHeight, imgWidth, imgHeight, trackerType);
     await worker.initialize();
 
+    this.worker = worker;
+
     this.version = packageInfo.version;
     console.info("WebARKit ", this.version);
 
@@ -121,6 +126,10 @@ export default class WebARKitController {
       .catch((err) => {
         console.warn("ERROR: " + err);
       });
+  }
+
+  process2(data) {
+    this.worker.process(data)
   }
 
   process(video) {
