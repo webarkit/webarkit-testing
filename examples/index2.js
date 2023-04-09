@@ -31,7 +31,8 @@ window.onload = function () {
                         videoSource, 0, 0, oWidth, oHeight
                     );
                     document.addEventListener("cornerEvent", function (e) {
-                        console.log(e.detail);
+                        //console.log(e.detail);
+                        drawCorners(JSON.parse(e.detail.corners));
                     });
                     requestAnimationFrame(update);
                 };
@@ -75,4 +76,27 @@ function createOverlayCanvas() {
     overlayCanvas.height = oHeight;
     overlayCanvas.style.zIndex = 1;
     document.body.appendChild(overlayCanvas);
+}
+
+function clearOverlayCtx() {
+    const overlayCtx = overlayCanvas.getContext("2d");
+    overlayCtx.clearRect(0, 0, oWidth, oHeight);
+}
+
+function drawCorners(corners) {
+    const overlayCtx = overlayCanvas.getContext("2d");
+    clearOverlayCtx();
+
+    overlayCtx.beginPath();
+    overlayCtx.strokeStyle = "blue";
+    overlayCtx.lineWidth = 3;
+
+    // [x1,y1,x2,y2,x3,y3,x4,y4]
+    overlayCtx.moveTo(corners[0], corners[1]);
+    overlayCtx.lineTo(corners[2], corners[3]);
+    overlayCtx.lineTo(corners[4], corners[5]);
+    overlayCtx.lineTo(corners[6], corners[7]);
+    overlayCtx.lineTo(corners[0], corners[1]);
+
+    overlayCtx.stroke();
 }
