@@ -9,32 +9,33 @@ window.onload = function () {
     console.log(WebARKit);
     videoEl = createVideo();
     createVideoCanvas();
+    createOverlayCanvas();
 
     const refIm = document.getElementById("refIm");
     graysScaleImage = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height);
     const grayImageData = graysScaleImage.getFrame();
 
-    //grayscaleVideo = new WebARKit.GrayScaleMedia(videoEl, oWidth, oHeight)
-    //console.log(grayscaleVideo);
-
-
-    WebARKit.WebARKitController.init2(videoEl, grayImageData, 640, 480, refIm.width, refIm.height, 'akaze').then(wark => {
+    WebARKit.WebARKitController.init2(videoEl, grayImageData, oWidth, oHeight, refIm.width, refIm.height, 'akaze').then(wark => {
         grayscaleVideo = new WebARKit.GrayScaleMedia(videoEl, oWidth, oHeight)
-        console.log(grayscaleVideo);
+
         grayscaleVideo
             .requestStream()
             .then((videoSource) => {
-                console.log(videoSource);
+
                 const update = () => {
                     var grayVideoData = grayscaleVideo.getFrame();
                     wark.process2(grayVideoData);
+                    wark.found();
                     const videoCanvasCtx = videoCanvas.getContext("2d");
                     videoCanvasCtx.drawImage(
                         videoSource, 0, 0, oWidth, oHeight
                     );
+                    document.addEventListener("cornerEvent", function (e) {
+                        console.log(e.detail);
+                    });
                     requestAnimationFrame(update);
                 };
-                update(); 
+                update();
             })
             .catch((err) => {
                 console.warn("ERROR: " + err);
@@ -64,4 +65,14 @@ function createVideoCanvas() {
     videoCanvas.width = oWidth;
     videoCanvas.height = oHeight;
     document.body.appendChild(videoCanvas);
+}
+
+function createOverlayCanvas() {
+    overlayCanvas = document.createElement("canvas");
+    setVideoStyle(overlayCanvas);
+    overlayCanvas.id = "overlay";
+    overlayCanvas.width = oWidth;
+    overlayCanvas.height = oHeight;
+    overlayCanvas.style.zIndex = 1;
+    document.body.appendChild(overlayCanvas);
 }

@@ -28,7 +28,7 @@ const load = async (msg) => {
     msg.videoHeight,
     instance.TRACKER_TYPE.TRACKER_AKAZE.value
   );
-  console.log(webarkit);
+
   console.log("[WebARKitController]", "WebARKit initialized");
 
   webarkit.initTrackerGray(msg.imgData, msg.imgWidth, msg.imgHeight);
@@ -36,9 +36,7 @@ const load = async (msg) => {
 };
 
 const processFrame = async (msg, webarkit) => {
-  console.log(msg);
-  console.log(webarkit);
   const wk = await webarkit
-  console.log(wk);
   wk.processFrame(msg.data, GRAY);
+  self.postMessage({ type: "sendData", matrix: wk.getHomography(), corners: wk.getCorners()})
 }
