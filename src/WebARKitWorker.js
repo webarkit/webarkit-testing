@@ -31,4 +31,17 @@ export class WebARKitWorker {
     process(data) {
         this.worker.postMessage({ type: "process", data });
     }
+
+    found() {
+        this.worker.onmessage = (e) => {
+            const msg = e.data;
+            switch (msg.type) {
+                case "sendData": {
+                    var cornerEvent = new CustomEvent("cornerEvent", {detail: {corners: JSON.stringify(msg.corners)}});
+                    document.dispatchEvent(cornerEvent);
+                    return msg;
+                }
+            }
+        };
+    }
 }
