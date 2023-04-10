@@ -1,47 +1,58 @@
 export class WebARKitWorker {
-    constructor(trackerGrayImage, videoWidth, videoHeight, imgWidth, imgHeight, trackerType) {
-        this.worker;
-        this.trackerGrayImage = trackerGrayImage;
-        this.videoWidth = videoWidth;
-        this.videoHeight = videoHeight;
-        this.imgWidth = imgWidth;
-        this.imgHeight = imgHeight;
-        this.trackerType = trackerType;
-    }
+  constructor(
+    trackerGrayImage,
+    videoWidth,
+    videoHeight,
+    imgWidth,
+    imgHeight,
+    trackerType
+  ) {
+    this.worker;
+    this.trackerGrayImage = trackerGrayImage;
+    this.videoWidth = videoWidth;
+    this.videoHeight = videoHeight;
+    this.imgWidth = imgWidth;
+    this.imgHeight = imgHeight;
+    this.trackerType = trackerType;
+  }
 
-    async initialize() {
-        console.log("WebARKitWorker initialized");
-        this.worker = new Worker(new URL("./Worker", import.meta.url));
-        return await this.loadTracker()
-    }
+  async initialize() {
+    console.log("WebARKitWorker initialized");
+    this.worker = new Worker(new URL("./Worker", import.meta.url));
+    return await this.loadTracker();
+  }
 
-    async loadTracker() {
-        this.worker.postMessage({
-            type: "loadTracker",
-            imgData: this.trackerGrayImage,
-            videoWidth: this.videoWidth,
-            videoHeight: this.videoHeight,
-            imgWidth: this.imgWidth,
-            imgHeight: this.imgHeight,
-            trackerType: this.trackerType,
-        });
-        return Promise.resolve(true);
-    }
+  async loadTracker() {
+    this.worker.postMessage({
+      type: "loadTracker",
+      imgData: this.trackerGrayImage,
+      videoWidth: this.videoWidth,
+      videoHeight: this.videoHeight,
+      imgWidth: this.imgWidth,
+      imgHeight: this.imgHeight,
+      trackerType: this.trackerType,
+    });
+    return Promise.resolve(true);
+  }
 
-    process(data) {
-        this.worker.postMessage({ type: "process", data });
-    }
+  process(data) {
+    this.worker.postMessage({ type: "process", data });
+  }
 
-    found() {
-        this.worker.onmessage = (e) => {
-            const msg = e.data;
-            switch (msg.type) {
-                case "sendData": {
-                    var cornerEvent = new CustomEvent("cornerEvent", {detail: {corners: JSON.stringify(msg.corners)}});
-                    document.dispatchEvent(cornerEvent);
-                    return msg;
-                }
-            }
-        };
-    }
+  found() {
+    this.worker.onmessage = (e) => {
+      const msg = e.data;
+      switch (msg.type) {
+        case "sendData": {
+          var cornerEvent = new CustomEvent("cornerEvent", {
+            detail: {
+              corners: JSON.stringify(msg.corners),
+              matrix: JSON.stringify(msg.matrix),
+            },
+          });
+          document.dispatchEvent(cornerEvent);
+        }
+      }
+    };
+  }
 }
