@@ -35,12 +35,11 @@ public:
     }
   }
 
-  void initTracker(emscripten::val data_buffer, int width, int height);
   void initTrackerGray(emscripten::val data_buffer, int width, int height);
   void processFrame(emscripten::val data_buffer, ColorSpace colorSpace);
   emscripten::val getHomography();
   emscripten::val getCorners();
-  emscripten::val getCorners2();
+  bool isValid();
 
 private:
   int videoWidth;

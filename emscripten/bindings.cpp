@@ -18,5 +18,6 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("initTrackerGray", &WebARKit::initTrackerGray)
       .function("processFrame", &WebARKit::processFrame)
       .function("getHomography", &WebARKit::getHomography)
-      .function("getCorners", &WebARKit::getCorners);
+      .function("getCorners", &WebARKit::getCorners)
+      .function("isValid", &WebARKit::isValid);
 };

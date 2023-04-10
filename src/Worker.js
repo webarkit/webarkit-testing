@@ -3,15 +3,18 @@ import WARKit from "../build/webarkit_ES6_wasm";
 var instance;
 var webarkit;
 var GRAY;
+var next = null;
+var markerResult = null;
 
 self.onmessage = function (e) {
   var msg = e.data;
   switch (msg.type) {
     case "loadTracker": {
-      webarkit = load(msg);
+      load(msg);
       return;
     }
     case "process": {
+      next = msg.data;
       processFrame(msg, webarkit);
     }
   }
@@ -32,11 +35,23 @@ const load = async (msg) => {
   console.log("[WebARKitController]", "WebARKit initialized");
 
   webarkit.initTrackerGray(msg.imgData, msg.imgWidth, msg.imgHeight);
-  return await webarkit;
 };
 
-const processFrame = async (msg, webarkit) => {
-  const wk = await webarkit
-  wk.processFrame(msg.data, GRAY);
-  self.postMessage({ type: "sendData", matrix: wk.getHomography(), corners: wk.getCorners()})
-}
+const processFrame = () => {
+  if (webarkit && webarkit.processFrame) {
+    webarkit.processFrame(next, GRAY);
+  }
+  if (webarkit.isValid() == true) {
+    markerResult = {
+      type: "sendData",
+      matrix: webarkit.getHomography(),
+      corners: webarkit.getCorners(),
+    };
+  } else {
+    markerResult = null;
+  }
+  if (markerResult) {
+    self.postMessage(markerResult);
+  }
+  next = null;
+};
