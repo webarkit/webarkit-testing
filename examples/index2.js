@@ -5,6 +5,8 @@ var videoEl;
 var arElem;
 var grayScaleVideo;
 var grayScaleImage;
+var overlayCanvas;
+var videoCanvas;
 var stats;
 var loadingPopUp;
 
@@ -17,8 +19,8 @@ window.onload = async function () {
     loadingPopUp.className = "show";
 
     const refIm = document.getElementById("refIm");
-    graysScaleImage = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height);
-    const grayImageData = graysScaleImage.getFrame();
+    grayScaleImage = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height);
+    const grayImageData = grayScaleImage.getFrame();
     arElem = document.getElementById("arElem");
     grayScaleVideo = new WebARKit.GrayScaleMedia(videoEl, oWidth, oHeight)
     var videoSource = await initVideo();

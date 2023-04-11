@@ -1,6 +1,6 @@
 import WARKit from "../build/webarkit_ES6_wasm";
 import { GrayScaleMedia } from "./utils/Grayscale";
-import { WebARKitWorker } from "./WebARKitWorker";
+//import { WebARKitWorker } from "./WebARKitWorker";
 import packageInfo from "../package.json";
 
 export default class WebARKitController {
@@ -8,10 +8,10 @@ export default class WebARKitController {
   static ORB_TRACKER;
   static AKAZE_TRACKER;
 
-  constructor(video) {
+  constructor() {
     this.id;
-    this.videoWidth = window.innerWidth;
-    this.videoHeight = window.innerHeight;
+    this.videoWidth;// = window.innerWidth;
+    this.videoHeight; // = window.innerHeight;
     this.imgWidth;
     this.imgHeight;
 
@@ -20,7 +20,7 @@ export default class WebARKitController {
     this.webarkit;
     this.worker;
 
-    this.video = video;
+    //this.video = video;
     this.grayVideo;
     this.trackerType;
   }
@@ -33,6 +33,16 @@ export default class WebARKitController {
     const webARC = new WebARKitController(video);
 
     return await webARC._initialize(trackerType);
+  }
+
+  static async init_raw(videoWidth, videoHeight, trackerType) {
+    this.videoWidth = videoWidth;
+    this.videoHeight = videoHeight;
+
+    // directly init with given width / height
+    const webARC = new WebARKitController();
+
+    return await webARC._initialize_raw( videoWidth, videoHeight, trackerType);
   }
 
   static async init2(video, grayImageData, videoWidth, videoHeight, imgWidth, imgHeight, trackerType) {
@@ -76,6 +86,40 @@ export default class WebARKitController {
       this.videoWidth,
       this.videoHeight
     );
+
+    setTimeout(() => {
+      this.dispatchEvent({
+        name: "load",
+        target: this,
+      });
+    }, 1);
+    return this;
+  }
+
+  async _initialize_raw(videoWidth, videoHeight, trackerType) {
+
+    this.videoWidth = videoWidth;
+    this.videoHeight = videoHeight;
+    // Create an instance of the WebARKit Emscripten C++ code.
+    this.instance = await WARKit();
+
+    // Set the tracker types for the WebARKitController class.
+    WebARKitController.ORB_TRACKER = this.instance.TRACKER_TYPE.TRACKER_ORB;
+    WebARKitController.AKAZE_TRACKER = this.instance.TRACKER_TYPE.TRACKER_AKAZE;
+    this.trackerType = this.setTrackerType(trackerType);
+
+    // Initialize the WebARKit class.
+    this.webarkit = new this.instance.WebARKit(
+      this.videoWidth,
+      this.videoHeight,
+      this.trackerType
+    );
+
+    console.log("[WebARKitController]", "WebARKit initialized");
+    WebARKitController.GRAY = this.instance.ColorSpace.GRAY;
+
+    this.version = packageInfo.version;
+    console.info("WebARKit ", this.version);
 
     setTimeout(() => {
       this.dispatchEvent({
@@ -136,6 +180,29 @@ export default class WebARKitController {
     this._imageToProcess(video);
   }
 
+  process_raw(imageData) {
+    let corners = [];
+    let matrix = [];
+    this.processFrame(imageData);
+
+    if(this.isValid()) {
+
+      corners = this.getCorners();
+      matrix = this.getHomography();
+
+      this.dispatchEvent({
+        name: "getMarker",
+        target: this,
+        data: {
+          index: 0,
+          type: this.trackerType,
+          corners: corners,
+          matrix: matrix
+        },
+      })
+    }
+  }
+
   found(data){
     this.worker.found(data)
   }
@@ -160,6 +227,10 @@ export default class WebARKitController {
 
   processFrame(imageData) {
     this.webarkit.processFrame(imageData, WebARKitController.GRAY);
+  }
+
+  isValid(){
+    return this.webarkit.isValid();
   }
 
   getHomography() {
