@@ -8,7 +8,7 @@ var grayScaleImage;
 var stats;
 var loadingPopUp;
 
-window.onload = function () {
+window.onload = async function () {
     console.log(WebARKit);
     videoEl = createVideo();
     createVideoCanvas();
@@ -20,49 +20,55 @@ window.onload = function () {
     graysScaleImage = new WebARKit.GrayScaleMedia(refIm, refIm.width, refIm.height);
     const grayImageData = graysScaleImage.getFrame();
     arElem = document.getElementById("arElem");
+    grayScaleVideo = new WebARKit.GrayScaleMedia(videoEl, oWidth, oHeight)
+    var videoSource = await initVideo();
 
     WebARKit.WebARKitController.init2(videoEl, grayImageData, oWidth, oHeight, refIm.width, refIm.height, 'akaze').then(wark => {
-        
-        grayscaleVideo = new WebARKit.GrayScaleMedia(videoEl, oWidth, oHeight)
 
-        grayscaleVideo
-            .requestStream()
-            .then((videoSource) => {
-                loadingPopUp.className = "hide";
+        loadingPopUp.className = "hide";
 
-                initStats();
-                
-                arElem.style["transform-origin"] = "top left"; // default is center
-                arElem.style.zIndex = 2;
+        initStats();
 
-                const update = () => {
-                    stats.begin();
-                    var grayVideoData = grayscaleVideo.getFrame();
-                    if(grayVideoData){
-                        wark.process2(grayVideoData);
-                    }
-                    arElem.style.display = "block";
-                    const videoCanvasCtx = videoCanvas.getContext("2d");
-                    videoCanvasCtx.drawImage(
-                        videoSource, 0, 0, oWidth, oHeight
-                    );
-                    stats.end();
-                    requestAnimationFrame(update);
-                };
-                update();
+        arElem.style["transform-origin"] = "top left"; // default is center
+        arElem.style.zIndex = 2;
 
-                wark.found();
+        let update = () => {
+            stats.begin();
+            var grayVideoData = grayScaleVideo.getFrame();
+            if (grayVideoData) {
+                wark.process2(grayVideoData);
+            }
+            arElem.style.display = "block";
+            const videoCanvasCtx = videoCanvas.getContext("2d");
+            videoCanvasCtx.drawImage(
+                videoSource, 0, 0, oWidth, oHeight
+            );
+            wark.found(grayVideoData);
+            stats.end();
+            requestAnimationFrame(update);
+        };
+        update();
 
-                document.addEventListener("cornerEvent", function (e) {
-                    console.log(e.detail.corners);
-                    drawCorners(JSON.parse(e.detail.corners));
-                    transformElem(JSON.parse(e.detail.matrix), arElem);
-                });
-            })
-            .catch((err) => {
-                console.warn("ERROR: " + err);
-            });
+        //wark.found(grayVideoData);
+
+        document.addEventListener("cornerEvent", function (e) {
+            console.log(e.detail.corners);
+            drawCorners(JSON.parse(e.detail.corners));
+            transformElem(JSON.parse(e.detail.matrix), arElem);
+        });
+        document.addEventListener("notFound", function (e) {
+            clearOverlayCtx();
+            arElem.style.display = "none";
+        });
     })
+}
+
+async function initVideo() {
+    return await grayScaleVideo
+        .requestStream()
+        .catch(err => {
+            console.error(err);
+        })
 }
 
 function initStats() {

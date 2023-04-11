@@ -16,14 +16,15 @@ self.onmessage = function (e) {
     case "process": {
       next = msg.data;
       processFrame(msg, webarkit);
+      return;
     }
   }
 };
 
 const load = async (msg) => {
-  console.log(msg);
+
   instance = await WARKit();
-  console.log(instance);
+
   GRAY = instance.ColorSpace.GRAY;
 
   webarkit = new instance.WebARKit(
@@ -39,16 +40,22 @@ const load = async (msg) => {
 
 const processFrame = () => {
   if (webarkit && webarkit.processFrame) {
+
     webarkit.processFrame(next, GRAY);
-  }
-  if (webarkit.isValid() == true) {
-    markerResult = {
-      type: "sendData",
-      matrix: webarkit.getHomography(),
-      corners: webarkit.getCorners(),
-    };
-  } else {
-    markerResult = null;
+
+    if (webarkit.isValid() == true) {
+      markerResult = {
+        type: "sendData",
+        matrix: webarkit.getHomography(),
+        corners: webarkit.getCorners(),
+      };
+    } else {
+      markerResult = {
+        type: "notFound",
+        matrix: null,
+        corners: null,
+      }
+    }
   }
   if (markerResult) {
     self.postMessage(markerResult);

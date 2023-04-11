@@ -136,8 +136,8 @@ export default class WebARKitController {
     this._imageToProcess(video);
   }
 
-  found(){
-    this.worker.found()
+  found(data){
+    this.worker.found(data)
   }
 
   async loadTrackerGrayImage(imgData, width, height) {
