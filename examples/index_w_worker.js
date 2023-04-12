@@ -48,6 +48,10 @@ window.onload = async function () {
   worker.onmessage = function (ev) {
     var msg = ev.data;
     switch (msg.type) {
+      case "loadedTracker": {
+        hideLoading();
+        break;
+      }
       case "found": {
         found(msg);
         break;
@@ -69,6 +73,10 @@ window.onload = async function () {
     requestAnimationFrame(update);
   };
   update();
+
+  function hideLoading() {
+    loadingPopUp.className = "hide";
+  }
 
   function found(msg) {
     if (!msg) {

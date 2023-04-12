@@ -24,6 +24,8 @@ function initTracker(msg) {
     ar = wark;
     wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight);
 
+    postMessage({ type: "loadedTracker"})
+
     wark.addEventListener("getMarker", function (event) {
       console.log(event.data.corners);
       markerResult = {
