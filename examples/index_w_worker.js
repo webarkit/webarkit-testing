@@ -19,14 +19,14 @@ window.onload = async function () {
   loadingPopUp.className = "show";
 
   const refIm = document.getElementById("refIm");
-  grayScaleImage = new WebARKit.GrayScaleMedia(
+  grayScaleImage = new GrayScale.GrayScaleMedia(
     refIm,
     refIm.width,
     refIm.height
   );
   const grayImageData = grayScaleImage.getFrame();
   arElem = document.getElementById("arElem");
-  grayScaleVideo = new WebARKit.GrayScaleMedia(videoEl, oWidth, oHeight);
+  grayScaleVideo = new GrayScale.GrayScaleMedia(videoEl, oWidth, oHeight);
   var videoSource = await initVideo();
 
   worker = new Worker("./worker.js");
