@@ -45,10 +45,7 @@ var MEM = 512 * 1024 * 1024; // 64MB
 var SOURCE_PATH = path.resolve(__dirname, '../emscripten/') + '/';
 var OUTPUT_PATH = path.resolve(__dirname, '../build/') + '/';
 
-var BUILD_DEBUG_FILE = 'webarkit.debug.js';
-var BUILD_WASM_FILE = 'webarkit_wasm.js';
 var BUILD_WASM_ES6_FILE = 'webarkit_ES6_wasm.js';
-var BUILD_MIN_FILE = 'webarkit.min.js';
 
 var MAIN_SOURCES = [
 	'WebARKitJS.cpp'
@@ -186,8 +183,6 @@ FLAGS += ' --profiling '
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
 
-var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/webarkit.api.js') +' ';
-
 FLAGS += ' --bind ';
 
 /* DEBUG FLAGS */
@@ -270,21 +265,6 @@ var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
 
 var ALL_BC = " {OUTPUT_PATH}libwebarkit.bc ";
 
-var compile_combine = format(EMCC + ' ' + INCLUDES + ' '
-    + ALL_BC + MAIN_SOURCES
-    + FLAGS + ' -s WASM=0' + ' '  + DEBUG_FLAGS + DEFINES + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
-    OUTPUT_PATH, OUTPUT_PATH, BUILD_DEBUG_FILE);
-
-var compile_combine_min = format(EMCC + ' ' + INCLUDES + ' '
-    + ALL_BC + MAIN_SOURCES
-    + FLAGS + ' -s WASM=0' + ' ' + DEFINES + PRE_FLAGS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
-    OUTPUT_PATH, OUTPUT_PATH, BUILD_MIN_FILE);
-
-var compile_wasm = format(EMCC + ' ' + INCLUDES + ' '
-    + ALL_BC + MAIN_SOURCES
-    + FLAGS + WASM_FLAGS + DEFINES + PRE_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
-    OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_FILE);
-
 var compile_wasm_es6 = format(EMCC + ' ' + INCLUDES + ' '
 		 + ALL_BC + MAIN_SOURCES
 		 + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + DEBUG_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
@@ -330,10 +310,7 @@ function addJob(job) {
 
 addJob(clean_builds);
 addJob(compile_arlib);
-//addJob(compile_combine);
-addJob(compile_wasm);
 addJob(compile_wasm_es6)
-//addJob(compile_combine_min);
 
 if (NO_LIBAR == true){
   jobs.splice(1,1);
