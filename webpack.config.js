@@ -1,32 +1,29 @@
-const path = require('path');
+const path = require("path");
 
-module.exports = {
-  entry: './src/index.js',
-  output: {
-    path: path.resolve('dist'),
-    filename: 'WebARKit.js',
-    library: 'WebARKit',
-    libraryTarget: 'umd',
-    // @see: https://github.com/webpack/webpack/issues/3929
-    libraryExport: 'default',
-    // @see: https://github.com/webpack/webpack/issues/6522
-    globalObject: 'typeof self !== \'undefined\' ? self : this',
-  },
-  module: {
+module.exports = (env, argv) => {
+  let devtool = false;
+  if (argv.mode === "development") {
+    devtool = "inline-source-map";
+  }
+  console.log(`${argv.mode} build`);
+  const module = {
     rules: [
       {
         test: /\.js?$/,
         exclude: /node_modules/,
-        use: [{
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-            plugins: [
-              // @see https://github.com/babel/babel/issues/9849
-              ['@babel/transform-runtime']
-            ]
-          }
-        }]
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: ["@babel/preset-env"],
+              plugins: [
+                // @see https://github.com/babel/babel/issues/9849
+                ["@babel/transform-runtime"],
+              ],
+            },
+          },
+         
+        ],
       },
       {
         test: /\.glsl$/i,
@@ -37,16 +34,58 @@ module.exports = {
         ],
       },
     ],
-  },
-  resolve: {
-    extensions: ['.js'],
-    modules: ['node_modules'],
-    // @see https://stackoverflow.com/questions/59487224/webpack-throws-error-with-emscripten-cant-resolve-fs
-    fallback: {
-      fs: false,
-      path: false,
-      crypto: false,
-    }
-  },
-  
+  };
+  return [
+    {
+      name: "webarkit",
+      devtool,
+      entry: "./src/index.js",
+      output: {
+        path: path.resolve('dist'),
+        filename: 'WebARKit.js',
+        library: 'WebARKit',
+        libraryTarget: 'umd',
+        // @see: https://github.com/webpack/webpack/issues/3929
+        libraryExport: 'default',
+        // @see: https://github.com/webpack/webpack/issues/6522
+        globalObject: 'typeof self !== \'undefined\' ? self : this',
+      },
+      resolve: {
+        extensions: [".js"],
+        // @see https://stackoverflow.com/questions/59487224/webpack-throws-error-with-emscripten-cant-resolve-fs
+        fallback: {
+          fs: false,
+          path: false,
+          crypto: false,
+        },
+      },
+      module,
+    },
+    {
+      name: "GrayScale",
+      devtool,
+      entry: "./src/utils/GrayScale.js",
+      output: {
+        //path: path.resolve('dist'),
+        path: path.resolve(__dirname, "dist"),
+        filename: "GrayScale.js",
+        library: "GrayScale",
+        libraryTarget: "umd",
+        // @see: https://github.com/webpack/webpack/issues/3929
+        //libraryExport: "default",
+        // @see: https://github.com/webpack/webpack/issues/6522
+        globalObject: "typeof self !== 'undefined' ? self : this",
+      },
+      resolve: {
+        extensions: [".js"],
+        // @see https://stackoverflow.com/questions/59487224/webpack-throws-error-with-emscripten-cant-resolve-fs
+        fallback: {
+          fs: false,
+          path: false,
+          crypto: false,
+        },
+      },
+      module,
+    },
+  ];
 };
