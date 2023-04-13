@@ -4,8 +4,9 @@ This is a repository testing for WebARKit. This will not became the official rep
 
 ## Features to add
 
-- [ ] Tracking inside a WebWorker to improve performances
-- [ ] Refactor the example and avoid Grayscale class to be used directly in WebARKitController
+- [x] Tracking inside a WebWorker to improve performances
+- [x] Refactor the example and avoid Grayscale class to be used directly in WebARKitController
+- [ ] Fix jittering in detection phase.
 
 ## Building
 
