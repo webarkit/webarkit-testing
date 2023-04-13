@@ -67,7 +67,6 @@ window.onload = async function () {
 
   let update = () => {
     stats.begin();
-    arElem.style.display = "block";
     const videoCanvasCtx = videoCanvas.getContext("2d");
     videoCanvasCtx.drawImage(videoSource, 0, 0, oWidth, oHeight);
     stats.end();
@@ -84,6 +83,7 @@ window.onload = async function () {
       clearOverlayCtx();
       arElem.style.display = "none";
     } else {
+      arElem.style.display = "block";
       drawCorners(JSON.parse(msg.corners));
       transformElem(JSON.parse(msg.matrix), arElem);
     }
