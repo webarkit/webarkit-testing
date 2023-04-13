@@ -35,6 +35,7 @@ window.onload = async function () {
 
   worker.postMessage({
     type: "initTracker",
+    trackerType: "akaze",
     imageData: grayImageData,
     imgWidth: refIm.width,
     imgHeight: refIm.height,

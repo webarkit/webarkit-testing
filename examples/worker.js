@@ -20,6 +20,8 @@ self.onmessage = (e) => {
 };
 
 function initTracker(msg) {
+  var trackerType = msg.trackerType;
+
   var onLoad = function (wark) {
     ar = wark;
     wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight);
@@ -40,7 +42,7 @@ function initTracker(msg) {
     console.error(error);
   };
 
-  WebARKit.WebARKitController.init_raw(msg.videoWidth, msg.videoHeight, "akaze")
+  WebARKit.WebARKitController.init_raw(msg.videoWidth, msg.videoHeight, trackerType)
     .then(onLoad)
     .catch(onError);
 }
