@@ -30,3 +30,5 @@ You are ready to modify the code and remember to re-build the project every time
 
 Go in examples folder try the example... point the pinball.jpg image and you will see some messages.
 At the moment it support Akaze or Orb, when the pinball image is detected and tracked it should display a Wikipedia web page and blue rect border around.
+
+Try the live example at https://kalwalt.github.io/webarkit-testing/
