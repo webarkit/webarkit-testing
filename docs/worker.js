@@ -1,4 +1,4 @@
-importScripts("../dist/WebARKit.js");
+importScripts("./dist/WebARKit.js");
 
 var ar;
 var next = null;
