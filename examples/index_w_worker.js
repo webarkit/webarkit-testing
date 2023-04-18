@@ -1,5 +1,5 @@
-var oWidth = window.innerWidth;
-var oHeight = window.innerHeight;
+var oWidth = 960;
+var oHeight = 720;
 
 var videoEl;
 var arElem;
@@ -89,7 +89,7 @@ window.onload = async function () {
     }
   }
 
-  function process(){
+  function process() {
     var grayVideoData = grayScaleVideo.getFrame();
     if (grayVideoData) {
       worker.postMessage({ type: "process", data: grayVideoData });
