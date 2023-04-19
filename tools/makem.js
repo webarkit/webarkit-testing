@@ -147,6 +147,7 @@ var kpm_sources = [
 });
 
 var webarkit_sources = [
+    'WebARKitOpticalTracking/WebARKitTracker.cpp',
     'WebARKitOpticalTracking/WebARKitAkazeTracker.cpp',
 	'WebARKitOpticalTracking/WebARKitOrbTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp'
@@ -156,8 +157,8 @@ var webarkit_sources = [
 
 if (HAVE_NFT) {
   ar_sources = ar_sources
-  .concat(ar2_sources)
-  .concat(kpm_sources)
+  //.concat(ar2_sources)
+  //.concat(kpm_sources)
   .concat(webarkit_sources);
 }
 
