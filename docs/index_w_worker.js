@@ -89,13 +89,13 @@ window.onload = async function () {
     }
   }
 
-  function process(){
+  function process() {
     var grayVideoData = grayScaleVideo.getFrame();
     if (grayVideoData) {
       worker.postMessage({ type: "process", data: grayVideoData });
     }
   }
-  process();
+  //process();
 };
 
 async function initVideo() {
