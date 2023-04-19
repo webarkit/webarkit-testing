@@ -27,7 +27,6 @@ void WebARKit::processFrame(emscripten::val data_buffer, ColorSpace colorSpace) 
 }
 
 emscripten::val WebARKit::getHomography() {
-  //double *output;
   std::vector<double> output;
   if (this->m_trackerType == TRACKER_TYPE::AKAZE_TRACKER) {
     output = m_akaze_tracker->getOutputData();
@@ -45,13 +44,17 @@ emscripten::val WebARKit::getHomography() {
 
 
 emscripten::val WebARKit::getCorners() {
-   emscripten::val corners = emscripten::val::array();
+   std::vector<double> output;
   if (this->m_trackerType == TRACKER_TYPE::AKAZE_TRACKER) {
-    corners = m_akaze_tracker->getCorners();
+    output = m_akaze_tracker->getOutputData();
   } else if (this->m_trackerType == TRACKER_TYPE::ORB_TRACKER) {
-    corners = m_orb_tracker->getCorners();
+    output = m_orb_tracker->getOutputData();
   } else {
     throw std::invalid_argument("Invalid tracker type");
+  }
+  emscripten::val corners = emscripten::val::array();
+  for (auto i = 9; i < 17; i++) {
+    corners.call<void>("push", output[i]);
   }
   return corners;
 }
