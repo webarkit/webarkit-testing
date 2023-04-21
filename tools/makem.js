@@ -175,11 +175,12 @@ FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 //FLAGS += ' -s DISABLE_EXCEPTION_CATCHING=0 ';
-FLAGS += ' -gsource-map -fsanitize=address '
+
+FLAGS += ' -gsource-map -fsanitize=undefined '
 FLAGS += ' -s ASSERTIONS=2 '
 FLAGS += '  -s DEMANGLE_SUPPORT=1 '; 
-//FLAGS += ' --profiling '
-// FLAGS += ' -s SAFE_HEAP=1 '
+FLAGS += ' --profiling '
+//FLAGS += ' -s SAFE_HEAP=1 '
 
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
