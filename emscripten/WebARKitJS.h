@@ -22,21 +22,21 @@ using namespace emscripten;
 class WebARKit {
 public:
   WebARKit() = default;
-  WebARKit(int videoWidth, int videoHeight, TRACKER_TYPE trackerType) {
+  WebARKit(int videoWidth, int videoHeight,  webarkit::TRACKER_TYPE trackerType) {
     this->videoWidth = videoWidth;
     this->videoHeight = videoHeight;
     this->m_trackerType = trackerType;
-    if(this->m_trackerType == TRACKER_TYPE::AKAZE_TRACKER) {
-      m_akaze_tracker = std::make_unique<WebARKitAkazeTracker>(WebARKitAkazeTracker());
-    } else if(this->m_trackerType == TRACKER_TYPE::ORB_TRACKER) {
-      m_orb_tracker = std::make_unique<WebARKitOrbTracker>(WebARKitOrbTracker());
+    if(this->m_trackerType == webarkit::TRACKER_TYPE::AKAZE_TRACKER) {
+      m_akaze_tracker = std::make_unique<webarkit::WebARKitAkazeTracker>(webarkit::WebARKitAkazeTracker());
+    } else if(this->m_trackerType == webarkit::TRACKER_TYPE::ORB_TRACKER) {
+      m_orb_tracker = std::make_unique<webarkit::WebARKitOrbTracker>(webarkit::WebARKitOrbTracker());
     } else {
       throw std::invalid_argument("Invalid tracker type");
     }
   }
 
   void initTrackerGray(emscripten::val data_buffer, int width, int height);
-  void processFrame(emscripten::val data_buffer, ColorSpace colorSpace);
+  void processFrame(emscripten::val data_buffer,  webarkit::ColorSpace colorSpace);
   emscripten::val getHomography();
   emscripten::val getCorners();
   bool isValid();
@@ -45,6 +45,6 @@ private:
   int videoWidth;
   int videoHeight;
   int m_trackerType;
-  std::unique_ptr<WebARKitAkazeTracker> m_akaze_tracker;
-  std::unique_ptr<WebARKitOrbTracker> m_orb_tracker;
+  std::unique_ptr<webarkit::WebARKitAkazeTracker> m_akaze_tracker;
+  std::unique_ptr<webarkit::WebARKitOrbTracker> m_orb_tracker;
 };
