@@ -3,18 +3,18 @@
 using namespace emscripten;
 
 EMSCRIPTEN_BINDINGS(constant_bindings) {
-  enum_<TRACKER_TYPE>("TRACKER_TYPE")
-      .value("TRACKER_AKAZE", AKAZE_TRACKER)
-      .value("TRACKER_ORB", ORB_TRACKER);
+  enum_<webarkit::TRACKER_TYPE>("TRACKER_TYPE")
+      .value("TRACKER_AKAZE", webarkit::AKAZE_TRACKER)
+      .value("TRACKER_ORB", webarkit::ORB_TRACKER);
 
-  enum_<ColorSpace>("ColorSpace")
-      .value("RGBA", RGBA)
-      .value("RGB", RGB)
-      .value("GRAY", GRAY);
+  enum_<webarkit::ColorSpace>("ColorSpace")
+      .value("RGBA", webarkit::RGBA)
+      .value("RGB", webarkit::RGB)
+      .value("GRAY", webarkit::GRAY);
 
   class_<WebARKit>("WebARKit")
       .constructor<>()
-      .constructor<int, int, TRACKER_TYPE>()
+      .constructor<int, int, webarkit::TRACKER_TYPE>()
       .function("initTrackerGray", &WebARKit::initTrackerGray)
       .function("processFrame", &WebARKit::processFrame)
       .function("getHomography", &WebARKit::getHomography)

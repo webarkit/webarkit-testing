@@ -2,6 +2,7 @@
  * Simple script for running emcc on ARToolKit
  * @author zz85 github.com/zz85
  * @author ThorstenBux github.com/ThorstenBux
+ * @author kalwalt github.com/kalwalt
  */
 
 
@@ -122,30 +123,6 @@ var ar2_sources = [
 	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/AR2/', src);
 });
 
-var kpm_sources = [
-	'kpmHandle.cpp',
-	'kpmRefDataSet.cpp',
-	'kpmMatching.cpp',
-	'kpmResult.cpp',
-	'kpmUtil.cpp',
-	'kpmFopen.c',
-	'FreakMatcher/detectors/DoG_scale_invariant_detector.cpp',
-	'FreakMatcher/detectors/gaussian_scale_space_pyramid.cpp',
-	'FreakMatcher/detectors/gradients.cpp',
-	'FreakMatcher/detectors/harris.cpp',
-	'FreakMatcher/detectors/orientation_assignment.cpp',
-	'FreakMatcher/detectors/pyramid.cpp',
-	'FreakMatcher/facade/visual_database_facade.cpp',
-	'FreakMatcher/matchers/hough_similarity_voting.cpp',
-	'FreakMatcher/matchers/freak.cpp',
-	'FreakMatcher/framework/date_time.cpp',
-	'FreakMatcher/framework/image.cpp',
-	'FreakMatcher/framework/logger.cpp',
-	'FreakMatcher/framework/timers.cpp',
-].map(function(src) {
-	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/KPM/', src);
-});
-
 var webarkit_sources = [
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
     'WebARKitOpticalTracking/WebARKitAkazeTracker.cpp',
@@ -157,8 +134,6 @@ var webarkit_sources = [
 
 if (HAVE_NFT) {
   ar_sources = ar_sources
-  //.concat(ar2_sources)
-  //.concat(kpm_sources)
   .concat(webarkit_sources);
 }
 
@@ -174,12 +149,13 @@ FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
-FLAGS += ' -s DISABLE_EXCEPTION_CATCHING=0 ';
-//FLAGS += ' -gsource-map -fsanitize=address '
-//FLAGS += ' -s ASSERTIONS=2 '
-//FLAGS += '  -s DEMANGLE_SUPPORT=1 '; 
+//FLAGS += ' -s DISABLE_EXCEPTION_CATCHING=0 ';
+
+FLAGS += ' -gsource-map -fsanitize=undefined '
+FLAGS += ' -s ASSERTIONS=2 '
+FLAGS += '  -s DEMANGLE_SUPPORT=1 '; 
 FLAGS += ' --profiling '
-// FLAGS += ' -s SAFE_HEAP=1 '
+//FLAGS += ' -s SAFE_HEAP=1 '
 
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
@@ -196,19 +172,15 @@ DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
 var INCLUDES = [
     path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
     path.resolve(__dirname, "../opencv/include"),
+    path.resolve(__dirname, "../opencv_js"),
     path.resolve(__dirname, "../opencv/modules/calib3d/include"),
     path.resolve(__dirname, "../opencv/modules/core/include"),
-    path.resolve(__dirname, "../opencv/modules/dnn/include"),
     path.resolve(__dirname, "../opencv/modules/features2d/include"),
     path.resolve(__dirname, "../opencv/modules/flann/include"),
     path.resolve(__dirname, "../opencv/modules/imgproc/include"),
-    path.resolve(__dirname, "../opencv/modules/objdetect/include"),
-    path.resolve(__dirname, "../opencv/modules/photo/include"),
     path.resolve(__dirname, "../opencv/modules/video/include"),
-    path.resolve(__dirname, "../opencv/build_wasm"),
     OUTPUT_PATH,
     SOURCE_PATH,
-    path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/FreakMatcher"),
 ]
     .map(function (s) {
         return "-I" + s;
@@ -216,15 +188,12 @@ var INCLUDES = [
     .join(" ");
 
 var OPENCV_LIBS = [
-	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_calib3d.a'),
-	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_core.a'),
-	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_dnn.a'),
-	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_features2d.a'),
-	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_flann.a'),
-	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_imgproc.a'),
-	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_objdetect.a'),
-	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_photo.a'),
-	path.resolve(__dirname, '../opencv/build_wasm/lib/libopencv_video.a'),
+	path.resolve(__dirname, '../opencv_js/lib/libopencv_calib3d.a'),
+	path.resolve(__dirname, '../opencv_js/lib/libopencv_core.a'),
+	path.resolve(__dirname, '../opencv_js/lib/libopencv_features2d.a'),
+	path.resolve(__dirname, '../opencv_js/lib/libopencv_flann.a'),
+	path.resolve(__dirname, '../opencv_js/lib/libopencv_imgproc.a'),
+	path.resolve(__dirname, '../opencv_js/lib/libopencv_video.a'),
 ].map(function(s) { return ' ' + s }).join(' ');
 
 function format(str) {
