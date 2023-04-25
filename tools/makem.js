@@ -129,7 +129,7 @@ var webarkit_sources = [
 	'WebARKitOpticalTracking/WebARKitOrbTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp'
 ].map(function(src) {
-	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/WebARKitTrackers/', src);
+	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/WebARKit/WebARKitTrackers/', src);
 });
 
 if (HAVE_NFT) {
@@ -171,6 +171,7 @@ DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
 
 var INCLUDES = [
     path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
+    path.resolve(__dirname, WEBARKITLIB_ROOT + "/WebARKit/WebARKitTrackers/WebARKitOpticalTracking/include"),
     path.resolve(__dirname, "../opencv/include"),
     path.resolve(__dirname, "../opencv_js"),
     path.resolve(__dirname, "../opencv/modules/calib3d/include"),

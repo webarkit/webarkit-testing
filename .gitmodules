@@ -1,6 +1,6 @@
 [submodule "emscripten/WebARKitLib"]
 	path = emscripten/WebARKitLib
-	url = https://github.com/kalwalt/WebARKitLib.git
+	url = https://github.com/webarkit/WebARKitLib.git
 [submodule "opencv"]
 	path = opencv
 	url = https://github.com/webarkit/opencv.git
