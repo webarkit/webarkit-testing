@@ -1,6 +1,6 @@
 # webarkit-testing
 
-This is a repository testing for [**WebARKit**](https://github.com/webarkit). This will not became the official repository, it's only a test.
+This is a repository testing for [**WebARKit**](https://github.com/webarkit). This will not became the official repository, it's only a testing repository to test the code and the features of WebARKit. When it will be ready and mature, the code wiil be hosted in a new repository.
 
 ## Features to add / issues to solve
 
@@ -8,7 +8,7 @@ This is a repository testing for [**WebARKit**](https://github.com/webarkit). Th
 - [x] Refactor the example and avoid Grayscale class to be used directly in WebARKitController
 - [x] Fix jittering in detection phase.
 - [ ] Solve issue: Uncaught exception in processFrame https://github.com/kalwalt/webarkit-testing/issues/11.
-- [ ] Reduce code size of the final bundled library file.
+- [x] Reduce code size of the final bundled library file.
 - [ ] Improve stability and tracker detection.
 
 ## Building
@@ -19,15 +19,15 @@ You need emscripten `3.1.26` because openCV may be built with this version.
 
 ### Instructions
 
-Before all, you need to clone this repository with the WebARKitLib submodule:
+Before all, you need to clone this repository with the WebARKitLib and opencv submodules:
 
 ```
 git clone --recursive https://github.com/kalwalt/webarkit-testing.git
 ```
 
-then if you plan to modify the C++ source code run `./build.sh` , the script will download the opencv pre-built.
+then if you plan to modify the C++ source code, you need to build opencv, run `./build_cv_w_docker.sh`, the script will build OpenCV with docker.
 
-You are ready to modify the code and remember to re-build the project every time with: `npm run build` and  re-build js code with `npm run dev-es6`
+You are ready to modify the code and remember to re-build the project every time with: `npm run build` and  re-build js code with `npm run build-es6` if you want a dev build use  `npm run dev-es6`.
 
 ## Examples
 

@@ -1,5 +1,7 @@
 # webarkit-testing
 
-Try our simple example running in a WebWorker:
+Try our simple examples running in a WebWorker:
 
-[example_w_worker](./example_w_worker.html)
+[akaze_example](./akaze_example.html)
+
+[orb_example](./orb_example.html)

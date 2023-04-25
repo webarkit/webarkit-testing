@@ -5,6 +5,7 @@ var videoEl;
 var arElem;
 var grayScaleVideo;
 var grayScaleImage;
+var grayVideoData
 var overlayCanvas;
 var videoCanvas;
 var stats;
@@ -35,7 +36,7 @@ window.onload = async function () {
 
   worker.postMessage({
     type: "initTracker",
-    trackerType: "akaze",
+    trackerType: "orb",
     imageData: grayImageData,
     imgWidth: refIm.width,
     imgHeight: refIm.height,
@@ -51,22 +52,26 @@ window.onload = async function () {
     switch (msg.type) {
       case "loadedTracker": {
         hideLoading();
+        process();
         break;
       }
       case "found": {
         found(msg);
+        process();
         break;
       }
       case "not found": {
         found(null);
+        process();
         break;
       }
     }
-    process();
+    //process();
   };
 
   let update = () => {
     stats.begin();
+    grayVideoData = grayScaleVideo.getFrame();
     const videoCanvasCtx = videoCanvas.getContext("2d");
     videoCanvasCtx.drawImage(videoSource, 0, 0, oWidth, oHeight);
     stats.end();
@@ -90,12 +95,11 @@ window.onload = async function () {
   }
 
   function process() {
-    var grayVideoData = grayScaleVideo.getFrame();
     if (grayVideoData) {
       worker.postMessage({ type: "process", data: grayVideoData });
     }
   }
-  //process();
+  update();
 };
 
 async function initVideo() {
