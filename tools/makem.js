@@ -18,6 +18,8 @@ const platform = os.platform();
 var NO_LIBAR = false;
 var WITH_FILTERING = 1;
 
+var DEBUG = true;
+
 var arguments = process.argv;
 
 for (var j = 2; j < arguments.length; j++) {
@@ -39,7 +41,14 @@ if (!EMSCRIPTEN_ROOT) {
 
 var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'emcc') : 'emcc';
 var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'em++') : 'em++';
-var OPTIMIZE_FLAGS = ' -O1 '; // -Oz for smallest size
+
+var OPTIMIZE_FLAGS;
+if (DEBUG) {
+    OPTIMIZE_FLAGS = ' -O1 ';
+} else {
+    OPTIMIZE_FLAGS = ' -Oz '; // -Oz for smallest size
+}
+
 var MEM = 128 * 1024 * 1024; // 64MB
 
 
@@ -65,9 +74,7 @@ MAIN_SOURCES = MAIN_SOURCES.map(function(src) {
   return path.resolve(SOURCE_PATH, src);
 }).join(' ');
 
-let srcTest = path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/');
-
-let arSources, ar_sources;
+let  ar_sources;
 
 if (platform === 'win32') {
 	var glob = require("glob");
@@ -149,13 +156,7 @@ FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
-//FLAGS += ' -s DISABLE_EXCEPTION_CATCHING=0 ';
-
-FLAGS += ' -gsource-map -fsanitize=undefined '
-FLAGS += ' -s ASSERTIONS=2 '
-FLAGS += '  -s DEMANGLE_SUPPORT=1 '; 
 FLAGS += ' --profiling '
-//FLAGS += ' -s SAFE_HEAP=1 '
 
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
@@ -163,11 +164,14 @@ var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
 FLAGS += ' --bind ';
 
 /* DEBUG FLAGS */
-var DEBUG_FLAGS = ' -g2 ';
-DEBUG_FLAGS += ' -s ASSERTIONS=1 '
+var DEBUG_FLAGS = ' ';
+
+if (DEBUG) {
+DEBUG_FLAGS += ' -gsource-map -fsanitize=undefined ';
+DEBUG_FLAGS += ' -s ASSERTIONS=2 '
 DEBUG_FLAGS += ' --profiling '
-DEBUG_FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
+}
 
 var INCLUDES = [
     path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
@@ -231,7 +235,7 @@ function clean_builds() {
 var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
     + ar_sources.join(' ')
 	//+ webarkit_sources.join(' ')
-    + FLAGS + ' ' + DEFINES + ' -r -o {OUTPUT_PATH}libwebarkit.bc ',
+    + FLAGS + ' ' + DEBUG_FLAGS + ' ' +  DEFINES + ' -r -o {OUTPUT_PATH}libwebarkit.bc ',
     OUTPUT_PATH);
 
 var ALL_BC = " {OUTPUT_PATH}libwebarkit.bc ";

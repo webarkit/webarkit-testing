@@ -1,7 +1,7 @@
 #include "WebARKitJS.h"
 
 void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int height) {
-  std::vector<uint8_t> u8 =
+  auto u8 =
       emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
   if (this->m_trackerType == webarkit::TRACKER_TYPE::AKAZE_TRACKER) {
     m_akaze_tracker->initialize_gray_raw(u8.data(), width, height);
@@ -13,7 +13,7 @@ void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int heigh
 }
 
 void WebARKit::processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace) {
-  std::vector<uint8_t> u8 =
+  auto u8 =
       emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
   if (this->m_trackerType == webarkit::TRACKER_TYPE::AKAZE_TRACKER) {
     m_akaze_tracker->processFrameData(u8.data(), this->videoWidth,
@@ -60,7 +60,7 @@ emscripten::val WebARKit::getCorners() {
 }
 
 bool WebARKit::isValid() {
-  bool valid = false;
+  auto valid = false;
   if (this->m_trackerType == webarkit::TRACKER_TYPE::AKAZE_TRACKER) {
     valid = m_akaze_tracker->isValid();
   } else if (this->m_trackerType == webarkit::TRACKER_TYPE::ORB_TRACKER) {
