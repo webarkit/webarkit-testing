@@ -39,6 +39,7 @@
     "dev-es6": "rimraf ./dist && webpack --mode development --progress --watch",
     "build-es6": "rimraf ./dist && webpack --mode production",
     "build": "node tools/makem.js; echo Built at `date`",
+    "build-debug": "node tools/makem.js --debug; echo Built at `date`",
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
     "build-all-dev": "node tools/makem.js --no-libar; echo Built at `date` && webpack --mode development --progress --watch",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/"

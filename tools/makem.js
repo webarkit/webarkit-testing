@@ -18,7 +18,7 @@ const platform = os.platform();
 var NO_LIBAR = false;
 var WITH_FILTERING = 1;
 
-var DEBUG = true;
+var DEBUG = false;
 
 var arguments = process.argv;
 
@@ -27,6 +27,10 @@ for (var j = 2; j < arguments.length; j++) {
 		NO_LIBAR = true;
 		console.log('Building webarkit with --no-libar option, libwebarkit will be preserved.');
 	};
+    if (arguments[j] == '--debug') {
+        console.log('Building webarkit with --debug option.');
+        DEBUG = true;
+    }
 }
 
 var HAVE_NFT = 1;
