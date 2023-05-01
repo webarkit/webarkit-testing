@@ -2,8 +2,9 @@
 #include <AR2/config.h>
 #include <AR2/imageFormat.h>
 #include <AR2/util.h>
-#include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitAkazeTracker.h>
-#include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitOrbTracker.h>
+/*#include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitAkazeTracker.h>
+#include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitOrbTracker.h>*/
+#include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitTracker.h>
 #include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitEnums.h>
 #include <emscripten.h>
 #include <emscripten/val.h>
@@ -26,17 +27,16 @@ public:
     this->videoWidth = videoWidth;
     this->videoHeight = videoHeight;
     this->m_trackerType = trackerType;
-    if(this->m_trackerType == webarkit::TRACKER_TYPE::AKAZE_TRACKER) {
-      m_akaze_tracker = std::make_unique<webarkit::WebARKitAkazeTracker>(webarkit::WebARKitAkazeTracker());
-    } else if(this->m_trackerType == webarkit::TRACKER_TYPE::ORB_TRACKER) {
-      m_orb_tracker = std::make_unique<webarkit::WebARKitOrbTracker>(webarkit::WebARKitOrbTracker());
+     m_tracker = std::make_unique<webarkit::WebARKitTracker>(webarkit::WebARKitTracker());
+    if(this->m_trackerType == webarkit::TRACKER_TYPE::AKAZE_TRACKER || webarkit::TRACKER_TYPE::ORB_TRACKER) {
+      m_tracker->initialize(trackerType);
     } else {
       throw std::invalid_argument("Invalid tracker type");
     }
   }
 
   void initTrackerGray(emscripten::val data_buffer, int width, int height);
-  void processFrame(emscripten::val data_buffer,  webarkit::ColorSpace colorSpace);
+  void processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace);
   emscripten::val getHomography();
   emscripten::val getCorners();
   bool isValid();
@@ -45,6 +45,5 @@ private:
   int videoWidth;
   int videoHeight;
   int m_trackerType;
-  std::unique_ptr<webarkit::WebARKitAkazeTracker> m_akaze_tracker;
-  std::unique_ptr<webarkit::WebARKitOrbTracker> m_orb_tracker;
+  std::unique_ptr<webarkit::WebARKitTracker> m_tracker;
 };
