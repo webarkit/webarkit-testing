@@ -28,6 +28,7 @@ git clone --recursive https://github.com/kalwalt/webarkit-testing.git
 then if you plan to modify the C++ source code, you need to build opencv, run `./build_cv_w_docker.sh`, the script will build OpenCV with docker.
 
 You are ready to modify the code and remember to re-build the project every time with: `npm run build` and  re-build js code with `npm run build-es6` if you want a dev build use  `npm run dev-es6`.
+It is possible to build a debug version of the library with `npm run build-debug` and then run `npm run dev-es6` to update the dist library.
 
 ## Examples
 
