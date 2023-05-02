@@ -7,7 +7,7 @@ This is a repository testing for [**WebARKit**](https://github.com/webarkit). Th
 - [x] Tracking inside a WebWorker to improve performances
 - [x] Refactor the example and avoid Grayscale class to be used directly in WebARKitController
 - [x] Fix jittering in detection phase.
-- [ ] Solve issue: Uncaught exception in processFrame https://github.com/kalwalt/webarkit-testing/issues/11.
+- [x] Solve issue: Uncaught exception in processFrame https://github.com/kalwalt/webarkit-testing/issues/11.
 - [x] Reduce code size of the final bundled library file.
 - [ ] Improve stability and tracker detection.
 
