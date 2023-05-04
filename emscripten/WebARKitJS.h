@@ -27,7 +27,7 @@ public:
     this->videoWidth = videoWidth;
     this->videoHeight = videoHeight;
     this->m_trackerType = trackerType;
-     m_tracker = std::make_unique<webarkit::WebARKitTracker>(webarkit::WebARKitTracker());
+     m_tracker = std::make_shared<webarkit::WebARKitTracker>(webarkit::WebARKitTracker());
     if(this->m_trackerType == webarkit::TRACKER_TYPE::AKAZE_TRACKER || webarkit::TRACKER_TYPE::ORB_TRACKER) {
       m_tracker->initialize(trackerType);
     } else {
@@ -45,5 +45,5 @@ private:
   int videoWidth;
   int videoHeight;
   int m_trackerType;
-  std::unique_ptr<webarkit::WebARKitTracker> m_tracker;
+  std::shared_ptr<webarkit::WebARKitTracker> m_tracker;
 };
