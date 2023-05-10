@@ -136,7 +136,9 @@ var ar2_sources = [
 
 var webarkit_sources = [
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
-    'WebARKitOpticalTracking/WebARKitConfig.cpp'
+    'WebARKitOpticalTracking/WebARKitConfig.cpp',
+    'WebARKitOpticalTracking/WebARKitFeatureDetector.cpp',
+    'WebARKitOpticalTracking/HarrisDetector.cpp'
 ].map(function(src) {
 	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/WebARKit/WebARKitTrackers/', src);
 });
