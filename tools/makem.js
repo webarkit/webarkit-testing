@@ -139,6 +139,7 @@ var webarkit_sources = [
     'WebARKitOpticalTracking/WebARKitConfig.cpp',
     'WebARKitOpticalTracking/WebARKitFeatureDetector.cpp',
     'WebARKitOpticalTracking/HarrisDetector.cpp',
+    'WebARKitOpticalTracking/HomographyInfo.cpp',
     'WebARKitOpticalTracking/TrackedPoint.cpp',
     'WebARKitOpticalTracking/TrackingPointSelector.cpp',
 ].map(function(src) {
