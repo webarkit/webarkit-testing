@@ -142,6 +142,9 @@ export default class WebARKitController {
     let matrix = [];
     this.processFrame_w(imageData);
 
+    let pose = this.updatePose(1);
+    console.log(pose);
+
     if (this.isValid()) {
 
       corners = this.getCorners();
@@ -159,7 +162,7 @@ export default class WebARKitController {
       })
     }
   }
-  
+
   async loadCamera(camearParam) {
     var filename = "/load_calib_" + WebARKitController.file_count++ + ".dat";
     const response = await fetch(camearParam);
@@ -187,6 +190,10 @@ export default class WebARKitController {
 
   processFrame_w(imageData) {
     this.webarkit.processFrame_w(imageData);
+  }
+
+  updatePose(id) {
+    return this.webarkit.updatePose(id);
   }
 
   isValid() {

@@ -47,6 +47,10 @@ class WebARKit {
 
     bool IsTrackableVisible(int trackableId);
 
+    emscripten::val updatePose(int trackableId);
+
+    bool updateWithTwoDResults(float trackingTrans[3][4]);
+
     void initTrackerGray(emscripten::val data_buffer, int width, int height);
     void processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace);
     void processFrame_w(emscripten::val data_buffer);
@@ -55,6 +59,7 @@ class WebARKit {
     bool isValid();
 
   private:
+    ARdouble trans[3][4]; 
     int videoWidth;
     int videoHeight;
     int m_trackerType;

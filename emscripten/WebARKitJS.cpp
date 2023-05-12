@@ -1,5 +1,24 @@
 #include "WebARKitJS.h"
 
+bool WebARKit::updateWithTwoDResults(float trackingTrans[3][4]) {
+
+    bool visible = false;
+    float m_twoDScale = 1.0f;
+
+    if (trackingTrans) {
+        visible = true;
+        for (int j = 0; j < 3; j++) {
+            trans[j][0] = (ARdouble)trackingTrans[j][0];
+            trans[j][1] = -(ARdouble)trackingTrans[j][1];
+            trans[j][2] = -(ARdouble)trackingTrans[j][2];
+            trans[j][3] = (ARdouble)(trackingTrans[j][3] * m_twoDScale * 0.001f * 1.64f);
+        }
+    } else
+        visible = false;
+
+    return visible;
+}
+
 void WebARKit::initialize_w(int videoWidth, int videoHeight, webarkit::TRACKER_TYPE trackerType) {
     this->videoWidth = videoWidth;
     this->videoHeight = videoHeight;
@@ -22,12 +41,27 @@ void WebARKit::addMarker(emscripten::val data_buffer, std::string filename, int 
     m_tracker->AddMarker(u8.data(), filename, width, height, markerID, scale);
 }
 
-bool WebARKit::GetTrackablePose(int trackableId, float transMat[3][4]){
+bool WebARKit::GetTrackablePose(int trackableId, float transMat[3][4]) {
     return m_tracker->GetTrackablePose(trackableId, transMat);
 };
 
-bool WebARKit::IsTrackableVisible(int trackableId) {
-    return m_tracker->IsTrackableVisible(trackableId);
+bool WebARKit::IsTrackableVisible(int trackableId) { return m_tracker->IsTrackableVisible(trackableId); }
+
+emscripten::val WebARKit::updatePose(int trackableId) {
+
+    if (IsTrackableVisible(trackableId)) {
+        std::cout << "Trackable is visible" << std::endl;
+        float transMat[3][4];
+        if (GetTrackablePose(trackableId, transMat)) {
+            bool success = updateWithTwoDResults(transMat);
+        } else {
+            updateWithTwoDResults(NULL);
+        }
+    } else {
+        updateWithTwoDResults(NULL);
+    }
+
+    return emscripten::val(emscripten::typed_memory_view(3 * 4, (ARdouble*)trans));
 }
 
 void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int height) {

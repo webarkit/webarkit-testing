@@ -43,6 +43,7 @@
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
     "build-all-dev": "node tools/makem.js --no-libar; echo Built at `date` && webpack --mode development --progress --watch",
     "build-docker": "docker exec emscripten-webarkit npm run build",
+    "build-docker-no-libar": "docker exec emscripten-webarkit npm run build-no-libar",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/"
   },
   "license": "LGPL-3.0",

@@ -20,6 +20,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("addMarker", &WebARKit::addMarker)
       .function("GetTrackablePose", &WebARKit::GetTrackablePose, allow_raw_pointers())
       .function("IsTrackableVisible", &WebARKit::IsTrackableVisible)
+      .function("updatePose", &WebARKit::updatePose)
       .function("initTrackerGray", &WebARKit::initTrackerGray)
       .function("processFrame", &WebARKit::processFrame)
       .function("processFrame_w", &WebARKit::processFrame_w)
