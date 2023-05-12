@@ -143,7 +143,7 @@ export default class WebARKitController {
     this.processFrame_w(imageData);
 
     let pose = this.updatePose(1);
-    console.log(pose);
+    //console.log(pose);
 
     if (this.isValid()) {
 
