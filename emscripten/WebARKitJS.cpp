@@ -31,8 +31,8 @@ void WebARKit::initialize_w(int videoWidth, int videoHeight, webarkit::TRACKER_T
     }
 }
 
-void WebARKit::loadARParam(std::string paramName, webarkit::TRACKER_TYPE trackerType) {
-    m_tracker->loadARParam(paramName, trackerType);
+void WebARKit::loadARParam(std::string paramName, webarkit::TRACKER_TYPE trackerType, size_t xsize, size_t ysize) {
+    m_tracker->loadARParam(paramName, trackerType, xsize, ysize);
 }
 
 void WebARKit::addMarker(emscripten::val data_buffer, std::string filename, int width, int height, int markerID,

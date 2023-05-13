@@ -39,7 +39,7 @@ class WebARKit {
 
     void initialize_w(int videoWidth, int videoHeight, webarkit::TRACKER_TYPE trackerType);
 
-    void loadARParam(std::string paramName, webarkit::TRACKER_TYPE trackerType);
+    void loadARParam(std::string paramName, webarkit::TRACKER_TYPE trackerType, size_t xsize, size_t ysize);
 
     void addMarker(emscripten::val data_buffer, std::string filename, int width, int height, int markerID, float scale);
 

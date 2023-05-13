@@ -142,8 +142,8 @@ export default class WebARKitController {
     let matrix = [];
     this.processFrame_w(imageData);
 
-    let pose = this.updatePose(1);
-    //console.log(pose);
+    let pose = this.updatePose(0);
+    console.log(pose);
 
     if (this.isValid()) {
 
@@ -173,7 +173,7 @@ export default class WebARKitController {
     const buffer = new Uint8Array(data);
     this.instance.FS.writeFile(filename, buffer, { encoding: "binary" });
     console.info('loaded camera');
-    return this.webarkit.loadARParam(filename, this.trackerType)
+    return this.webarkit.loadARParam(filename, this.trackerType, this.videoWidth, this.videoHeight)
   }
 
   async loadTrackerGrayImage(imgData, width, height) {
