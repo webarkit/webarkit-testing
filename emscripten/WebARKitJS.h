@@ -47,6 +47,8 @@ class WebARKit {
 
     bool IsTrackableVisible(int trackableId);
 
+    emscripten::val getPoseMatrix(int trackableId);
+
     emscripten::val updatePose(int trackableId);
 
     bool updateWithTwoDResults(float trackingTrans[3][4]);

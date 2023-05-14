@@ -19,6 +19,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("loadARParam", &WebARKit::loadARParam)
       .function("addMarker", &WebARKit::addMarker)
       .function("GetTrackablePose", &WebARKit::GetTrackablePose, allow_raw_pointers())
+      .function("getPoseMatrix", &WebARKit::getPoseMatrix)
       .function("IsTrackableVisible", &WebARKit::IsTrackableVisible)
       .function("updatePose", &WebARKit::updatePose)
       .function("initTrackerGray", &WebARKit::initTrackerGray)

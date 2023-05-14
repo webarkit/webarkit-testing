@@ -47,6 +47,17 @@ bool WebARKit::GetTrackablePose(int trackableId, float transMat[3][4]) {
 
 bool WebARKit::IsTrackableVisible(int trackableId) { return m_tracker->IsTrackableVisible(trackableId); }
 
+emscripten::val WebARKit::getPoseMatrix(int trackableId) {
+    emscripten::val res = emscripten::val::array();
+    if (IsTrackableVisible(trackableId)) {
+        float* ptr = m_tracker->GetTrackablePosePtr(trackableId);
+        for (auto i = 0; i < 9; i++) {
+            res.call<void>("push", ptr[i]);
+        }
+    }
+    return res;
+}
+
 emscripten::val WebARKit::updatePose(int trackableId) {
 
     if (IsTrackableVisible(trackableId)) {

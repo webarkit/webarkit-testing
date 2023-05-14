@@ -6,6 +6,7 @@ export default class WebARKitController {
   static ORB_TRACKER;
   static AKAZE_TRACKER;
   static file_count = 0;
+  static markerId = 0;
 
   constructor() {
     this.id;
@@ -142,8 +143,23 @@ export default class WebARKitController {
     let matrix = [];
     this.processFrame_w(imageData);
 
-    let pose = this.updatePose(0);
-    console.log(pose);
+    if (this.isTrackableVisible()) {
+      let pose = this.updatePose();
+      let poseM = this.getPoseMatrix();
+      console.log(pose);
+      console.log(poseM);
+      this.dispatchEvent({
+        name: "getMarker",
+        target: this,
+        data: {
+          index: this.id,
+          type: this.trackerType,
+          corners: [],
+          matrix: pose
+        },
+      })
+
+    }
 
     if (this.isValid()) {
 
@@ -181,7 +197,8 @@ export default class WebARKitController {
   }
 
   async addMarkerGrayImage(imgData, width, height) {
-    return this.webarkit.addMarker(imgData, 'test', width, height, 0, 0.5);
+    this.id = WebARKitController.markerId++;
+    return this.webarkit.addMarker(imgData, 'test', width, height, this.id, 0.5);
   }
 
   processFrame(imageData) {
@@ -192,12 +209,20 @@ export default class WebARKitController {
     this.webarkit.processFrame_w(imageData);
   }
 
-  updatePose(id) {
-    return this.webarkit.updatePose(id);
+  updatePose() {
+    return this.webarkit.updatePose(this.id);
+  }
+
+  getPoseMatrix() {
+    return this.webarkit.getPoseMatrix(this.id);
   }
 
   isValid() {
     return this.webarkit.isValid();
+  }
+
+  isTrackableVisible() {
+    return this.webarkit.IsTrackableVisible(this.id);
   }
 
   getHomography() {
