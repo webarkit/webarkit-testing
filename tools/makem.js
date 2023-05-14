@@ -135,10 +135,9 @@ var ar2_sources = [
 });
 
 var webarkit_sources = [
+    '../WebARKitLog.cpp',
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
-    'WebARKitOpticalTracking/WebARKitConfig.cpp',
-    'WebARKitOpticalTracking/WebARKitFeatureDetector.cpp',
-    'WebARKitOpticalTracking/HarrisDetector.cpp'
+    'WebARKitOpticalTracking/WebARKitConfig.cpp'
 ].map(function(src) {
 	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/WebARKit/WebARKitTrackers/', src);
 });
@@ -179,6 +178,7 @@ DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
 
 var INCLUDES = [
     path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
+    path.resolve(__dirname, WEBARKITLIB_ROOT + "/WebARKit/include"),
     path.resolve(__dirname, WEBARKITLIB_ROOT + "/WebARKit/WebARKitTrackers/WebARKitOpticalTracking/include"),
     path.resolve(__dirname, "../opencv/include"),
     path.resolve(__dirname, "../opencv_js"),
