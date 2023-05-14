@@ -5,6 +5,8 @@ export default class WebARKitController {
   static GRAY;
   static ORB_TRACKER;
   static AKAZE_TRACKER;
+  static file_count = 0;
+  static markerId = 0;
 
   constructor() {
     this.id;
@@ -24,7 +26,13 @@ export default class WebARKitController {
     // directly init with given width / height
     const webARC = new WebARKitController();
 
-    return await webARC._initialize_raw( videoWidth, videoHeight, trackerType);
+    return await webARC._initialize_raw(videoWidth, videoHeight, trackerType);
+  }
+
+  static async init_w(videoWidth, videoHeight, trackerType) {
+    const webARC = new WebARKitController();
+    //await webARC._initialize_w( videoWidth, videoHeight, trackerType);
+    return await webARC._initialize_w(videoWidth, videoHeight, trackerType);
   }
 
   async _initialize_raw(videoWidth, videoHeight, trackerType) {
@@ -61,6 +69,39 @@ export default class WebARKitController {
     return this;
   }
 
+  async _initialize_w(videoWidth, videoHeight, trackerType) {
+
+    this.videoWidth = videoWidth;
+    this.videoHeight = videoHeight;
+    // Create an instance of the WebARKit Emscripten C++ code.
+    this.instance = await WARKit();
+
+    // Set the tracker types for the WebARKitController class.
+    WebARKitController.ORB_TRACKER = this.instance.TRACKER_TYPE.TRACKER_ORB;
+    WebARKitController.AKAZE_TRACKER = this.instance.TRACKER_TYPE.TRACKER_AKAZE;
+    this.trackerType = this.setTrackerType(trackerType);
+
+    // Initialize the WebARKit class.
+    this.webarkit = new this.instance.WebARKit();
+
+    await this.loadCamera("./data/camera_para.dat");
+
+    console.log("[WebARKitController]", "WebARKit initialized");
+    WebARKitController.GRAY = this.instance.ColorSpace.GRAY;
+
+    this.version = packageInfo.version;
+    console.info("WebARKit ", this.version);
+
+    setTimeout(() => {
+      this.dispatchEvent({
+        name: "load",
+        target: this,
+      });
+    }, 1);
+    return this;
+  }
+
+
   setTrackerType(trackerType) {
     let trackerT;
     if (trackerType === undefined || trackerType === null) {
@@ -79,7 +120,7 @@ export default class WebARKitController {
     let matrix = [];
     this.processFrame(imageData);
 
-    if(this.isValid()) {
+    if (this.isValid()) {
 
       corners = this.getCorners();
       matrix = this.getHomography();
@@ -97,16 +138,91 @@ export default class WebARKitController {
     }
   }
 
+  process_w(imageData) {
+    let corners = [];
+    let matrix = [];
+    this.processFrame_w(imageData);
+
+    if (this.isTrackableVisible()) {
+      let pose = this.updatePose();
+      let poseM = this.getPoseMatrix();
+      console.log(pose);
+      console.log(poseM);
+      this.dispatchEvent({
+        name: "getMarker",
+        target: this,
+        data: {
+          index: this.id,
+          type: this.trackerType,
+          corners: [],
+          matrix: pose
+        },
+      })
+
+    }
+
+    if (this.isValid()) {
+
+      corners = this.getCorners();
+      matrix = this.getHomography();
+
+      this.dispatchEvent({
+        name: "getMarker",
+        target: this,
+        data: {
+          index: 0,
+          type: this.trackerType,
+          corners: corners,
+          matrix: matrix
+        },
+      })
+    }
+  }
+
+  async loadCamera(camearParam) {
+    var filename = "/load_calib_" + WebARKitController.file_count++ + ".dat";
+    const response = await fetch(camearParam);
+    if (!response.ok) {
+      throw new Error("Network response was not OK");
+    }
+    const data = await response.arrayBuffer();
+    const buffer = new Uint8Array(data);
+    this.instance.FS.writeFile(filename, buffer, { encoding: "binary" });
+    console.info('loaded camera');
+    return this.webarkit.loadARParam(filename, this.trackerType, this.videoWidth, this.videoHeight)
+  }
+
   async loadTrackerGrayImage(imgData, width, height) {
     return this.webarkit.initTrackerGray(imgData, width, height);
+  }
+
+  async addMarkerGrayImage(imgData, width, height) {
+    this.id = WebARKitController.markerId++;
+    return this.webarkit.addMarker(imgData, 'test', width, height, this.id, 0.5);
   }
 
   processFrame(imageData) {
     this.webarkit.processFrame(imageData, WebARKitController.GRAY);
   }
 
-  isValid(){
+  processFrame_w(imageData) {
+    this.webarkit.processFrame_w(imageData);
+  }
+
+  updatePose() {
+    return this.webarkit.updatePose(this.id);
+  }
+
+  getPoseMatrix() {
+    return this.webarkit.getPoseMatrix(this.id);
+  }
+
+  isValid() {
     return this.webarkit.isValid();
+  }
+
+  isTrackableVisible() {
+    return this.webarkit.IsTrackableVisible(this.id);
   }
 
   getHomography() {

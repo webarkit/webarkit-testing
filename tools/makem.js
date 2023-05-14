@@ -138,7 +138,10 @@ var webarkit_sources = [
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp',
     'WebARKitOpticalTracking/WebARKitFeatureDetector.cpp',
-    'WebARKitOpticalTracking/HarrisDetector.cpp'
+    'WebARKitOpticalTracking/HarrisDetector.cpp',
+    'WebARKitOpticalTracking/HomographyInfo.cpp',
+    'WebARKitOpticalTracking/TrackedPoint.cpp',
+    'WebARKitOpticalTracking/TrackingPointSelector.cpp',
 ].map(function(src) {
 	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/WebARKit/WebARKitTrackers/', src);
 });
