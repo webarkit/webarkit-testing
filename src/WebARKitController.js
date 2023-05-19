@@ -33,10 +33,13 @@ export default class WebARKitController {
     this.videoHeight = videoHeight;
     // Create an instance of the WebARKit Emscripten C++ code.
     this.instance = await WARKit();
+    console.log(this.instance);
 
     // Set the tracker types for the WebARKitController class.
     WebARKitController.ORB_TRACKER = this.instance.TRACKER_TYPE.TRACKER_ORB;
     WebARKitController.AKAZE_TRACKER = this.instance.TRACKER_TYPE.TRACKER_AKAZE;
+    WebARKitController.FREAK_TRACKER = this.instance.TRACKER_TYPE.TRACKER_FREAK;
+    WebARKitController.TEBLID_TRACKER = this.instance.TRACKER_TYPE.TRACKER_TEBLID;
     this.trackerType = this.setTrackerType(trackerType);
 
     // Initialize the WebARKit class.
@@ -70,6 +73,10 @@ export default class WebARKitController {
       trackerT = WebARKitController.ORB_TRACKER;
     } else if (trackerType === "akaze") {
       trackerT = WebARKitController.AKAZE_TRACKER;
+    } else if (trackerType === "freak") {
+      trackerT = WebARKitController.FREAK_TRACKER;
+    } else if (trackerType === "teblid") {
+      trackerT = WebARKitController.TEBLID_TRACKER;
     }
     return trackerT;
   }

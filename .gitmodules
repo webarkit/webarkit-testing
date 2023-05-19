@@ -6,4 +6,4 @@
 	url = https://github.com/webarkit/opencv.git
 [submodule "opencv_contrib"]
 	path = opencv_contrib
-	url = https://github.com/opencv/opencv_contrib
+	url = https://github.com/webarkit/opencv_contrib

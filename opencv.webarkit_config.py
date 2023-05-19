@@ -4,7 +4,7 @@ core = {
     '': [
         'absdiff', 'add', 'addWeighted', 'bitwise_and', 'bitwise_not', 'bitwise_or', 'bitwise_xor', 'cartToPolar',
         'compare', 'convertScaleAbs', 'copyMakeBorder', 'countNonZero', 'determinant', 'dft', 'divide', 'eigen',
-        'exp', 'flip', 'getOptimalDFTSize','gemm', 'hconcat', 'inRange', 'invert', 'kmeans', 'log', 'magnitude',
+        'exp', 'flip', 'getOptimalDFTSize', 'gemm', 'hconcat', 'inRange', 'invert', 'kmeans', 'log', 'magnitude',
         'max', 'mean', 'meanStdDev', 'merge', 'min', 'minMaxLoc', 'mixChannels', 'multiply', 'norm', 'normalize',
         'perspectiveTransform', 'polarToCart', 'pow', 'randn', 'randu', 'reduce', 'repeat', 'rotate', 'setIdentity', 'setRNGSeed',
         'solve', 'solvePoly', 'split', 'sqrt', 'subtract', 'trace', 'transform', 'transpose', 'vconcat',
@@ -64,7 +64,7 @@ imgproc = {
         'getStructuringElement',
         'goodFeaturesToTrack',
         'grabCut',
-        #'initUndistortRectifyMap',  # 4.x: moved to calib3d
+        # 'initUndistortRectifyMap',  # 4.x: moved to calib3d
         'integral',
         'integral2',
         'isContourConvex',
@@ -85,7 +85,7 @@ imgproc = {
         'resize',
         'sepFilter2D',
         'threshold',
-        #'undistort',  # 4.x: moved to calib3d
+        # 'undistort',  # 4.x: moved to calib3d
         'warpAffine',
         'warpPerspective',
         'warpPolar',
@@ -113,9 +113,9 @@ objdetect = {'': ['groupRectangles'],
              'CascadeClassifier': ['load', 'detectMultiScale2', 'CascadeClassifier', 'detectMultiScale3', 'empty', 'detectMultiScale'],
              'QRCodeDetector': ['QRCodeDetector', 'decode', 'decodeCurved', 'detect', 'detectAndDecode', 'detectMulti', 'setEpsX', 'setEpsY'],
              'ArucoDetector': ['getPredefinedDictionary', 'detectMarkers', 'refineDetectedMarkers', 'getDictionary', 'setDictionary', 'getDetectorParameters', 'setDetectorParameters', 'getRefineParameters', 'setRefineParameters'],
-             'GridBoard': ['create','generateImage', 'getGridSize', 'getMarkerLength', 'getMarkerSeparation'],
+             'GridBoard': ['create', 'generateImage', 'getGridSize', 'getMarkerLength', 'getMarkerSeparation'],
              'CharucoBoard': ['create', 'generateImage', 'getChessboardCorners', 'getNearestMarkerCorners', 'checkCharucoCornersCollinear']
-}
+             }
 
 video = {
     '': [
@@ -151,26 +151,26 @@ features2d = {'Feature2D': ['detect', 'compute', 'detectAndCompute', 'descriptor
               'BFMatcher': ['isMaskSupported', 'create'],
               '': ['drawKeypoints', 'drawMatches', 'drawMatchesKnn']}
 
-photo = {'': ['createAlignMTB', 'createCalibrateDebevec', 'createCalibrateRobertson', \
-              'createMergeDebevec', 'createMergeMertens', 'createMergeRobertson', \
+photo = {'': ['createAlignMTB', 'createCalibrateDebevec', 'createCalibrateRobertson',
+              'createMergeDebevec', 'createMergeMertens', 'createMergeRobertson',
               'createTonemapDrago', 'createTonemapMantiuk', 'createTonemapReinhard', 'inpaint'],
-        'CalibrateCRF': ['process'],
-        'AlignMTB' : ['calculateShift', 'shiftMat', 'computeBitmaps', 'getMaxBits', 'setMaxBits', \
+         'CalibrateCRF': ['process'],
+         'AlignMTB': ['calculateShift', 'shiftMat', 'computeBitmaps', 'getMaxBits', 'setMaxBits',
                       'getExcludeRange', 'setExcludeRange', 'getCut', 'setCut'],
-        'CalibrateDebevec' : ['getLambda', 'setLambda', 'getSamples', 'setSamples', 'getRandom', 'setRandom'],
-        'CalibrateRobertson' : ['getMaxIter', 'setMaxIter', 'getThreshold', 'setThreshold', 'getRadiance'],
-        'MergeExposures' : ['process'],
-        'MergeDebevec' : ['process'],
-        'MergeMertens' : ['process', 'getContrastWeight', 'setContrastWeight', 'getSaturationWeight', \
+         'CalibrateDebevec': ['getLambda', 'setLambda', 'getSamples', 'setSamples', 'getRandom', 'setRandom'],
+         'CalibrateRobertson': ['getMaxIter', 'setMaxIter', 'getThreshold', 'setThreshold', 'getRadiance'],
+         'MergeExposures': ['process'],
+         'MergeDebevec': ['process'],
+         'MergeMertens': ['process', 'getContrastWeight', 'setContrastWeight', 'getSaturationWeight',
                           'setSaturationWeight', 'getExposureWeight', 'setExposureWeight'],
-        'MergeRobertson' : ['process'],
-        'Tonemap' : ['process' , 'getGamma', 'setGamma'],
-        'TonemapDrago' : ['getSaturation', 'setSaturation', 'getBias', 'setBias', \
-                          'getSigmaColor', 'setSigmaColor', 'getSigmaSpace','setSigmaSpace'],
-        'TonemapMantiuk' : ['getScale', 'setScale', 'getSaturation', 'setSaturation'],
-        'TonemapReinhard' : ['getIntensity', 'setIntensity', 'getLightAdaptation', 'setLightAdaptation', \
+         'MergeRobertson': ['process'],
+         'Tonemap': ['process', 'getGamma', 'setGamma'],
+         'TonemapDrago': ['getSaturation', 'setSaturation', 'getBias', 'setBias',
+                          'getSigmaColor', 'setSigmaColor', 'getSigmaSpace', 'setSigmaSpace'],
+         'TonemapMantiuk': ['getScale', 'setScale', 'getSaturation', 'setSaturation'],
+         'TonemapReinhard': ['getIntensity', 'setIntensity', 'getLightAdaptation', 'setLightAdaptation',
                              'getColorAdaptation', 'setColorAdaptation']
-        }
+         }
 
 calib3d = {
     '': [
@@ -189,13 +189,17 @@ calib3d = {
 
         # cv::fisheye namespace
         # Disabling because i think i will never use these...
-        #'fisheye_initUndistortRectifyMap',
-        #'fisheye_projectPoints',
+        # 'fisheye_initUndistortRectifyMap',
+        # 'fisheye_projectPoints',
     ],
 }
+xfeatures2d = {
+    'FREAK': ['create', 'setOrientationNormalized', 'getOrientationNormalized', 'setScaleNormalized', 'getScaleNormalized', 'setPatternScale', 'getPatternScale', 'setNOctaves', 'getNOctaves', 'getDefaultName'],
+    'TEBLID': ['create', 'getDefaultName'],
+}
 
-white_list = makeWhiteList([core, imgproc, objdetect, video, dnn, features2d, photo, calib3d])
+white_list = makeWhiteList(
+    [core, imgproc, objdetect, video, dnn, features2d, photo, calib3d, xfeatures2d])
 
 # namespace_prefix_override['dnn'] = ''  # compatibility stuff (enabled by default)
 # namespace_prefix_override['aruco'] = ''  # compatibility stuff (enabled by default)
-

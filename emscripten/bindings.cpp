@@ -5,6 +5,8 @@ using namespace emscripten;
 EMSCRIPTEN_BINDINGS(constant_bindings) {
   enum_<webarkit::TRACKER_TYPE>("TRACKER_TYPE")
       .value("TRACKER_AKAZE", webarkit::AKAZE_TRACKER)
+      .value("TRACKER_FREAK", webarkit::FREAK_TRACKER)
+      .value("TRACKER_TEBLID", webarkit::TEBLID_TRACKER)
       .value("TRACKER_ORB", webarkit::ORB_TRACKER);
 
   enum_<webarkit::ColorSpace>("ColorSpace")

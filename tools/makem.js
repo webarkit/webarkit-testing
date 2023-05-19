@@ -187,7 +187,9 @@ var INCLUDES = [
     path.resolve(__dirname, "../opencv/modules/features2d/include"),
     path.resolve(__dirname, "../opencv/modules/flann/include"),
     path.resolve(__dirname, "../opencv/modules/imgproc/include"),
+    path.resolve(__dirname, "../opencv/modules/imgcodecs/include"),
     path.resolve(__dirname, "../opencv/modules/video/include"),
+    path.resolve(__dirname, "../opencv_contrib/modules/xfeatures2d/include"),
     OUTPUT_PATH,
     SOURCE_PATH,
 ]
@@ -203,6 +205,7 @@ var OPENCV_LIBS = [
 	path.resolve(__dirname, '../opencv_js/lib/libopencv_flann.a'),
 	path.resolve(__dirname, '../opencv_js/lib/libopencv_imgproc.a'),
 	path.resolve(__dirname, '../opencv_js/lib/libopencv_video.a'),
+    path.resolve(__dirname, '../opencv_js/lib/libopencv_xfeatures2d.a'),
 ].map(function(s) { return ' ' + s }).join(' ');
 
 function format(str) {
