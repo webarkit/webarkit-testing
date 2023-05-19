@@ -5,12 +5,14 @@ var videoEl;
 var arElem;
 var grayScaleVideo;
 var grayScaleImage;
-var grayVideoData
+var grayVideoData;
 var overlayCanvas;
 var videoCanvas;
 var stats;
 var loadingPopUp;
 var worker;
+
+var type = setTrackerType();
 
 window.onload = async function () {
   videoEl = createVideo();
@@ -36,7 +38,7 @@ window.onload = async function () {
 
   worker.postMessage({
     type: "initTracker",
-    trackerType: "orb",
+    trackerType: type,
     imageData: grayImageData,
     imgWidth: refIm.width,
     imgHeight: refIm.height,
