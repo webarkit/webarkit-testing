@@ -174,6 +174,7 @@ DEBUG_FLAGS += ' -gsource-map -fsanitize=undefined ';
 DEBUG_FLAGS += ' -s ASSERTIONS=2 '
 DEBUG_FLAGS += ' --profiling '
 DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
+DEBUG_FLAGS += ' -DWEBARKIT_DEBUG '
 }
 
 var INCLUDES = [
