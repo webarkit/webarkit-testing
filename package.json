@@ -42,6 +42,7 @@
     "build-debug": "node tools/makem.js --debug; echo Built at `date`",
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
     "build-docker": "docker exec emscripten-webarkit npm run build",
+    "build-docker-debug": "docker exec emscripten-webarkit npm run build-debug",
     "build-all-dev": "node tools/makem.js --no-libar; echo Built at `date` && webpack --mode development --progress --watch",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/"
   },
