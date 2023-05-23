@@ -136,6 +136,7 @@ var ar2_sources = [
 
 var webarkit_sources = [
     '../WebARKitLog.cpp',
+    '../WebARKitManager.cpp',
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp'
 ].map(function(src) {
