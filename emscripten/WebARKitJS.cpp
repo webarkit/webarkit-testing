@@ -3,7 +3,8 @@
 void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int height) {
   auto u8 =
       emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
-  m_tracker->initTracker(u8.data(), width, height);
+    //m_tracker->initTracker(u8.data(), width, height);
+  manager.initTracker(u8.data(), width, height);
 }
 
 void WebARKit::processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace) {
