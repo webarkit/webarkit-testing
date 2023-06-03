@@ -4,7 +4,6 @@
 #include <AR2/util.h>
 #include <WebARKitManager.h>
 #include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitEnums.h>
-#include <WebARKitTrackers/WebARKitOpticalTracking/WebARKitTracker.h>
 #include <emscripten.h>
 #include <emscripten/val.h>
 #include <iostream>
@@ -30,13 +29,6 @@ class WebARKit {
         this->m_trackerType = trackerType;
 
         manager.initialiseBase(m_trackerType);
-
-        /*m_tracker = std::make_shared<webarkit::WebARKitTracker>(webarkit::WebARKitTracker());
-        if(this->m_trackerType == webarkit::TRACKER_TYPE::AKAZE_TRACKER || webarkit::TRACKER_TYPE::ORB_TRACKER) {
-          m_tracker->initialize(trackerType);
-        } else {
-          throw std::invalid_argument("Invalid tracker type");
-        }*/
     }
 
     void initTrackerGray(emscripten::val data_buffer, int width, int height);
@@ -50,5 +42,4 @@ class WebARKit {
     int videoHeight;
     webarkit::TRACKER_TYPE m_trackerType;
     webarkit::WebARKitManager manager;
-    std::shared_ptr<webarkit::WebARKitTracker> m_tracker;
 };
