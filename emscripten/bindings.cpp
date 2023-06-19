@@ -14,11 +14,18 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .value("RGB", webarkit::RGB)
       .value("GRAY", webarkit::GRAY);
 
+  constant("WEBARKIT_LOG_LEVEL_DEBUG", WEBARKIT_LOG_LEVEL_DEBUG + 0);
+  constant("WEBARKIT_LOG_LEVEL_INFO", WEBARKIT_LOG_LEVEL_INFO + 0);
+  constant("WEBARKIT_LOG_LEVEL_WARN", WEBARKIT_LOG_LEVEL_WARN + 0);
+  constant("WEBARKIT_LOG_LEVEL_ERROR", WEBARKIT_LOG_LEVEL_ERROR + 0);
+  constant("WEBARKIT_LOG_LEVEL_REL_INFO", WEBARKIT_LOG_LEVEL_REL_INFO + 0);
+
   class_<WebARKit>("WebARKit")
       .constructor<>()
       .constructor<int, int, webarkit::TRACKER_TYPE>()
       .function("initTrackerGray", &WebARKit::initTrackerGray)
       .function("processFrame", &WebARKit::processFrame)
+      .function("setLogLevel", &WebARKit::setLogLevel)
       .function("getHomography", &WebARKit::getHomography)
       .function("getCorners", &WebARKit::getCorners)
       .function("isValid", &WebARKit::isValid);

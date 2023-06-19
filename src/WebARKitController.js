@@ -112,6 +112,10 @@ export default class WebARKitController {
     this.webarkit.processFrame(imageData, WebARKitController.GRAY);
   }
 
+  setLogLevel(level) {
+    this.webarkit.setLogLevel(level);
+  }
+
   isValid(){
     return this.webarkit.isValid();
   }

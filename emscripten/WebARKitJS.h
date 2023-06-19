@@ -33,6 +33,7 @@ class WebARKit {
 
     void initTrackerGray(emscripten::val data_buffer, int width, int height);
     void processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace);
+    void setLogLevel(int logLevel);
     emscripten::val getHomography();
     emscripten::val getCorners();
     bool isValid();

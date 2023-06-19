@@ -13,6 +13,10 @@ void WebARKit::processFrame(emscripten::val data_buffer, webarkit::ColorSpace co
                            this->videoHeight, colorSpace);
 }
 
+void WebARKit::setLogLevel(int logLevel) {
+  manager.setLogLevel(logLevel);
+}
+
 emscripten::val WebARKit::getHomography() {
   std::vector<double> output;
    output = manager.getOutputData();

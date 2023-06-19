@@ -171,11 +171,13 @@ FLAGS += ' --bind ';
 var DEBUG_FLAGS = ' ';
 
 if (DEBUG) {
-DEBUG_FLAGS += ' -gsource-map -fsanitize=undefined ';
-DEBUG_FLAGS += ' -s ASSERTIONS=2 '
-DEBUG_FLAGS += ' --profiling '
-DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
-DEBUG_FLAGS += ' -DWEBARKIT_DEBUG '
+    // Choose your Debug options
+    //DEBUG_FLAGS += ' -gsource-map -fsanitize=undefined ';
+    //DEBUG_FLAGS += ' -s ASSERTIONS=2 '
+    //DEBUG_FLAGS += ' --profiling '
+    //DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
+    // WEBARKIT_DEBUG define flag is used to display additional debug information in the console
+    DEBUG_FLAGS += ' -DWEBARKIT_DEBUG '
 }
 
 var INCLUDES = [
