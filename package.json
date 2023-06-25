@@ -1,6 +1,6 @@
 {
   "name": "@kalwalt/webarkit-testing",
-  "version": "0.3.3",
+  "version": "0.4.3",
   "main": "dist/WebARKit.js",
   "description": "Experimental WebARKit",
   "keywords": [
@@ -27,7 +27,7 @@
     "url": "https://github.com/kalwalt/webarkit-testing/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.8",
+    "@babel/core": "^7.22.5",
     "@babel/plugin-transform-runtime": "^7.21.4",
     "@babel/preset-env": "^7.21.5",
     "babel-loader": "^9.1.2",
