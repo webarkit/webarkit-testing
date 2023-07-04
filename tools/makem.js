@@ -164,6 +164,7 @@ FLAGS += ' --profiling '
 
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
+var SIMD_FLAG = ' -msimd128 ';
 
 FLAGS += ' --bind ';
 
@@ -253,7 +254,7 @@ var ALL_BC = " {OUTPUT_PATH}libwebarkit.bc ";
 
 var compile_wasm_es6 = format(EMCC + ' ' + INCLUDES + ' '
 		 + ALL_BC + MAIN_SOURCES
-		 + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + DEBUG_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
+		 + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + SIMD_FLAG + DEBUG_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
 		 OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_ES6_FILE);
 
 /*
