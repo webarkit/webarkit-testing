@@ -27,31 +27,34 @@
     "url": "https://github.com/kalwalt/webarkit-testing/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.5",
-    "@babel/plugin-transform-runtime": "^7.21.4",
-    "@babel/preset-env": "^7.21.5",
-    "babel-loader": "^9.1.2",
-    "rimraf": "^5.0.0",
-    "webpack": "^5.82.1",
-    "webpack-cli": "^5.1.1"
+    "@babel/core": "^7.23.2",
+    "@babel/plugin-transform-runtime": "^7.23.2",
+    "@babel/preset-env": "^7.23.2",
+    "babel-loader": "^9.1.3",
+    "rimraf": "^5.0.5",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
   },
   "scripts": {
     "dev-es6": "rimraf ./dist && webpack --mode development --progress --watch",
     "build-es6": "rimraf ./dist && webpack --mode production",
     "build": "node tools/makem.js; echo Built at `date`",
-    "build-cmake": "emcmake cmake -B emscripten/WebARKitLib/WebARKit/build ..",
+    "build-cmake": "emcmake cmake -B emscripten/WebARKitLib/WebARKit/build -S emscripten/WebARKitLib/WebARKit -DEMSCRIPTEN_COMP=1 ..",
+    "build-make": "emmake make -C emscripten/WebARKitLib/WebARKit/build",
     "build-debug": "node tools/makem.js --debug; echo Built at `date`",
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
-    "build-docker": "docker exec emscripten-webarkit npm run build",
-    "build-docker-w-cmake": "docker exec emscripten-webarkit npm run build-cmake",
+    "build-docker": "docker exec emscripten-webarkit-testing npm run build",
+    "build-docker-w-cmake": "docker exec emscripten-webarkit-testing npm run build-cmake",
+    "build-docker-w-make": "docker exec emscripten-webarkit-testing npm run build-make",
     "build-docker-no-libar": "docker exec emscripten-webarkit npm run build-no-libar",
-    "build-docker-debug": "docker exec emscripten-webarkit npm run build-debug",
+    "build-docker-debug": "docker exec emscripten-webarkit-testing npm run build-debug",
     "build-all-dev": "node tools/makem.js --no-libar; echo Built at `date` && webpack --mode development --progress --watch",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
-    "serve": "npx http-server"
+    "serve": "npx http-server",
+    "setup-docker": "docker run -dit --name emscripten-webarkit-testing -v $(pwd):/src emscripten/emsdk:3.1.26 bash"
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "^7.21.5"
+    "@babel/runtime": "^7.23.2"
   }
 }
