@@ -1,6 +1,6 @@
 {
   "name": "@kalwalt/webarkit-testing",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "main": "dist/WebARKit.js",
   "description": "Experimental WebARKit",
   "keywords": [
