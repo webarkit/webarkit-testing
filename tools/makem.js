@@ -7,11 +7,11 @@
 
 
 var
-	exec = require('child_process').exec,
-	path = require('path'),
-	fs = require('fs'),
-	os = require('os'),
-	child;
+    exec = require('child_process').exec,
+    path = require('path'),
+    fs = require('fs'),
+    os = require('os'),
+    child;
 
 const platform = os.platform();
 
@@ -23,10 +23,10 @@ var DEBUG = false;
 var arguments = process.argv;
 
 for (var j = 2; j < arguments.length; j++) {
-	if (arguments[j] == '--no-libar') {
-		NO_LIBAR = true;
-		console.log('Building webarkit with --no-libar option, libwebarkit will be preserved.');
-	};
+    if (arguments[j] == '--no-libar') {
+        NO_LIBAR = true;
+        console.log('Building webarkit with --no-libar option, libwebarkit will be preserved.');
+    };
     if (arguments[j] == '--debug') {
         console.log('Building webarkit with --debug option.');
         DEBUG = true;
@@ -39,8 +39,8 @@ var EMSCRIPTEN_ROOT = process.env.EMSCRIPTEN;
 var WEBARKITLIB_ROOT = process.env.WEBARKITLIB_ROOT || path.resolve(__dirname, "../emscripten/WebARKitLib");
 
 if (!EMSCRIPTEN_ROOT) {
-  console.log("\nWarning: EMSCRIPTEN environment variable not found.")
-  console.log("If you get a \"command not found\" error,\ndo `source <path to emsdk>/emsdk_env.sh` and try again.");
+    console.log("\nWarning: EMSCRIPTEN environment variable not found.")
+    console.log("If you get a \"command not found\" error,\ndo `source <path to emsdk>/emsdk_env.sh` and try again.");
 }
 
 var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'emcc') : 'emcc';
@@ -60,57 +60,58 @@ var SOURCE_PATH = path.resolve(__dirname, '../emscripten/') + '/';
 var OUTPUT_PATH = path.resolve(__dirname, '../build/') + '/';
 
 var BUILD_WASM_ES6_FILE = 'webarkit_ES6_wasm.js';
+var BUILD_WASM_SIMD_ES6_FILE = 'webarkit_ES6_wasm.simd.js';
 
 var MAIN_SOURCES = [
-	'WebARKitJS.cpp'
+    'WebARKitJS.cpp'
 ];
 
 if (!fs.existsSync(path.resolve(WEBARKITLIB_ROOT, 'include/AR/config.h'))) {
-	console.log("Renaming and moving config.h.in to config.h");
-	fs.copyFileSync(
-		path.resolve(WEBARKITLIB_ROOT, 'include/AR/config.h.in'),
-		path.resolve(WEBARKITLIB_ROOT, 'include/AR/config.h')
-	);
-	console.log("Done!");
+    console.log("Renaming and moving config.h.in to config.h");
+    fs.copyFileSync(
+        path.resolve(WEBARKITLIB_ROOT, 'include/AR/config.h.in'),
+        path.resolve(WEBARKITLIB_ROOT, 'include/AR/config.h')
+    );
+    console.log("Done!");
 }
 
-MAIN_SOURCES = MAIN_SOURCES.map(function(src) {
-  return path.resolve(SOURCE_PATH, src);
+MAIN_SOURCES = MAIN_SOURCES.map(function (src) {
+    return path.resolve(SOURCE_PATH, src);
 }).join(' ');
 
-let  ar_sources;
+let ar_sources;
 
 if (platform === 'win32') {
-	var glob = require("glob");
-function match(pattern) {
-    var r = glob.sync('emscripten/WebARKitLib/lib/SRC/' + pattern);
-    return r;
-}
-function matchAll(patterns, prefix="") {
-    let r = [];
-    for(let pattern of patterns) {
-        r.push(...(match(prefix + pattern)));
+    var glob = require("glob");
+    function match(pattern) {
+        var r = glob.sync('emscripten/WebARKitLib/lib/SRC/' + pattern);
+        return r;
     }
-    return r;
-}
+    function matchAll(patterns, prefix = "") {
+        let r = [];
+        for (let pattern of patterns) {
+            r.push(...(match(prefix + pattern)));
+        }
+        return r;
+    }
 
-  ar_sources = matchAll([
-    'AR/arLabelingSub/*.c',
-    'AR/*.c',
-    'ARICP/*.c',
-    'ARUtil/log.c',
-    'ARUtil/file_utils.c',
-]);
+    ar_sources = matchAll([
+        'AR/arLabelingSub/*.c',
+        'AR/*.c',
+        'ARICP/*.c',
+        'ARUtil/log.c',
+        'ARUtil/file_utils.c',
+    ]);
 } else {
-	ar_sources = [
-	  'AR/arLabelingSub/*.c',
-	  'AR/*.c',
-	  'ARICP/*.c',
-	  'ARUtil/log.c',
-	  'ARUtil/file_utils.c',
-	].map(function(src) {
-		return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/', src);
-	});
+    ar_sources = [
+        'AR/arLabelingSub/*.c',
+        'AR/*.c',
+        'ARICP/*.c',
+        'ARUtil/log.c',
+        'ARUtil/file_utils.c',
+    ].map(function (src) {
+        return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/', src);
+    });
 }
 
 var ar2_sources = [
@@ -130,8 +131,8 @@ var ar2_sources = [
     'searchPoint.c',
     'coord.c',
     'util.c',
-].map(function(src) {
-	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/AR2/', src);
+].map(function (src) {
+    return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/AR2/', src);
 });
 
 var webarkit_sources = [
@@ -139,13 +140,13 @@ var webarkit_sources = [
     '../WebARKitManager.cpp',
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp'
-].map(function(src) {
-	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/WebARKit/WebARKitTrackers/', src);
+].map(function (src) {
+    return path.resolve(__dirname, WEBARKITLIB_ROOT + '/WebARKit/WebARKitTrackers/', src);
 });
 
 if (HAVE_NFT) {
-  ar_sources = ar_sources
-  .concat(webarkit_sources);
+    ar_sources = ar_sources
+        .concat(webarkit_sources);
 }
 
 var DEFINES = ' ';
@@ -163,6 +164,7 @@ FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 FLAGS += ' --profiling '
 
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
+var SIMD = ' -msimd128 '
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
 
 FLAGS += ' --bind ';
@@ -203,14 +205,14 @@ var INCLUDES = [
     .join(" ");
 
 var OPENCV_LIBS = [
-	path.resolve(__dirname, '../opencv_js/lib/libopencv_calib3d.a'),
-	path.resolve(__dirname, '../opencv_js/lib/libopencv_core.a'),
-	path.resolve(__dirname, '../opencv_js/lib/libopencv_features2d.a'),
-	path.resolve(__dirname, '../opencv_js/lib/libopencv_flann.a'),
-	path.resolve(__dirname, '../opencv_js/lib/libopencv_imgproc.a'),
-	path.resolve(__dirname, '../opencv_js/lib/libopencv_video.a'),
+    path.resolve(__dirname, '../opencv_js/lib/libopencv_calib3d.a'),
+    path.resolve(__dirname, '../opencv_js/lib/libopencv_core.a'),
+    path.resolve(__dirname, '../opencv_js/lib/libopencv_features2d.a'),
+    path.resolve(__dirname, '../opencv_js/lib/libopencv_flann.a'),
+    path.resolve(__dirname, '../opencv_js/lib/libopencv_imgproc.a'),
+    path.resolve(__dirname, '../opencv_js/lib/libopencv_video.a'),
     path.resolve(__dirname, '../opencv_js/lib/libopencv_xfeatures2d.a'),
-].map(function(s) { return ' ' + s }).join(' ');
+].map(function (s) { return ' ' + s }).join(' ');
 
 function format(str) {
     for (var f = 1; f < arguments.length; f++) {
@@ -229,32 +231,45 @@ function clean_builds() {
     try {
         var files = fs.readdirSync(OUTPUT_PATH);
         var i;
-                var filesLength = files.length;
+        var filesLength = files.length;
         if (filesLength > 0)
-				if (NO_LIBAR == true){
-                    i=1;
-				} else { i=0; }
-            for ( ;i < filesLength; i++) {
-                var filePath = OUTPUT_PATH + '/' + files[i];
-                if (fs.statSync(filePath).isFile())
-                    fs.unlinkSync(filePath);
-            }
+            if (NO_LIBAR == true) {
+                i = 1;
+            } else { i = 0; }
+        for (; i < filesLength; i++) {
+            var filePath = OUTPUT_PATH + '/' + files[i];
+            if (fs.statSync(filePath).isFile())
+                fs.unlinkSync(filePath);
+        }
     }
-    catch(e) { return console.log(e); }
+    catch (e) { return console.log(e); }
 }
 
 var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
     + ar_sources.join(' ')
-	//+ webarkit_sources.join(' ')
-    + FLAGS + ' ' + DEBUG_FLAGS + ' ' +  DEFINES + ' -r -o {OUTPUT_PATH}libwebarkit.bc ',
+    //+ webarkit_sources.join(' ')
+    + FLAGS + ' ' + DEBUG_FLAGS + ' ' + DEFINES + ' -r -o {OUTPUT_PATH}libwebarkit.bc ',
     OUTPUT_PATH);
 
-var ALL_BC = " {OUTPUT_PATH}libwebarkit.bc ";
+var compile_simd_arlib = format(EMCC + ' ' + INCLUDES + ' '
+    + ar_sources.join(' ')
+    //+ webarkit_sources.join(' ')
+    + FLAGS + ' ' + DEBUG_FLAGS + ' ' + DEFINES +  SIMD + ' -r -o {OUTPUT_PATH}libwebarkit.simd.bc ',
+    OUTPUT_PATH);
+
+var BC = " {OUTPUT_PATH}libwebarkit.bc ";
+
+var BC_SIMD = " {OUTPUT_PATH}libwebarkit.simd.bc ";
 
 var compile_wasm_es6 = format(EMCC + ' ' + INCLUDES + ' '
-		 + ALL_BC + MAIN_SOURCES
-		 + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + DEBUG_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
-		 OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_ES6_FILE);
+    + BC + MAIN_SOURCES
+    + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + DEBUG_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
+    OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_ES6_FILE);
+
+var compile_wasm_simd_es6 = format(EMCC + ' ' + INCLUDES + ' '
+    + BC_SIMD + MAIN_SOURCES
+    + FLAGS + WASM_FLAGS + SIMD + DEFINES + ES6_FLAGS + DEBUG_FLAGS + OPENCV_LIBS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
+    OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_SIMD_ES6_FILE);
 
 /*
  * Run commands
@@ -296,10 +311,12 @@ function addJob(job) {
 
 addJob(clean_builds);
 addJob(compile_arlib);
+addJob(compile_simd_arlib);
 addJob(compile_wasm_es6)
+addJob(compile_wasm_simd_es6)
 
-if (NO_LIBAR == true){
-  jobs.splice(1,1);
+if (NO_LIBAR == true) {
+    jobs.splice(1, 1);
 }
 
 runJob();
