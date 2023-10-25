@@ -1,4 +1,4 @@
-import WARKit from "../build/webarkit_ES6_wasm";
+import WARKit from "../build/webarkit_ES6_wasm.simd";
 import packageInfo from "../package.json";
 
 export default class WebARKitController {
