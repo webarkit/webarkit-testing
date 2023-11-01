@@ -28,7 +28,7 @@ class WebARKit {
         this->videoHeight = videoHeight;
         this->m_trackerType = trackerType;
 
-        manager.initialiseBase(m_trackerType);
+        manager.initialiseBase(m_trackerType, this->videoWidth, this->videoHeight);
     }
 
     void initTrackerGray(emscripten::val data_buffer, int width, int height);

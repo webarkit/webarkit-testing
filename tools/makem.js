@@ -136,6 +136,7 @@ var ar2_sources = [
 });
 
 var webarkit_sources = [
+    '../WebARKitCamera.cpp',
     '../WebARKitLog.cpp',
     '../WebARKitManager.cpp',
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
