@@ -35,6 +35,7 @@ class WebARKit {
     void processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace);
     void setLogLevel(int logLevel);
     emscripten::val getHomography();
+    emscripten::val getPoseMatrix();
     emscripten::val getCorners();
     bool isValid();
 

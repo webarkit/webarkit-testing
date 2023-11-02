@@ -4,5 +4,6 @@
         "any": "cpp",
         "string_view": "cpp",
         "regex": "cpp"
-    }
+    },
+    "clang-format.executable": "/usr/bin/clang-format"
 }

@@ -84,12 +84,14 @@ export default class WebARKitController {
   process_raw(imageData) {
     let corners = [];
     let matrix = [];
+    let pose = [];
     this.processFrame(imageData);
 
     if(this.isValid()) {
 
       corners = this.getCorners();
       matrix = this.getHomography();
+      pose = this.getPoseMatrix();
 
       this.dispatchEvent({
         name: "getMarker",
@@ -98,7 +100,8 @@ export default class WebARKitController {
           index: 0,
           type: this.trackerType,
           corners: corners,
-          matrix: matrix
+          matrix: matrix,
+          pose: pose
         },
       })
     }
@@ -122,6 +125,10 @@ export default class WebARKitController {
 
   getHomography() {
     return this.webarkit.getHomography();
+  }
+
+  getPoseMatrix() {
+    return this.webarkit.getPoseMatrix();
   }
 
   getCorners() {

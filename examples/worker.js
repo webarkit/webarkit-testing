@@ -34,6 +34,7 @@ function initTracker(msg) {
         type: "found",
         corners: JSON.stringify(event.data.corners),
         matrix: JSON.stringify(event.data.matrix),
+        pose: JSON.stringify(event.data.pose),
       };
     });
   };
