@@ -25,8 +25,10 @@ emscripten::val WebARKit::getHomography() {
 emscripten::val WebARKit::getPoseMatrix() {
     cv::Mat poseMatrix = manager.getPoseMatrix();
     emscripten::val pose = emscripten::val::array();
-    for (auto i = 0; i < 12; i++) {
-        pose.call<void>("push", poseMatrix.at<double>(i));
+    for (auto i = 0; i < 3; i++) {
+        for (auto j = 0; j < 4; j++) {
+            pose.call<void>("push", poseMatrix.at<double>(j, i));
+        }
     }
     return pose;
 }
