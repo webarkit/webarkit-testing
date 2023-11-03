@@ -46,7 +46,7 @@
     "build-docker": "docker exec emscripten-webarkit-testing npm run build",
     "build-docker-w-cmake": "docker exec emscripten-webarkit-testing npm run build-cmake",
     "build-docker-w-make": "docker exec emscripten-webarkit-testing npm run build-make",
-    "build-docker-no-libar": "docker exec emscripten-webarkit npm run build-no-libar",
+    "build-docker-no-libar": "docker exec emscripten-webarkit-testing npm run build-no-libar",
     "build-docker-debug": "docker exec emscripten-webarkit-testing npm run build-debug",
     "build-all-dev": "node tools/makem.js --no-libar; echo Built at `date` && webpack --mode development --progress --watch",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
