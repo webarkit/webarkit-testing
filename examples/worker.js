@@ -28,6 +28,9 @@ function initTracker(msg) {
 
     postMessage({ type: "loadedTracker"})
 
+    var cameraProjMat = wark.getCameraProjectionMatrix();
+    console.log("camera proj Mat: ", cameraProjMat);
+
     wark.addEventListener("getMarker", function (event) {
       console.log(event.data.corners);
       markerResult = {

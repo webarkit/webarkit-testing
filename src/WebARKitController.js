@@ -131,6 +131,10 @@ export default class WebARKitController {
     return this.webarkit.getPoseMatrix();
   }
 
+  getCameraProjectionMatrix() {
+    return this.webarkit.getCameraProjectionMatrix();
+  }
+
   getCorners() {
     return this.webarkit.getCorners();
   }

@@ -33,6 +33,15 @@ emscripten::val WebARKit::getPoseMatrix() {
     return pose;
 }
 
+emscripten::val WebARKit::getCameraProjectionMatrix() {
+    std::array<double, 16> cameraProjectionMatrix = manager.getCameraProjectionMatrix();
+    emscripten::val cameraProjection = emscripten::val::array();
+    for (auto c: cameraProjectionMatrix) {
+        cameraProjection.call<void>("push", c);
+    }
+    return cameraProjection;
+}
+
 emscripten::val WebARKit::getCorners() {
     std::vector<double> output;
     output = manager.getOutputData();

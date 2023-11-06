@@ -36,6 +36,7 @@ class WebARKit {
     void setLogLevel(int logLevel);
     emscripten::val getHomography();
     emscripten::val getPoseMatrix();
+    emscripten::val getCameraProjectionMatrix();
     emscripten::val getCorners();
     bool isValid();
 
