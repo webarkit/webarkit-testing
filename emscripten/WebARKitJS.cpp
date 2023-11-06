@@ -24,7 +24,6 @@ emscripten::val WebARKit::getHomography() {
 
 emscripten::val WebARKit::getPoseMatrix() {
     cv::Mat poseMatrix = manager.getPoseMatrix();
-    WEBARKIT_LOGi("Mat shape: %d x %d", poseMatrix.rows, poseMatrix.cols);
     emscripten::val pose = emscripten::val::array();
     for (auto i = 0; i < poseMatrix.rows; i++) {
         for (auto j = 0; j < poseMatrix.cols; j++) {

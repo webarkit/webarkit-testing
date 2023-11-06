@@ -138,6 +138,7 @@ var ar2_sources = [
 var webarkit_sources = [
     '../WebARKitCamera.cpp',
     '../WebARKitLog.cpp',
+    '../WebARKitGL.cpp',
     '../WebARKitManager.cpp',
     '../WebARKitPattern.cpp',
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
