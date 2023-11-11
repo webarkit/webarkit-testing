@@ -31,7 +31,7 @@ class WebARKit {
         manager.initialiseBase(m_trackerType, this->videoWidth, this->videoHeight);
     }
 
-    void initTrackerGray(emscripten::val data_buffer, int width, int height);
+    void initTrackerGray(emscripten::val data_buffer, int width, int height, webarkit::ColorSpace colorSpace);
     void processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace);
     void setLogLevel(int logLevel);
     emscripten::val getHomography();

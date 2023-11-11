@@ -1,8 +1,8 @@
 #include "WebARKitJS.h"
 
-void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int height) {
+void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int height, webarkit::ColorSpace colorSpace) {
     auto u8 = emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
-    manager.initTracker(u8.data(), width, height);
+    manager.initTracker(u8.data(), width, height, colorSpace);
 }
 
 void WebARKit::processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace) {

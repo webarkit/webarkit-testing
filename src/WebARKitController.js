@@ -107,8 +107,8 @@ export default class WebARKitController {
     }
   }
 
-  async loadTrackerGrayImage(imgData, width, height) {
-    return this.webarkit.initTrackerGray(imgData, width, height);
+  async loadTrackerGrayImage(imgData, width, height, trackerType) {
+    return this.webarkit.initTrackerGray(imgData, width, height, trackerType);
   }
 
   processFrame(imageData) {
