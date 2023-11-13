@@ -2,6 +2,8 @@ import WARKit from "../build/webarkit_ES6_wasm.simd";
 import packageInfo from "../package.json";
 
 export default class WebARKitController {
+  static RGBA;
+  static RGB;
   static GRAY;
   static ORB_TRACKER;
   static AKAZE_TRACKER;
@@ -51,6 +53,8 @@ export default class WebARKitController {
 
     console.log("[WebARKitController]", "WebARKit initialized");
     WebARKitController.GRAY = this.instance.ColorSpace.GRAY;
+    WebARKitController.RGBA = this.instance.ColorSpace.RGBA;
+    WebARKitController.RGB = this.instance.ColorSpace.RGB;
 
     this.version = packageInfo.version;
     console.info("WebARKit ", this.version);
@@ -81,11 +85,11 @@ export default class WebARKitController {
     return trackerT;
   }
 
-  process_raw(imageData) {
+  process_raw(imageData, colorSpace) {
     let corners = [];
     let matrix = [];
     let pose = [];
-    this.processFrame(imageData);
+    this.processFrame(imageData, colorSpace);
 
     if(this.isValid()) {
 
@@ -111,8 +115,8 @@ export default class WebARKitController {
     return this.webarkit.initTrackerGray(imgData, width, height, trackerType);
   }
 
-  processFrame(imageData) {
-    this.webarkit.processFrame(imageData, WebARKitController.GRAY);
+  processFrame(imageData, colorSpace) {
+    this.webarkit.processFrame(imageData, colorSpace);
   }
 
   setLogLevel(level) {

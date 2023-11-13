@@ -14,7 +14,9 @@
   }
   </script>
   <canvas id="canvas_draw"></canvas>
-  <script src="worker_threejs_setup.js"></script>
+  <script src="initCamera.js"></script>
+  <!--<script src="worker_threejs_setup.js"></script>-->
+  <script src="threejs_worker_ES6.js"></script>
   <script src="js/three.min.js"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -24,5 +26,6 @@
   
   <img id="refIm" src="./data/pinball.jpg" width="1637" height="2048" style="display:none;">
   <img id="arElem" src="./data/aframe-k.png"></img>
+  <video id="video" autoplay loop muted playsinline></video>
   <div id="loading">Loading Image Tracking Modules...</div>
 </body>

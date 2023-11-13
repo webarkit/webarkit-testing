@@ -59,7 +59,7 @@ function initTracker(msg) {
 function processFrame() {
   markerResult = null;
   if (ar && ar.process_raw) {
-    ar.process_raw(next);
+    ar.process_raw(next, WebARKit.WebARKitController.RGBA);
   }
   if (markerResult) {
     postMessage(markerResult);
