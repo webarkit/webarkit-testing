@@ -39,7 +39,7 @@ function initTracker(msg) {
     postMessage({ type: "endLoading", end: true })
 
     wark.addEventListener("getMarker", function (event) {
-      console.log(event.data);
+      //console.log(event.data);
       markerResult = {
         type: "found",
         corners: JSON.stringify(event.data.corners),

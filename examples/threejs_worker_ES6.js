@@ -112,10 +112,10 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       var msg = ev.data;
       switch (msg.type) {
         case "loadedTracker": {
-          console.log(msg)
+          //console.log(msg)
           var proj = JSON.parse(msg.cameraProjMat);
           //var proj = [1.9102363924347978, 0, 0, 0, 0, 2.5377457054523322, 0, 0, -0.013943280545895442, -0.005830389685211879, -1.0000002000000199, -1, 0, 0, -0.00020000002000000202, 0];
-          console.log("proj: ", proj);
+          //console.log("proj: ", proj);
           var ratioW = pw / w;
           var ratioH = ph / h;
           proj[0] *= ratioW;
@@ -188,7 +188,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       sphere.position.x = 1;
       //sphere.position.z = 1;
       // set matrix of 'root' by detected 'world' matrix
-      console.log("world: ", world);
+      //console.log("world: ", world);
       var world2= [0.04984269657942322, 0.0011028004165823837, 0.0037468644060579515, 0, -0.00015674864315588379, 0.048456810395189856, -0.012054592420455989, 0, -0.003895003003705642, 0.012004841145274035, 0.04830878467734379, 0, -5.418834804971434, -3.6673568534354173, -10.857604385997499, 1];
       setMatrix(root.matrix, world);
     }
