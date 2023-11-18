@@ -33,6 +33,17 @@ emscripten::val WebARKit::getPoseMatrix() {
     return pose;
 }
 
+emscripten::val WebARKit::getGLViewMatrix() {
+    cv::Mat glViewMatrix = manager.getGLViewMatrix();
+    emscripten::val glView = emscripten::val::array();
+    for (auto i = 0; i < glViewMatrix.rows; i++) {
+        for (auto j = 0; j < glViewMatrix.cols; j++) {
+            glView.call<void>("push", glViewMatrix.at<double>(i, j));
+        }
+    }
+    return glView;
+}
+
 emscripten::val WebARKit::getCameraProjectionMatrix() {
     std::array<double, 16> cameraProjectionMatrix = manager.getCameraProjectionMatrix();
     emscripten::val cameraProjection = emscripten::val::array();

@@ -88,19 +88,18 @@ export default class WebARKitController {
   process_raw(imageData, colorSpace) {
     let corners = [];
     let matrix = [];
-    let matrixGL_RH = [];
-    let pose = [];
+    let matrixGL_RH = new Float64Array(16)
+    let pose = new Float64Array(16);
+    let viewMatrix_GL = new Float64Array(16);
     this.processFrame(imageData, colorSpace);
 
     if(this.isValid()) {
 
       corners = this.getCorners();
       matrix = this.getHomography();
-      //this.transMatToGLMat(this.getPoseMatrix(), pose);
-      pose = this.getPoseMatrix();
-      console.log("pose: ", pose)
+      this.transMatToGLMat(this.getPoseMatrix(), pose);
+      viewMatrix_GL = this.getGLViewMatrix();
       matrixGL_RH = this.arglCameraViewRHf(pose, matrixGL_RH, 1.0);
-      //pose = this.getPoseMatrix();
 
 
       this.dispatchEvent({
@@ -112,6 +111,7 @@ export default class WebARKitController {
           corners: corners,
           matrix: matrix,
           matrixGL_RH: matrixGL_RH,
+          viewMatrix_GL: viewMatrix_GL,
           pose: pose
         },
       })
@@ -140,6 +140,10 @@ export default class WebARKitController {
 
   getPoseMatrix() {
     return this.webarkit.getPoseMatrix();
+  }
+
+  getGLViewMatrix() {
+    return this.webarkit.getGLViewMatrix();
   }
 
   getCameraProjectionMatrix() {

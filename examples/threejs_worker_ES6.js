@@ -1,6 +1,9 @@
 var oWidth = window.innerWidth;
 var oHeight = window.innerHeight;
 
+//var oWidth = 640;
+//var oHeight = 480;
+
 function isMobile () {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
@@ -51,7 +54,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   var marker;
 
   sphere.material.flatShading;
-  sphere.scale.set(200, 200, 200);
+  sphere.scale.set(10, 10, 10);
 
   root.matrixAutoUpdate = false;
   root.add(sphere);
@@ -88,7 +91,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       fetch(URL)
           .then(response => response.arrayBuffer())
           .then(buff => {
-            console.log(buff);
+            //console.log(buff);
             let buffer = new Uint8Array(buff);
             worker.postMessage({
               type: "initTracker",
@@ -110,8 +113,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       switch (msg.type) {
         case "loadedTracker": {
           console.log(msg)
-          //var proj = JSON.parse(msg.cameraProjMat);
-          var proj = [1.9102363924347978, 0, 0, 0, 0, 2.5377457054523322, 0, 0, -0.013943280545895442, -0.005830389685211879, -1.0000002000000199, -1, 0, 0, -0.00020000002000000202, 0];
+          var proj = JSON.parse(msg.cameraProjMat);
+          //var proj = [1.9102363924347978, 0, 0, 0, 0, 2.5377457054523322, 0, 0, -0.013943280545895442, -0.005830389685211879, -1.0000002000000199, -1, 0, 0, -0.00020000002000000202, 0];
           console.log("proj: ", proj);
           var ratioW = pw / w;
           var ratioH = ph / h;
@@ -162,7 +165,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     if (!msg) {
       world = null;
     } else {
-      world = JSON.parse(msg.matrixGL_RH);
+      //world = JSON.parse(msg.matrixGL_RH);
+      world = JSON.parse(msg.viewMatrix_GL);
     }
   };
 
@@ -180,13 +184,13 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       sphere.visible = false;
     } else {
       sphere.visible = true;
-      sphere.position.y = 10;
-      sphere.position.x = 10;
+      sphere.position.y = 1;
+      sphere.position.x = 1;
       //sphere.position.z = 1;
       // set matrix of 'root' by detected 'world' matrix
       console.log("world: ", world);
       var world2= [0.04984269657942322, 0.0011028004165823837, 0.0037468644060579515, 0, -0.00015674864315588379, 0.048456810395189856, -0.012054592420455989, 0, -0.003895003003705642, 0.012004841145274035, 0.04830878467734379, 0, -5.418834804971434, -3.6673568534354173, -10.857604385997499, 1];
-      setMatrix(root.matrix, world2);
+      setMatrix(root.matrix, world);
     }
     renderer.render(scene, camera);
   };

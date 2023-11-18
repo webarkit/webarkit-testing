@@ -39,12 +39,13 @@ function initTracker(msg) {
     postMessage({ type: "endLoading", end: true })
 
     wark.addEventListener("getMarker", function (event) {
-      console.log(event.data.corners);
+      console.log(event.data);
       markerResult = {
         type: "found",
         corners: JSON.stringify(event.data.corners),
         matrix: JSON.stringify(event.data.matrix),
         matrixGL_RH: JSON.stringify(event.data.matrixGL_RH),
+        viewMatrix_GL: JSON.stringify(event.data.viewMatrix_GL),
         pose: JSON.stringify(event.data.pose),
       };
     });
