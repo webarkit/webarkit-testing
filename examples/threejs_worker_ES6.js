@@ -29,6 +29,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   var ox, oy;
   var worker;
 
+  var imageData;
+
   var canvas_process = document.createElement('canvas');
   var context_process = canvas_process.getContext('2d', { willReadFrequently: true });
   var targetCanvas = document.querySelector("#canvas");
@@ -165,8 +167,10 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     if (!msg) {
       world = null;
     } else {
+      world = JSON.parse(msg.pose);
       //world = JSON.parse(msg.matrixGL_RH);
-      world = JSON.parse(msg.viewMatrix_GL);
+      //world = JSON.parse(msg.viewMatrix_GL);
+
     }
   };
 
@@ -189,22 +193,39 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       //sphere.position.z = 1;
       // set matrix of 'root' by detected 'world' matrix
       //console.log("world: ", world);
-      var world2= [0.04984269657942322, 0.0011028004165823837, 0.0037468644060579515, 0, -0.00015674864315588379, 0.048456810395189856, -0.012054592420455989, 0, -0.003895003003705642, 0.012004841145274035, 0.04830878467734379, 0, -5.418834804971434, -3.6673568534354173, -10.857604385997499, 1];
+      //var world2= [0.04984269657942322, 0.0011028004165823837, 0.0037468644060579515, 0, -0.00015674864315588379, 0.048456810395189856, -0.012054592420455989, 0, -0.003895003003705642, 0.012004841145274035, 0.04830878467734379, 0, -5.418834804971434, -3.6673568534354173, -10.857604385997499, 1];
       setMatrix(root.matrix, world);
     }
     renderer.render(scene, camera);
   };
 
-  var process = function () {
+  var update = function (){
     context_process.fillStyle = 'black';
+    //console.log("pw:", pw);
+    //console.log("ph: ", ph);
+    //context_process.fillRect(0, 0, pw, ph);
+    context_process.fillRect(0, 0, w, h);
+    //console.log("vw: ", vw, "vh: ", vh, "ox: ", ox, "oy: ", oy, "w: ",w, "h: ", h)
+    //context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
+    context_process.drawImage(video, 0, 0);
+
+    //imageData = context_process.getImageData(0, 0, pw, ph);
+    imageData = context_process.getImageData(0, 0, w, h);
+  }
+
+  var process = function () {
+    /*context_process.fillStyle = 'black';
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
-    var imageData = context_process.getImageData(0, 0, pw, ph);
-    worker.postMessage({ type: 'process', data: imageData }, [imageData.data.buffer]);
+    var imageData = context_process.getImageData(0, 0, pw, ph);*/
+    if(!imageData) return;
+    worker.postMessage({ type: 'process', data: imageData });
   }
   var tick = function () {
     draw();
+    //process();
+    update();
     requestAnimationFrame(tick);
   };
 

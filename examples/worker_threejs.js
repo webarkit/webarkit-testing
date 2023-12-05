@@ -26,6 +26,7 @@ function initTracker(msg) {
   var onLoad = function (wark) {
     ar = wark;
     //console.log("wark: ", wark)
+    wark.setLogLevel(0);
     wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.RGB);
 
     var cameraProjMat = wark.getCameraProjectionMatrix();
@@ -42,10 +43,10 @@ function initTracker(msg) {
       //console.log(event.data);
       markerResult = {
         type: "found",
-        corners: JSON.stringify(event.data.corners),
-        matrix: JSON.stringify(event.data.matrix),
-        matrixGL_RH: JSON.stringify(event.data.matrixGL_RH),
-        viewMatrix_GL: JSON.stringify(event.data.viewMatrix_GL),
+        //corners: JSON.stringify(event.data.corners),
+        //matrix: JSON.stringify(event.data.matrix),
+        //matrixGL_RH: JSON.stringify(event.data.matrixGL_RH),
+        //viewMatrix_GL: JSON.stringify(event.data.viewMatrix_GL),
         pose: JSON.stringify(event.data.pose),
       };
     });

@@ -7,6 +7,8 @@ export default class WebARKitController {
   static GRAY;
   static ORB_TRACKER;
   static AKAZE_TRACKER;
+  static FREAK_TRACKER;
+  static TEBLID_TRACKER;
 
   constructor() {
     this.id;
@@ -86,8 +88,8 @@ export default class WebARKitController {
   }
 
   process_raw(imageData, colorSpace) {
-    let corners = [];
-    let matrix = [];
+    let corners = new Float64Array(8)
+    let matrix = new Float64Array(16);
     let matrixGL_RH = new Float64Array(16)
     let pose = new Float64Array(16);
     let viewMatrix_GL = new Float64Array(16);
