@@ -106,6 +106,18 @@ html {
   object-fit: cover;
 }
 
+#canvas_process {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 80;
+
+  display: block;
+  width: 1280px;;
+  height: 720px;
+  object-fit: cover;
+}
+
 #arvideo {
   display: none;
 }

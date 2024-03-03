@@ -31,7 +31,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   var imageData;
 
-  var canvas_process = document.createElement('canvas');
+  var canvas_process = document.getElementById('canvas_process');
+
   var context_process = canvas_process.getContext('2d', { willReadFrequently: true });
   var targetCanvas = document.querySelector("#canvas");
 
@@ -56,7 +57,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   var marker;
 
   sphere.material.flatShading;
-  sphere.scale.set(10, 10, 10);
+  sphere.scale.set(.5, .5, .5);
 
   root.matrixAutoUpdate = false;
   root.add(sphere);
@@ -77,10 +78,10 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     ph = Math.max(h, w / 4 * 3);
     ox = (pw - w) / 2;
     oy = (ph - h) / 2;
-    canvas_process.style.clientWidth = pw + "px";
-    canvas_process.style.clientHeight = ph + "px";
-    canvas_process.width = pw;
-    canvas_process.height = ph;
+    //canvas_process.style.clientWidth = pw + "px";
+    //canvas_process.style.clientHeight = ph + "px";
+    //canvas_process.width = pw;
+    //canvas_process.height = ph;
 
     renderer.setSize(sw, sh);
 
@@ -174,22 +175,22 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     }
   };
 
-  var lasttime = Date.now();
-  var time = 0;
+  //var lasttime = Date.now();
+  //var time = 0;
 
   var draw = function () {
     render_update();
-    var now = Date.now();
+    /*var now = Date.now();
     var dt = now - lasttime;
     time += dt;
-    lasttime = now;
+    lasttime = now;*/
 
     if (!world) {
       sphere.visible = false;
     } else {
       sphere.visible = true;
-      sphere.position.y = 1;
-      sphere.position.x = 1;
+      //sphere.position.y = 1;
+      //sphere.position.x = 1;
       //sphere.position.z = 1;
       // set matrix of 'root' by detected 'world' matrix
       //console.log("world: ", world);
@@ -203,13 +204,13 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     context_process.fillStyle = 'black';
     //console.log("pw:", pw);
     //console.log("ph: ", ph);
-    context_process.fillRect(0, 0, pw, ph);
+    context_process.fillRect(0, 0, vw, vh);
     //context_process.fillRect(0, 0, w, h);
-    console.log("vw: ", vw, "vh: ", vh, "ox: ", ox, "oy: ", oy, "w: ",w, "h: ", h)
-    context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
-    //context_process.drawImage(video, 0, 0);
+    //console.log("vw: ", vw, "vh: ", vh, "ox: ", ox, "oy: ", oy, "w: ",w, "h: ", h)
+    //context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
+    context_process.drawImage(video, 0, 0);
 
-    imageData = context_process.getImageData(0, 0, pw, ph);
+    imageData = context_process.getImageData(0, 0, vw, vh);
     //imageData = context_process.getImageData(0, 0, w, h);
     //requestAnimationFrame(update);
   }
