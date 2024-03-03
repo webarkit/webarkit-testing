@@ -129,7 +129,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           proj[9] *= ratioH;
           proj[13] *= ratioH;
           setMatrix(camera.projectionMatrix, proj);
-          process();
+          //process();
           break;
         }
         case "endLoading": {
@@ -147,12 +147,12 @@ function start(markerUrl, video, input_width, input_height, render_update, track
         }
         case 'found': {
           found(msg);
-          process();
+          //process();
           break;
         }
         case 'not found': {
           found(null);
-          process();
+          //process();
           break;
         }
       }
@@ -203,29 +203,36 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     context_process.fillStyle = 'black';
     //console.log("pw:", pw);
     //console.log("ph: ", ph);
-    //context_process.fillRect(0, 0, pw, ph);
-    context_process.fillRect(0, 0, w, h);
-    //console.log("vw: ", vw, "vh: ", vh, "ox: ", ox, "oy: ", oy, "w: ",w, "h: ", h)
-    //context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
-    context_process.drawImage(video, 0, 0);
+    context_process.fillRect(0, 0, pw, ph);
+    //context_process.fillRect(0, 0, w, h);
+    console.log("vw: ", vw, "vh: ", vh, "ox: ", ox, "oy: ", oy, "w: ",w, "h: ", h)
+    context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
+    //context_process.drawImage(video, 0, 0);
 
-    //imageData = context_process.getImageData(0, 0, pw, ph);
-    imageData = context_process.getImageData(0, 0, w, h);
+    imageData = context_process.getImageData(0, 0, pw, ph);
+    //imageData = context_process.getImageData(0, 0, w, h);
+    //requestAnimationFrame(update);
   }
 
-  var process = function () {
-    /*context_process.fillStyle = 'black';
-    context_process.fillRect(0, 0, pw, ph);
-    context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
+  //update();
 
-    var imageData = context_process.getImageData(0, 0, pw, ph);*/
+  var process = function () {
+    //context_process.fillStyle = 'black';
+    //context_process.fillRect(0, 0, pw, ph);
+    //context_process.fillRect(0, 0, w, h);
+    //context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
+    //context_process.drawImage(video, 0, 0);
+
+    //var imageData = context_process.getImageData(0, 0, pw, ph);
+    //var imageData = context_process.getImageData(0, 0, w, h);
+    update();
     if(!imageData) return;
-    worker.postMessage({ type: 'process', data: imageData });
+    worker.postMessage({ type: 'process', data: imageData.data.buffer }, [imageData.data.buffer]);
   }
   var tick = function () {
     draw();
     //process();
-    update();
+    //update();
     requestAnimationFrame(tick);
   };
 
