@@ -41,34 +41,33 @@ async function loadSpeedyVideo(id) {
 
     pipeline.init(source, sink, greyscale); // add the nodes to the pipeline
 
+    var oWidth = window.innerWidth;
+    var oHeight = window.innerHeight;
+
     var data;
 
-    (function () {
+    const off = new OffscreenCanvas(oWidth, oHeight)
+    const ctx = off.getContext('2d', { willReadFrequently: true })
+    var image = null;
 
-        const off = new OffscreenCanvas(1280, 720)
-        const ctx = off.getContext('2d')
-        var image = null, frameReady = false;
+    async function update() {
+        const result = await pipeline.run(); // image is a SpeedyMedia
+        image = result.image;
 
-        async function update() {
-            const result = await pipeline.run(); // image is a SpeedyMedia
-            image = result.image;
-            //console.log(image);
-            ctx.drawImage(image.source, 0, 0);
+        ctx.drawImage(image.source, 0, 0);
 
-            data = ctx.getImageData(0, 0, 1280, 720);
+        let dt = ctx.getImageData(0, 0, oWidth, oHeight);
 
-            frameReady = true;
-            setTimeout(update, 1000 / 60);
-            return data;
-        }
+        requestAnimationFrame(update);
+        return dt;
+    }
 
-        data = update();
-    })()
+    data = await update();
+
     return data;
 }
 
 function getImgData(img) {
-
 
     const ctx = document.createElement('canvas').getContext('2d')
 
@@ -76,20 +75,6 @@ function getImgData(img) {
     let data = ctx.getImageData(0, 0, 1637, 2048);
 
     return data.data;
-}
-
-async function getVideoData() {
-    //const off = new OffscreenCanvas(1280, 720)
-    //const ctx = off.getContext('2d')
-    //const {image}  = await pipeline.run(); // image is a SpeedyMedia
-
-    ctx.drawImage(image.source, 0, 0);
-
-    let data = ctx.getImageData(0, 0, 1280, 720);
-
-    requestAnimationFrame(getVideoData);
-
-    return data;
 }
 
 

@@ -31,9 +31,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   var imageData;
 
- // var canvas_process = document.getElementById('canvas_process');
-
-  //var context_process = canvas_process.getContext('2d', { willReadFrequently: true });
   var targetCanvas = document.querySelector("#canvas");
 
   var renderer = new THREE.WebGLRenderer({ canvas: targetCanvas, alpha: true, antialias: true });
@@ -78,10 +75,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     ph = Math.max(h, w / 4 * 3);
     ox = (pw - w) / 2;
     oy = (ph - h) / 2;
-    //canvas_process.style.clientWidth = pw + "px";
-    //canvas_process.style.clientHeight = ph + "px";
-    //canvas_process.width = pw;
-    //canvas_process.height = ph;
 
     renderer.setSize(sw, sh);
 
@@ -187,7 +180,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   }
   var tick = function () {
     draw();
-    //process();
+    process();
     //update();
     requestAnimationFrame(tick);
   };
