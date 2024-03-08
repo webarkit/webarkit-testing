@@ -84,7 +84,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     var type = setTrackerType();
 
     loadSpeedyImage('refIm').then(img => {
-      console.log(img);
       worker.postMessage({
         type: "initTracker",
         trackerType: type,
@@ -137,8 +136,9 @@ function start(markerUrl, video, input_width, input_height, render_update, track
         }
       }
       track_update();
-      process();
+      //process();
     };
+    //update();
   };
 
   var world;
@@ -165,27 +165,37 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   var update = function (){
     
-    loadSpeedyVideo('video').then((data) => {
-      imageData = data;
-      if(!imageData) return;
-    worker.postMessage({ type: 'process', data: imageData.data.buffer }, [imageData.data.buffer]);
-  
+    loadSpeedyVideo('video', (data) => {
+      console.log(data);
+      if(!data) return;
+      //console.warn('imageData: ', imageData);
+      function updateImgData(data) {
+        //console.log(data);
+        console.warn('updateImgData');
+        worker.postMessage({ type: 'process', data: data.data.buffer }, [data.data.buffer]);
+        requestAnimationFrame(updateImgData)
+      }
+      updateImgData(data)
     });
    
   }
 
   var process = function () {   
+    
     update();
 
   }
   var tick = function () {
     draw();
-    process();
+    //process();
     //update();
+    //console.log('we are in draw!');
     requestAnimationFrame(tick);
   };
 
   load();
+  update();
+  //process();
   tick();
-  process();
+  //process();
 }

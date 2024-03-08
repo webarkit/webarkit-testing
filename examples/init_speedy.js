@@ -1,5 +1,6 @@
 async function loadSpeedyImage(id) {
     // Load an image
+    console.warn('Loading speedy-media for the image tracker...');
     const img = document.getElementById(id);
     const media = await Speedy.load(img);
 
@@ -22,7 +23,8 @@ async function loadSpeedyImage(id) {
     return getImgData(image);
 }
 
-async function loadSpeedyVideo(id) {
+async function loadSpeedyVideo(id, callback) {
+    console.warn('Loading speedy-media for video...');
 
     // Load a video
     const video = document.getElementById(id);
@@ -56,15 +58,20 @@ async function loadSpeedyVideo(id) {
 
         ctx.drawImage(image.source, 0, 0);
 
-        let dt = ctx.getImageData(0, 0, oWidth, oHeight);
+        data = ctx.getImageData(0, 0, oWidth, oHeight);
+
+        //console.log(data);
+        //callback(data);
 
         requestAnimationFrame(update);
-        return dt;
     }
 
-    data = await update();
+    update();
+    //console.log(data);
+    callback(data)
+    //requestAnimationFrame(update);
 
-    return data;
+    return true;
 }
 
 function getImgData(img) {
