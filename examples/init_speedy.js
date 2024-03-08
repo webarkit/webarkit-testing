@@ -48,7 +48,7 @@ async function loadSpeedyVideo(id, callback) {
 
     var data;
 
-    (async function () {
+    (function () {
         const off = new OffscreenCanvas(oWidth, oHeight)
         const ctx = off.getContext('2d', { willReadFrequently: true })
         let image = null, frameReady = false;
@@ -60,27 +60,28 @@ async function loadSpeedyVideo(id, callback) {
             setTimeout(update, 1000 / 60);
         }
 
-        await update();
+        update();
 
-        async function process() {
+        function process(cb = (d) => { }) {
             if (frameReady) {
-                console.log('Processing frame...');
+                //console.log('Processing frame...');
                 ctx.drawImage(image.source, 0, 0);
                 data = ctx.getImageData(0, 0, oWidth, oHeight);
                 //console.log(data);
-                callback(data);
+                if (typeof cb === "function") {
+                    cb(data);
+                  }
             }
             frameReady = false;
-            requestAnimationFrame(update);
+            requestAnimationFrame(process.bind(this, cb));
         }
 
-        await process()
-        setInterval(renderStatus, 200);
+        process((c) => {
+            //console.log(c);
+            callback(c);        
+        })
+        setInterval(() => renderStatus(), 200);
     })();
-
-    //console.log(data);
-    //callback(data)
-    //requestAnimationFrame(update);
 
     return true;
 }

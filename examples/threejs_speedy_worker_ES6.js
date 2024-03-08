@@ -171,9 +171,9 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       //console.warn('imageData: ', imageData);
       function updateImgData(data) {
         //console.log(data);
-        console.warn('updateImgData');
+        //console.warn('updateImgData');
         worker.postMessage({ type: 'process', data: data.data.buffer }, [data.data.buffer]);
-        requestAnimationFrame(updateImgData)
+        requestAnimationFrame(updateImgData);
       }
       updateImgData(data)
     });
