@@ -48,27 +48,38 @@ async function loadSpeedyVideo(id, callback) {
 
     var data;
 
-    const off = new OffscreenCanvas(oWidth, oHeight)
-    const ctx = off.getContext('2d', { willReadFrequently: true })
-    var image = null;
+    (async function () {
+        const off = new OffscreenCanvas(oWidth, oHeight)
+        const ctx = off.getContext('2d', { willReadFrequently: true })
+        let image = null, frameReady = false;
 
-    async function update() {
-        const result = await pipeline.run(); // image is a SpeedyMedia
-        image = result.image;
+        async function update() {
+            const result = await pipeline.run(); // image is a SpeedyMedia
+            image = result.image;
+            frameReady = true;
+            setTimeout(update, 1000 / 60);
+        }
 
-        ctx.drawImage(image.source, 0, 0);
+        await update();
 
-        data = ctx.getImageData(0, 0, oWidth, oHeight);
+        async function process() {
+            if (frameReady) {
+                console.log('Processing frame...');
+                ctx.drawImage(image.source, 0, 0);
+                data = ctx.getImageData(0, 0, oWidth, oHeight);
+                //console.log(data);
+                callback(data);
+            }
+            frameReady = false;
+            requestAnimationFrame(update);
+        }
 
-        //console.log(data);
-        //callback(data);
+        await process()
+        setInterval(renderStatus, 200);
+    })();
 
-        requestAnimationFrame(update);
-    }
-
-    update();
     //console.log(data);
-    callback(data)
+    //callback(data)
     //requestAnimationFrame(update);
 
     return true;
@@ -82,6 +93,15 @@ function getImgData(img) {
     let data = ctx.getImageData(0, 0, 1637, 2048);
 
     return data.data;
+}
+
+function renderStatus(arr = null, label = 'Keypoints') {
+    const status = document.getElementById('status');
+
+    if (Array.isArray(arr))
+        status.innerText = `FPS: ${Speedy.fps} | ${label}: ${arr.length}`;
+    else
+        status.innerText = `FPS: ${Speedy.fps}`;
 }
 
 
