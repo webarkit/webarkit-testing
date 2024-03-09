@@ -1,9 +1,6 @@
 var oWidth = window.innerWidth;
 var oHeight = window.innerHeight;
 
-//var oWidth = 640;
-//var oHeight = 480;
-
 function isMobile () {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
@@ -28,8 +25,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   var pw, ph;
   var ox, oy;
   var worker;
-
-  var imageData;
 
   var targetCanvas = document.querySelector("#canvas");
 
@@ -136,9 +131,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
         }
       }
       track_update();
-      //process();
     };
-    //update();
   };
 
   var world;
@@ -163,39 +156,22 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     renderer.render(scene, camera);
   };
 
-  var update = function (){
+  var process = function (){
     
-    loadSpeedyVideo('video', (data) => {
-      console.log(data);
-      if(!data) return;
-      //console.warn('imageData: ', imageData);
-      function updateImgData(data) {
-        //console.log(data);
-        //console.warn('updateImgData');
-        worker.postMessage({ type: 'process', data: data.data.buffer }, [data.data.buffer]);
-        requestAnimationFrame(updateImgData);
-      }
-      updateImgData(data)
-    });
+    loadSpeedyVideo('video');
+
+    document.addEventListener('process_data', function(e){
+      worker.postMessage({ type: 'process', data: e.detail.data.data.buffer }, );
+  })
    
   }
 
-  var process = function () {   
-    
-    update();
-
-  }
   var tick = function () {
     draw();
-    //process();
-    //update();
-    //console.log('we are in draw!');
     requestAnimationFrame(tick);
   };
 
   load();
-  update();
-  //process();
+  process();
   tick();
-  //process();
 }

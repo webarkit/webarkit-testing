@@ -20,10 +20,12 @@ async function loadSpeedyImage(id) {
 
     const { image } = await pipeline.run(); // image is a SpeedyMedia
 
-    return getImgData(image);
+    const canvas = setupCanvas("canvas_load", image.width, image.height,'pinball');
+
+    return getImgData(image, canvas);
 }
 
-async function loadSpeedyVideo(id, callback) {
+async function loadSpeedyVideo(id) {
     console.warn('Loading speedy-media for video...');
 
     // Load a video
@@ -62,36 +64,31 @@ async function loadSpeedyVideo(id, callback) {
 
         update();
 
-        function process(cb = (d) => { }) {
+        function process() {
             if (frameReady) {
-                //console.log('Processing frame...');
                 ctx.drawImage(image.source, 0, 0);
                 data = ctx.getImageData(0, 0, oWidth, oHeight);
-                //console.log(data);
-                if (typeof cb === "function") {
-                    cb(data);
-                  }
+                const event = new CustomEvent("process_data", { detail: { data: data } });
+                document.dispatchEvent(event);         
             }
             frameReady = false;
-            requestAnimationFrame(process.bind(this, cb));
+            requestAnimationFrame(process)
         }
 
-        process((c) => {
-            //console.log(c);
-            callback(c);        
-        })
+        process();
+    
         setInterval(() => renderStatus(), 200);
     })();
 
     return true;
 }
 
-function getImgData(img) {
+function getImgData(img, canvas, width = img.width, height = img.height) {
 
-    const ctx = document.createElement('canvas').getContext('2d')
+    const ctx = canvas.getContext('2d')
 
-    ctx.drawImage(img.source, 0, 0);
-    let data = ctx.getImageData(0, 0, 1637, 2048);
+    ctx.drawImage(img.source, 0, 0,  width, height);
+    let data = ctx.getImageData(0, 0, width, height);
 
     return data.data;
 }
@@ -103,6 +100,19 @@ function renderStatus(arr = null, label = 'Keypoints') {
         status.innerText = `FPS: ${Speedy.fps} | ${label}: ${arr.length}`;
     else
         status.innerText = `FPS: ${Speedy.fps}`;
+}
+
+function setupCanvas(id, width, height, title = '')
+{
+    const canvas = document.getElementById(id);
+
+    if(canvas) {
+        canvas.width = width;
+        canvas.height = height;
+        canvas.title = title;
+    }
+
+    return canvas;
 }
 
 
