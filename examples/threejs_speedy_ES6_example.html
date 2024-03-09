@@ -78,6 +78,7 @@ STATS
                 sourceVideo.width = 1280;
                 sourceVideo.height = 720;
                 sourceVideo.play();
+                console.log(video.videoWidth);
 
                 // init target canvas
                 initTargetCanvas();
@@ -91,7 +92,7 @@ STATS
             })
             .then(_ => {
 
-                start('./data/pinball.jpg', video, video.videoWidth, video.videoHeight, function() { statsMain.update() }, function() { statsWorker.update() })
+                start( video.videoWidth, video.videoHeight, function() { statsMain.update() }, function() { statsWorker.update() })
 
             });
           
