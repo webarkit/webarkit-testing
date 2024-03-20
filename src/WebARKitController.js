@@ -87,13 +87,13 @@ export default class WebARKitController {
     return trackerT;
   }
 
-  process_raw(imageData, colorSpace) {
+  process_raw(imageData, colorSpace, enableBlur) {
     let corners = new Float64Array(8)
     let matrix = new Float64Array(16);
     let matrixGL_RH = new Float64Array(16)
     let pose = new Float64Array(16);
     let viewMatrix_GL = new Float64Array(16);
-    this.processFrame(imageData, colorSpace, true);
+    this.processFrame(imageData, colorSpace, enableBlur);
 
     if(this.isValid()) {
 

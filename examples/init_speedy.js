@@ -36,14 +36,19 @@ async function loadSpeedyVideo(id) {
     const pipeline = Speedy.Pipeline(); // create the pipeline and the nodes
     const source = Speedy.Image.Source();
     const sink = Speedy.Image.Sink();
+    const mux = Speedy.Image.Multiplexer();
     const greyscale = Speedy.Filter.Greyscale();
+    const nightvision = Speedy.Filter.Nightvision();
 
     source.media = media; // set the media source
 
-    source.output().connectTo(greyscale.input()); // connect the nodes
-    greyscale.output().connectTo(sink.input());
+    source.output().connectTo(greyscale.input());  // connect the nodes
+    source.output().connectTo(mux.input('in0'));
+    greyscale.output().connectTo(mux.input('in1'));
+    mux.output().connectTo(nightvision.input());
+    nightvision.output().connectTo(sink.input());
 
-    pipeline.init(source, sink, greyscale); // add the nodes to the pipeline
+    pipeline.init(source, sink, mux, greyscale, nightvision); // add the nodes to the pipeline
 
     var oWidth = window.innerWidth;
     var oHeight = window.innerHeight;
@@ -56,6 +61,13 @@ async function loadSpeedyVideo(id) {
         let image = null, frameReady = false;
 
         async function update() {
+            mux.port =  1;
+
+            nightvision.gain = 0.5;
+            nightvision.offset = 0.5;
+            nightvision.decay = 0.1;
+            nightvision.quality = "medium";
+
             const result = await pipeline.run(); // image is a SpeedyMedia
             image = result.image;
             frameReady = true;
