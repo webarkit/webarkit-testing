@@ -93,7 +93,7 @@ export default class WebARKitController {
     let matrixGL_RH = new Float64Array(16)
     let pose = new Float64Array(16);
     let viewMatrix_GL = new Float64Array(16);
-    this.processFrame(imageData, colorSpace);
+    this.processFrame(imageData, colorSpace, true);
 
     if(this.isValid()) {
 
@@ -124,8 +124,8 @@ export default class WebARKitController {
     return this.webarkit.initTrackerGray(imgData, width, height, trackerType);
   }
 
-  processFrame(imageData, colorSpace) {
-    this.webarkit.processFrame(imageData, colorSpace);
+  processFrame(imageData, colorSpace, enableBlur) {
+    this.webarkit.processFrame(imageData, colorSpace, enableBlur);
   }
 
   setLogLevel(level) {

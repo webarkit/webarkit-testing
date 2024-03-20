@@ -32,7 +32,7 @@ class WebARKit {
     }
 
     void initTrackerGray(emscripten::val data_buffer, int width, int height, webarkit::ColorSpace colorSpace);
-    void processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace);
+    void processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace, bool enableBlur);
     void setLogLevel(int logLevel);
     emscripten::val getHomography();
     emscripten::val getPoseMatrix();
