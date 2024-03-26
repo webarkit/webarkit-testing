@@ -52,10 +52,11 @@ export default class SpeedyPipelineNodeImageSinkImageData extends SpeedyPipeline
            const canvas = gpu.renderToCanvas(image);
            const ctx = canvas.getContext('2d');
            ctx.drawImage(image.source, 0, 0);
-           ctx.getImageData(0, 0, image.width, image.height).data.then(data => { 
-            this._imageData = data;
-            this._format = format;
-            resolve();});
+           ctx.getImageData(0, 0, image.width, image.height).data.then(data => {
+               //this._imageData = data;
+               this._bitmap = data;
+               this._format = format;
+               resolve();});
        });
    }
 }

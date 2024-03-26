@@ -1,5 +1,7 @@
-var oWidth = window.innerWidth;
-var oHeight = window.innerHeight;
+//var oWidth = window.innerWidth;
+//var oHeight = window.innerHeight;
+var oWidth = 1280
+var oHeight = 720;
 
 function isMobile () {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);

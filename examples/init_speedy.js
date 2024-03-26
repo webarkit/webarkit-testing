@@ -11,17 +11,21 @@ async function loadSpeedyImage(id) {
     
     console.log(SpeedyVisionSinkImageData);
 
-    //const sinktest  = new SpeedyVisionSinkImageData()
+    const sinkIData  = new SpeedyVisionSinkImageData.default.prototype.constructor()
+    console.log(sinkIData)
     const greyscale = Speedy.Filter.Greyscale();
 
     source.media = media; // set the media source
 
     source.output().connectTo(greyscale.input()); // connect the nodes
-    greyscale.output().connectTo(sink.input());
+    //greyscale.output().connectTo(sink.input());
+    greyscale.output().connectTo(sinkIData.input());
 
-    pipeline.init(source, sink, greyscale); // add the nodes to the pipeline
+    //pipeline.init(source, sink, greyscale); // add the nodes to the pipeline
+    pipeline.init(source, sinkIData, greyscale); // add the nodes to the pipeline
 
     const { image } = await pipeline.run(); // image is a SpeedyMedia
+    console.log(image)
 
     const canvas = setupCanvas("canvas_load", image.width, image.height,'pinball');
 
@@ -73,6 +77,7 @@ async function loadSpeedyVideo(id) {
 
             const result = await pipeline.run(); // image is a SpeedyMedia
             image = result.image;
+            //console.log(image)
             frameReady = true;
             setTimeout(update, 1000 / 60);
         }
