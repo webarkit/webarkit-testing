@@ -8,7 +8,10 @@ async function loadSpeedyImage(id) {
     const pipeline = Speedy.Pipeline(); // create the pipeline and the nodes
     const source = Speedy.Image.Source();
     const sink = Speedy.Image.Sink();
+    
+    console.log(SpeedyVisionSinkImageData);
 
+    //const sinktest  = new SpeedyVisionSinkImageData()
     const greyscale = Speedy.Filter.Greyscale();
 
     source.media = media; // set the media source
@@ -126,5 +129,3 @@ function setupCanvas(id, width, height, title = '')
 
     return canvas;
 }
-
-

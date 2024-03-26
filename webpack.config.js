@@ -62,6 +62,23 @@ module.exports = (env, argv) => {
       module,
     },
     {
+      name: "SpeedyVisionSinkImageData",
+      devtool,
+      entry: "./src/speedy-vision-mod/sink-image-data.js",
+      output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'SpeedyVisionSinkImageData.js',
+        library: 'SpeedyVisionSinkImageData',
+        libraryTarget: 'umd',
+        //globalObject: 'typeof self !== \'undefined\' ? self : this',
+      },
+      resolve: {
+        extensions: [".js"],
+      },
+      module,
+
+    },
+    {
       name: "GrayScale",
       devtool,
       entry: "./src/utils/GrayScale.js",
