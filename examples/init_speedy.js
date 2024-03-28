@@ -7,7 +7,7 @@ async function loadSpeedyImage(id) {
     // Setup the pipeline
     const pipeline = Speedy.Pipeline(); // create the pipeline and the nodes
     const source = Speedy.Image.Source();
-    const sink = Speedy.Image.Sink();
+    //const sink = Speedy.Image.Sink();
     
     console.log(SpeedyVisionSinkImageData);
 

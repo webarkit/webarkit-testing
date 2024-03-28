@@ -34,9 +34,17 @@ export default class SpeedyPipelineNodeImageSinkImageData extends SpeedyPipeline
      */
    export()
    {
-       Utils.assert(this._bitmap != null);
-       const mediaSource = this._bitmap ? this._bitmap : new Image();
-       return SpeedyMedia.load(mediaSource, { format: this._format }, false);
+       const { image, format } = /** @type {SpeedyPipelineMessageWithImage} */ ( this.input().read() );
+       return new SpeedyPromise(resolve => {
+        const canvas = gpu.renderToCanvas(image);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(image.source, 0, 0);
+        ctx.getImageData(0, 0, image.width, image.height).data.then(data => {
+            //this._imageData = data;
+            this._bitmap = data;
+            this._format = format;
+            resolve();});
+    });
    }
 
    /**
@@ -44,19 +52,17 @@ export default class SpeedyPipelineNodeImageSinkImageData extends SpeedyPipeline
     * @param {SpeedyGPU} gpu
     * @returns {void|SpeedyPromise<void>}
     */
-   run(gpu)
+   _run(gpu)
    {
        const { image, format } = /** @type {SpeedyPipelineMessageWithImage} */ ( this.input().read() );
 
        return new SpeedyPromise(resolve => {
            const canvas = gpu.renderToCanvas(image);
-           const ctx = canvas.getContext('2d');
-           ctx.drawImage(image.source, 0, 0);
-           ctx.getImageData(0, 0, image.width, image.height).data.then(data => {
-               //this._imageData = data;
-               this._bitmap = data;
+           createImageBitmap(canvas, 0, canvas.height - image.height, image.width, image.height).then(bitmap => {
+               this._bitmap = bitmap;
                this._format = format;
-               resolve();});
+               resolve();
+           });
        });
    }
 }
