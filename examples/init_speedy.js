@@ -7,25 +7,32 @@ async function loadSpeedyImage(id) {
     // Setup the pipeline
     const pipeline = Speedy.Pipeline(); // create the pipeline and the nodes
     const source = Speedy.Image.Source();
-    //const sink = Speedy.Image.Sink();
+    const sink = Speedy.Image.Sink();
     
     console.log(SpeedyVisionSinkImageData);
 
-    const sinkIData  = new SpeedyVisionSinkImageData.default.prototype.constructor()
-    console.log(sinkIData)
+    //const textureReader = new SpeedyVisionSinkImageData.TextureReader()
+    //console.log(textureReader)
+
+    //const sinkIData  = new SpeedyVisionSinkImageData.default.prototype.constructor()
+    //console.log(sinkIData)
     const greyscale = Speedy.Filter.Greyscale();
 
     source.media = media; // set the media source
 
     source.output().connectTo(greyscale.input()); // connect the nodes
-    //greyscale.output().connectTo(sink.input());
-    greyscale.output().connectTo(sinkIData.input());
+    greyscale.output().connectTo(sink.input());
+    //greyscale.output().connectTo(sinkIData.input());
 
-    //pipeline.init(source, sink, greyscale); // add the nodes to the pipeline
-    pipeline.init(source, sinkIData, greyscale); // add the nodes to the pipeline
+    pipeline.init(source, sink, greyscale); // add the nodes to the pipeline
+    //pipeline.init(source, sinkIData, greyscale); // add the nodes to the pipeline
+
 
     const { image } = await pipeline.run(); // image is a SpeedyMedia
     console.log(image)
+
+    //var texture;
+    //textureReader.readPixels(pipeline._gpu, texture)
 
     const canvas = setupCanvas("canvas_load", image.width, image.height,'pinball');
 

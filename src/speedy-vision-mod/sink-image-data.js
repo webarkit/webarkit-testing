@@ -8,10 +8,20 @@ import { SpeedyMediaSource } from 'speedy-vision/src/core/speedy-media-source';
 import { Utils } from 'speedy-vision/src/utils/utils';
 import { ImageFormat } from 'speedy-vision/src/utils/types';
 import { SpeedyPromise } from 'speedy-vision/src/core/speedy-promise';
+import { SpeedyTextureReader } from "speedy-vision/src/gpu/speedy-texture-reader";
 
+
+export  class TextureReader extends SpeedyTextureReader {
+    constructor() {
+        super();
+    }
+    readPixels(gpu, texture) {
+       return gpu.readPixelsAsync(texture)
+    };
+};
 export default class SpeedyPipelineNodeImageSinkImageData extends SpeedyPipelineSinkNode {
 
-    #_imageData = null;
+    //#_imageData = null;
 
     constructor(name = 'image')
     {
@@ -22,7 +32,7 @@ export default class SpeedyPipelineNodeImageSinkImageData extends SpeedyPipeline
         /** @type {ImageBitmap} output bitmap */
         this._bitmap = null;
 
-        this.imageData = null;
+        //this.imageData = null;
 
         /** @type {ImageFormat} output format */
         this._format = ImageFormat.RGBA;
