@@ -27,6 +27,9 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("processFrame", &WebARKit::processFrame)
       .function("setLogLevel", &WebARKit::setLogLevel)
       .function("getHomography", &WebARKit::getHomography)
+      .function("getPoseMatrix", &WebARKit::getPoseMatrix)
+      .function("getGLViewMatrix", &WebARKit::getGLViewMatrix)
+      .function("getCameraProjectionMatrix", &WebARKit::getCameraProjectionMatrix)
       .function("getCorners", &WebARKit::getCorners)
       .function("isValid", &WebARKit::isValid);
 };

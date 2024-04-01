@@ -136,8 +136,11 @@ var ar2_sources = [
 });
 
 var webarkit_sources = [
+    '../WebARKitCamera.cpp',
     '../WebARKitLog.cpp',
+    '../WebARKitGL.cpp',
     '../WebARKitManager.cpp',
+    '../WebARKitPattern.cpp',
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp'
 ].map(function (src) {
@@ -174,10 +177,10 @@ var DEBUG_FLAGS = ' ';
 
 if (DEBUG) {
     // Choose your Debug options
-    //DEBUG_FLAGS += ' -gsource-map -fsanitize=undefined ';
-    //DEBUG_FLAGS += ' -s ASSERTIONS=2 '
+    DEBUG_FLAGS += ' -gsource-map -fsanitize=undefined ';
+    DEBUG_FLAGS += ' -s ASSERTIONS=2 '
     //DEBUG_FLAGS += ' --profiling '
-    //DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
+    DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
     // WEBARKIT_DEBUG define flag is used to display additional debug information in the console
     DEBUG_FLAGS += ' -DWEBARKIT_DEBUG '
 }

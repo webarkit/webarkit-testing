@@ -91,6 +91,7 @@ window.onload = async function () {
       arElem.style.display = "none";
     } else {
       arElem.style.display = "block";
+      console.log("pose matrix: ", JSON.parse(msg.pose));
       drawCorners(JSON.parse(msg.corners));
       transformElem(JSON.parse(msg.matrix), arElem);
     }
