@@ -249,14 +249,14 @@ function clean_builds() {
 }
 
 var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
-    + ar_sources.join(' ')
-    //+ webarkit_sources.join(' ')
+    //+ ar_sources.join(' ')
+    + webarkit_sources.join(' ')
     + FLAGS + ' ' + DEBUG_FLAGS + ' ' + DEFINES + ' -r -o {OUTPUT_PATH}libwebarkit.bc ',
     OUTPUT_PATH);
 
 var compile_simd_arlib = format(EMCC + ' ' + INCLUDES + ' '
-    + ar_sources.join(' ')
-    //+ webarkit_sources.join(' ')
+    //+ ar_sources.join(' ')
+    + webarkit_sources.join(' ')
     + FLAGS + ' ' + DEBUG_FLAGS + ' ' + DEFINES +  SIMD + ' -r -o {OUTPUT_PATH}libwebarkit.simd.bc ',
     OUTPUT_PATH);
 
