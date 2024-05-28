@@ -141,6 +141,7 @@ var webarkit_sources = [
     '../WebARKitGL.cpp',
     '../WebARKitManager.cpp',
     '../WebARKitPattern.cpp',
+    'WebARKitOpticalTracking/WebARKitHomographyInfo.cpp',
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp'
 ].map(function (src) {
@@ -183,6 +184,8 @@ if (DEBUG) {
     DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
     // WEBARKIT_DEBUG define flag is used to display additional debug information in the console
     DEBUG_FLAGS += ' -DWEBARKIT_DEBUG '
+    // enable also this if it is necessary...
+    // DEBUG_FLAGS += ' -sNO_DISABLE_EXCEPTION_CATCHING '
 }
 
 var INCLUDES = [
