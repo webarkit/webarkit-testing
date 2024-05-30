@@ -141,6 +141,8 @@ var webarkit_sources = [
     '../WebARKitGL.cpp',
     '../WebARKitManager.cpp',
     '../WebARKitPattern.cpp',
+    'WebARKitOpticalTracking/TrackedPoint.cpp',
+    'WebARKitOpticalTracking/TrackingPointSelector.cpp',
     'WebARKitOpticalTracking/WebARKitHomographyInfo.cpp',
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp'
