@@ -33,6 +33,17 @@ emscripten::val WebARKit::getPoseMatrix() {
     return pose;
 }
 
+emscripten::val WebARKit::getPoseMatrix2() {
+    auto poseMatrix =  (float (*)[4])manager.getPoseMatrix2();
+    emscripten::val pose = emscripten::val::array();
+    for (auto i = 0; i < 3; i++) {
+        for (auto j = 0; j < 4; j++) {
+            pose.call<void>("push", poseMatrix[i][j]);
+        }
+    }
+    return pose;
+}
+
 emscripten::val WebARKit::getGLViewMatrix() {
     cv::Mat glViewMatrix = manager.getGLViewMatrix();
     emscripten::val glView = emscripten::val::array();
