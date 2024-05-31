@@ -28,6 +28,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("setLogLevel", &WebARKit::setLogLevel)
       .function("getHomography", &WebARKit::getHomography)
       .function("getPoseMatrix", &WebARKit::getPoseMatrix)
+      .function("getPoseMatrix2", &WebARKit::getPoseMatrix2)
       .function("getGLViewMatrix", &WebARKit::getGLViewMatrix)
       .function("getCameraProjectionMatrix", &WebARKit::getCameraProjectionMatrix)
       .function("getCorners", &WebARKit::getCorners)

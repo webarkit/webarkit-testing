@@ -141,7 +141,7 @@ export default class WebARKitController {
   }
 
   getPoseMatrix() {
-    return this.webarkit.getPoseMatrix();
+    return this.webarkit.getPoseMatrix2();
   }
 
   getGLViewMatrix() {
