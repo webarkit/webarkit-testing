@@ -27,12 +27,13 @@
     "url": "https://github.com/kalwalt/webarkit-testing/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.2",
-    "@babel/plugin-transform-runtime": "^7.23.2",
-    "@babel/preset-env": "^7.23.2",
+    "@babel/core": "^7.24.0",
+    "@babel/plugin-transform-runtime": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
     "babel-loader": "^9.1.3",
     "rimraf": "^5.0.5",
-    "webpack": "^5.89.0",
+    "speedy-vision": "^0.9.0-wip",
+    "webpack": "^5.90.3",
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
@@ -46,7 +47,7 @@
     "build-docker": "docker exec emscripten-webarkit-testing npm run build",
     "build-docker-w-cmake": "docker exec emscripten-webarkit-testing npm run build-cmake",
     "build-docker-w-make": "docker exec emscripten-webarkit-testing npm run build-make",
-    "build-docker-no-libar": "docker exec emscripten-webarkit npm run build-no-libar",
+    "build-docker-no-libar": "docker exec emscripten-webarkit-testing npm run build-no-libar",
     "build-docker-debug": "docker exec emscripten-webarkit-testing npm run build-debug",
     "build-all-dev": "node tools/makem.js --no-libar; echo Built at `date` && webpack --mode development --progress --watch",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
@@ -55,6 +56,6 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "^7.23.2"
+    "@babel/runtime": "^7.24.0"
   }
 }

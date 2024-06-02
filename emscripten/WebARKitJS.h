@@ -28,13 +28,16 @@ class WebARKit {
         this->videoHeight = videoHeight;
         this->m_trackerType = trackerType;
 
-        manager.initialiseBase(m_trackerType);
+        manager.initialiseBase(m_trackerType, this->videoWidth, this->videoHeight);
     }
 
-    void initTrackerGray(emscripten::val data_buffer, int width, int height);
-    void processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace);
+    void initTrackerGray(emscripten::val data_buffer, int width, int height, webarkit::ColorSpace colorSpace);
+    void processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace, bool enableBlur);
     void setLogLevel(int logLevel);
     emscripten::val getHomography();
+    emscripten::val getPoseMatrix();
+    emscripten::val getGLViewMatrix();
+    emscripten::val getCameraProjectionMatrix();
     emscripten::val getCorners();
     bool isValid();
 

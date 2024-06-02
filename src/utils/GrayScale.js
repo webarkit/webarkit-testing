@@ -77,6 +77,10 @@ export class GrayScaleMedia {
         this.grayBuf = new Uint8Array(this.gl.drawingBufferWidth * this.gl.drawingBufferHeight);
     }
 
+    getContext() {
+        return this.gl;
+    }
+
     getFrame() {
         if (!this.glReady) return undefined;
 
