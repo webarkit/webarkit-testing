@@ -1,3 +1,4 @@
+importScripts("../dist/WebARKit.js");
 
 var ar;
 var next = null;
@@ -23,9 +24,17 @@ function initTracker(msg) {
 
   var onLoad = function (wark) {
     ar = wark;
-    wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight);
+    wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.GRAY);
 
-    postMessage({ type: "loadedTracker"})
+    var cameraProjMat = wark.getCameraProjectionMatrix();
+    console.log("camera proj Mat: ", cameraProjMat);
+
+    postMessage({
+      type: "loadedTracker",
+      cameraProjMat: JSON.stringify(cameraProjMat),
+    })
+
+
 
     wark.addEventListener("getMarker", function (event) {
       console.log(event.data.corners);
@@ -33,6 +42,7 @@ function initTracker(msg) {
         type: "found",
         corners: JSON.stringify(event.data.corners),
         matrix: JSON.stringify(event.data.matrix),
+        pose: JSON.stringify(event.data.pose),
       };
     });
   };
@@ -49,7 +59,7 @@ function initTracker(msg) {
 function processFrame() {
   markerResult = null;
   if (ar && ar.process_raw) {
-    ar.process_raw(next);
+    ar.process_raw(next, WebARKit.WebARKitController.GRAY);
   }
   if (markerResult) {
     postMessage(markerResult);

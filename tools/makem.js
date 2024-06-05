@@ -141,6 +141,9 @@ var webarkit_sources = [
     '../WebARKitGL.cpp',
     '../WebARKitManager.cpp',
     '../WebARKitPattern.cpp',
+    'WebARKitOpticalTracking/TrackedPoint.cpp',
+    'WebARKitOpticalTracking/TrackingPointSelector.cpp',
+    'WebARKitOpticalTracking/WebARKitHomographyInfo.cpp',
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
     'WebARKitOpticalTracking/WebARKitConfig.cpp'
 ].map(function (src) {
@@ -183,6 +186,8 @@ if (DEBUG) {
     DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
     // WEBARKIT_DEBUG define flag is used to display additional debug information in the console
     DEBUG_FLAGS += ' -DWEBARKIT_DEBUG '
+    // enable also this if it is necessary...
+    // DEBUG_FLAGS += ' -sNO_DISABLE_EXCEPTION_CATCHING '
 }
 
 var INCLUDES = [
@@ -249,14 +254,14 @@ function clean_builds() {
 }
 
 var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
-    + ar_sources.join(' ')
-    //+ webarkit_sources.join(' ')
+    //+ ar_sources.join(' ')
+    + webarkit_sources.join(' ')
     + FLAGS + ' ' + DEBUG_FLAGS + ' ' + DEFINES + ' -r -o {OUTPUT_PATH}libwebarkit.bc ',
     OUTPUT_PATH);
 
 var compile_simd_arlib = format(EMCC + ' ' + INCLUDES + ' '
-    + ar_sources.join(' ')
-    //+ webarkit_sources.join(' ')
+    //+ ar_sources.join(' ')
+    + webarkit_sources.join(' ')
     + FLAGS + ' ' + DEBUG_FLAGS + ' ' + DEFINES +  SIMD + ' -r -o {OUTPUT_PATH}libwebarkit.simd.bc ',
     OUTPUT_PATH);
 

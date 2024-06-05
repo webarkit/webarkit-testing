@@ -15,7 +15,7 @@ This is a repository testing for [**WebARKit**](https://github.com/webarkit). Th
 
 ### Pre-requisites
 
-You need emscripten `3.1.26` because openCV may be built with this version.
+You need emscripten `3.1.26` because OpenCV may be built with this version. We are using our OpenCV (4.7.0) forked version.
 
 ### Instructions
 
@@ -33,6 +33,6 @@ It is possible to build a debug version of the library with `npm run build-debug
 ## Examples
 
 Go in examples folder try one of the examples... point the camera to the pinball.jpg image and you will see some messages.
-At the moment it support Akaze or Orb, when the pinball image is detected and tracked it should display a colored image and blue rect border around.
+At the moment it support Akaze, Orb, Freak and Teblid. When the pinball image is detected and tracked it should display a colored image with a blue rect border around. Consider that the examples are not optimized for Mobile devices yet, best to try on desktop PC.
 
-Try the live examples at https://kalwalt.github.io/webarkit-testing/
+Try the live examples at https://webarkit.github.io/webarkit-testing/
