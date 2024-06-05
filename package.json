@@ -19,12 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kalwalt/webarkit-testing"
+    "url": "https://github.com/webarkit/webarkit-testing"
   },
   "homepage": "",
   "contributors": [],
   "bugs": {
-    "url": "https://github.com/kalwalt/webarkit-testing/issues"
+    "url": "https://github.com/webarkit/webarkit-testing/issues"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
