@@ -35,4 +35,4 @@ It is possible to build a debug version of the library with `npm run build-debug
 Go in examples folder try one of the examples... point the camera to the pinball.jpg image and you will see some messages.
 At the moment it support Akaze, Orb, Freak and Teblid. When the pinball image is detected and tracked it should display a colored image with a blue rect border around. Consider that the examples are not optimized for Mobile devices yet, best to try on desktop PC.
 
-Try the live examples at https://webarkit.github.io/webarkit-testing/
+Try the live examples at [www.webarkit.org/examples/webarkit-testing](https://www.webarkit.org/examples/webarkit-testing)
