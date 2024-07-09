@@ -66,6 +66,7 @@ function processFrame() {
   if (ar && ar.process_raw) {
     var u8 = new Uint8Array(next);
     ar.process_raw(u8, WebARKit.WebARKitController.RGBA, false)
+    //ar.process_raw(u8, WebARKit.WebARKitController.RGBA)
   }
   if (markerResult) {
     postMessage(markerResult);

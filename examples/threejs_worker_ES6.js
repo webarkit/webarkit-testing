@@ -31,7 +31,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   var imageData;
 
-  var canvas_process = document.getElementById('canvas_process');
+  //var canvas_process = document.getElementById('canvas_process');
+  var canvas_process = document.createElement('canvas');
 
   var context_process = canvas_process.getContext('2d', { willReadFrequently: true });
   var targetCanvas = document.querySelector("#canvas");
@@ -94,7 +95,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       fetch(URL)
           .then(response => response.arrayBuffer())
           .then(buff => {
-            //console.log(buff);
             let buffer = new Uint8Array(buff);
             worker.postMessage({
               type: "initTracker",
@@ -102,8 +102,10 @@ function start(markerUrl, video, input_width, input_height, render_update, track
               imageData: buffer,
               imgWidth: refIm.width,
               imgHeight: refIm.height,
-              videoWidth: oWidth,
-              videoHeight: oHeight,
+              //videoWidth: oWidth,
+              //videoHeight: oHeight,
+              videoWidth: vw,
+              videoHeight: vh,
             });
             return buffer;
           })
@@ -130,7 +132,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           proj[9] *= ratioH;
           proj[13] *= ratioH;
           setMatrix(camera.projectionMatrix, proj);
-          //process();
+          process();
           break;
         }
         case "endLoading": {
@@ -148,12 +150,12 @@ function start(markerUrl, video, input_width, input_height, render_update, track
         }
         case 'found': {
           found(msg);
-          //process();
+          process();
           break;
         }
         case 'not found': {
           found(null);
-          //process();
+          process();
           break;
         }
       }
@@ -200,7 +202,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     renderer.render(scene, camera);
   };
 
-  var update = function (){
+  let update =  () => {
     context_process.fillStyle = 'black';
     //console.log("pw:", pw);
     //console.log("ph: ", ph);
@@ -226,9 +228,14 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
     //var imageData = context_process.getImageData(0, 0, pw, ph);
     //var imageData = context_process.getImageData(0, 0, w, h);
-    update();
-    if(!imageData) return;
-    worker.postMessage({ type: 'process', data: imageData.data.buffer }, [imageData.data.buffer]);
+    //update();
+    //if(!imageData) return;
+    //worker.postMessage({ type: 'process', data: imageData.data.buffer }, [imageData.data.buffer]);
+    update()
+    if(imageData) {
+      worker.postMessage({ type: 'process', data: imageData.data.buffer }, [imageData.data.buffer]);
+    }
+    //update();
   }
   var tick = function () {
     draw();
