@@ -50,6 +50,8 @@ export default class WebARKitController {
     this.trackerType = this.setTrackerType(trackerType);
 
     WebARKitController.MEDIAN_BLUR = this.instance.BLUR_TYPE.MEDIAN_BLUR;
+    WebARKitController.BOX_BLUR = this.instance.BLUR_TYPE.BOX_BLUR;
+    WebARKitController.NONE_BLUR = this.instance.BLUR_TYPE.NONE_BLUR;
 
     // Initialize the WebARKit class.
     this.webarkit = new this.instance.WebARKit(
@@ -130,7 +132,7 @@ export default class WebARKitController {
   }
 
   processFrame(imageData, colorSpace, enableBlur) {
-    this.webarkit.processFrame(imageData, colorSpace, 1, enableBlur);
+    this.webarkit.processFrame(imageData, colorSpace, WebARKitController.MEDIAN_BLUR, enableBlur);
   }
 
   setLogLevel(level) {
