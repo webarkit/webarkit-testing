@@ -5,9 +5,9 @@ void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int heigh
     manager.initTracker(u8.data(), width, height, colorSpace);
 }
 
-void WebARKit::processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace, webarkit::BLUR_TYPE blurType, bool enableBlur) {
+void WebARKit::processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace, webarkit::BLUR_TYPE blurType) {
     auto u8 = emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
-    manager.processFrameData(u8.data(), this->videoWidth, this->videoHeight, colorSpace,blurType, enableBlur);
+    manager.processFrameData(u8.data(), this->videoWidth, this->videoHeight, colorSpace, blurType);
 }
 
 void WebARKit::setLogLevel(int logLevel) { manager.setLogLevel(logLevel); }
