@@ -9,6 +9,9 @@ export default class WebARKitController {
   static AKAZE_TRACKER;
   static FREAK_TRACKER;
   static TEBLID_TRACKER;
+  static MEDIAN_BLUR;
+  static BOX_BLUR;
+  static NONE_BLUR;
 
   constructor() {
     this.id;
@@ -45,6 +48,8 @@ export default class WebARKitController {
     WebARKitController.FREAK_TRACKER = this.instance.TRACKER_TYPE.TRACKER_FREAK;
     WebARKitController.TEBLID_TRACKER = this.instance.TRACKER_TYPE.TRACKER_TEBLID;
     this.trackerType = this.setTrackerType(trackerType);
+
+    WebARKitController.MEDIAN_BLUR = this.instance.BLUR_TYPE.MEDIAN_BLUR;
 
     // Initialize the WebARKit class.
     this.webarkit = new this.instance.WebARKit(
@@ -125,7 +130,7 @@ export default class WebARKitController {
   }
 
   processFrame(imageData, colorSpace, enableBlur) {
-    this.webarkit.processFrame(imageData, colorSpace, enableBlur);
+    this.webarkit.processFrame(imageData, colorSpace, 1, enableBlur);
   }
 
   setLogLevel(level) {
