@@ -14,6 +14,11 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .value("RGB", webarkit::RGB)
       .value("GRAY", webarkit::GRAY);
 
+  enum_<webarkit::BLUR_TYPE>("BLUR_TYPE")
+      .value("MEDIAN_BLUR", webarkit::MEDIAN_BLUR)
+      .value("BOX_BLUR", webarkit::BOX_BLUR)
+      .value("NONE_BLUR", webarkit::NONE_BLUR);
+
   constant("WEBARKIT_LOG_LEVEL_DEBUG", WEBARKIT_LOG_LEVEL_DEBUG + 0);
   constant("WEBARKIT_LOG_LEVEL_INFO", WEBARKIT_LOG_LEVEL_INFO + 0);
   constant("WEBARKIT_LOG_LEVEL_WARN", WEBARKIT_LOG_LEVEL_WARN + 0);
