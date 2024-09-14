@@ -24,6 +24,7 @@ function initTracker(msg) {
 
   var onLoad = function (wark) {
     ar = wark;
+    wark.setLogLevel(0);
     wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.GRAY);
 
     var cameraProjMat = wark.getCameraProjectionMatrix();
