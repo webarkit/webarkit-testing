@@ -12,6 +12,11 @@ export default class WebARKitController {
   static MEDIAN_BLUR;
   static BOX_BLUR;
   static NONE_BLUR;
+  static WEBARKIT_LOG_LEVEL_DEBUG
+  static WEBARKIT_LOG_LEVEL_INFO;
+  static WEBARKIT_LOG_LEVEL_WARN;
+  static WEBARKIT_LOG_LEVEL_ERROR;
+  static WEBARKIT_LOG_LEVEL_REL_INFO;
 
   constructor() {
     this.id;
@@ -52,6 +57,12 @@ export default class WebARKitController {
     WebARKitController.MEDIAN_BLUR = this.instance.BLUR_TYPE.MEDIAN_BLUR;
     WebARKitController.BOX_BLUR = this.instance.BLUR_TYPE.BOX_BLUR;
     WebARKitController.NONE_BLUR = this.instance.BLUR_TYPE.NONE_BLUR;
+
+    WebARKitController.WEBARKIT_LOG_LEVEL_DEBUG = this.instance.WEBARKIT_LOG_LEVEL_DEBUG;
+    WebARKitController.WEBARKIT_LOG_LEVEL_INFO = this.instance.WEBARKIT_LOG_LEVEL_INFO;
+    WebARKitController.WEBARKIT_LOG_LEVEL_WARN = this.instance.WEBARKIT_LOG_LEVEL_WARN;
+    WebARKitController.WEBARKIT_LOG_LEVEL_ERROR = this.instance.WEBARKIT_LOG_LEVEL_ERROR;
+    WebARKitController.WEBARKIT_LOG_LEVEL_REL_INFO = this.instance.WEBARKIT_LOG_LEVEL_REL_INFO;
 
     // Initialize the WebARKit class.
     this.webarkit = new this.instance.WebARKit(
