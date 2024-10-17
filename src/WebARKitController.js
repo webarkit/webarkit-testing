@@ -9,6 +9,14 @@ export default class WebARKitController {
   static AKAZE_TRACKER;
   static FREAK_TRACKER;
   static TEBLID_TRACKER;
+  static MEDIAN_BLUR;
+  static BOX_BLUR;
+  static NONE_BLUR;
+  static WEBARKIT_LOG_LEVEL_DEBUG
+  static WEBARKIT_LOG_LEVEL_INFO;
+  static WEBARKIT_LOG_LEVEL_WARN;
+  static WEBARKIT_LOG_LEVEL_ERROR;
+  static WEBARKIT_LOG_LEVEL_REL_INFO;
 
   constructor() {
     this.id;
@@ -45,6 +53,16 @@ export default class WebARKitController {
     WebARKitController.FREAK_TRACKER = this.instance.TRACKER_TYPE.TRACKER_FREAK;
     WebARKitController.TEBLID_TRACKER = this.instance.TRACKER_TYPE.TRACKER_TEBLID;
     this.trackerType = this.setTrackerType(trackerType);
+
+    WebARKitController.MEDIAN_BLUR = this.instance.BLUR_TYPE.MEDIAN_BLUR;
+    WebARKitController.BOX_BLUR = this.instance.BLUR_TYPE.BOX_BLUR;
+    WebARKitController.NONE_BLUR = this.instance.BLUR_TYPE.NONE_BLUR;
+
+    WebARKitController.WEBARKIT_LOG_LEVEL_DEBUG = this.instance.WEBARKIT_LOG_LEVEL_DEBUG;
+    WebARKitController.WEBARKIT_LOG_LEVEL_INFO = this.instance.WEBARKIT_LOG_LEVEL_INFO;
+    WebARKitController.WEBARKIT_LOG_LEVEL_WARN = this.instance.WEBARKIT_LOG_LEVEL_WARN;
+    WebARKitController.WEBARKIT_LOG_LEVEL_ERROR = this.instance.WEBARKIT_LOG_LEVEL_ERROR;
+    WebARKitController.WEBARKIT_LOG_LEVEL_REL_INFO = this.instance.WEBARKIT_LOG_LEVEL_REL_INFO;
 
     // Initialize the WebARKit class.
     this.webarkit = new this.instance.WebARKit(
@@ -87,13 +105,13 @@ export default class WebARKitController {
     return trackerT;
   }
 
-  process_raw(imageData, colorSpace, enableBlur) {
+  process_raw(imageData, colorSpace) {
     let corners = new Float64Array(8)
     let matrix = new Float64Array(16);
     let matrixGL_RH = new Float64Array(16)
     let pose = new Float64Array(16);
     let viewMatrix_GL = new Float64Array(16);
-    this.processFrame(imageData, colorSpace, enableBlur);
+    this.processFrame(imageData, colorSpace);
 
     if(this.isValid()) {
 
@@ -124,8 +142,8 @@ export default class WebARKitController {
     return this.webarkit.initTrackerGray(imgData, width, height, trackerType);
   }
 
-  processFrame(imageData, colorSpace, enableBlur) {
-    this.webarkit.processFrame(imageData, colorSpace, enableBlur);
+  processFrame(imageData, colorSpace) {
+    this.webarkit.processFrame(imageData, colorSpace, WebARKitController.MEDIAN_BLUR);
   }
 
   setLogLevel(level) {
