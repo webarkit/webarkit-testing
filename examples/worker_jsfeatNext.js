@@ -66,7 +66,8 @@ function processFrame() {
   if (ar && ar.process_raw) {
     var u8 = new Uint8Array(next.data);
     //console.log(next.data)
-    ar.process_raw(next.data, WebARKit.WebARKitController.GRAY)
+    //ar.process_raw(next.data, WebARKit.WebARKitController.GRAY)
+    ar.process_raw(next, WebARKit.WebARKitController.GRAY)
     //ar.process_raw(u8, WebARKit.WebARKitController.RGBA)
   }
   if (markerResult) {

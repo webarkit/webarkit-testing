@@ -1,5 +1,5 @@
 async function initCamera(width, height) {
-
+    var aspect = width / height;
     const constraints = {
         audio: false,
         video: {
@@ -7,6 +7,7 @@ async function initCamera(width, height) {
             facingMode: "environment",
             // using the "user" front camera
             // facingMode: "user",
+            aspectRatio: { ideal: aspect },
             width: width,
             height: height
         }

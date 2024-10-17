@@ -20,6 +20,23 @@ var setMatrix = function (matrix, value) {
   }
 };
 
+function color2gray(data, videoSize) {
+  let q = 0;
+  let gray = new Uint8Array(videoSize);
+
+  // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
+  // see (ARToolKitJS.cpp L: 43)
+  for (let p = 0; p < videoSize; p++) {
+    let r = data[q + 0],
+        g = data[q + 1],
+        b = data[q + 2];
+    // @see https://stackoverflow.com/a/596241/5843642
+    gray[p] = (r + r + r + b + g + g + g + g) >> 3;
+    q += 4;
+  }
+  return gray;
+}
+
 function start(markerUrl, video, input_width, input_height, render_update, track_update) {
   var vw, vh;
   var sw, sh;
@@ -36,6 +53,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   var imgproc = new jsfeat.imgproc();
 
   var img_u8 = new jsfeat.matrix_t(input_width, input_height, jsfeat.U8_t | jsfeat.C1_t);
+  var grayV = new Uint8ClampedArray(input_width * input_height);
 
   //var canvas_process = document.getElementById('canvas_process');
   var canvas_process = document.createElement('canvas');
@@ -103,11 +121,13 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           .then(buff => {
             let buffer = new Uint8Array(buff);
             let img_u8_tracker = new jsfeat.matrix_t(refIm.width, refIm.height, jsfeat.U8_t | jsfeat.C1_t);
-            imgproc.grayscale(buffer, vw, vh, img_u8_tracker);
+            imgproc.grayscale(buffer, refIm.width, refIm.height, img_u8_tracker);
+            var grayT = color2gray(buffer, refIm.width * refIm.height);
             worker.postMessage({
               type: "initTracker",
               trackerType: type,
               imageData: img_u8_tracker.data,
+              //imageData: grayT,
               imgWidth: refIm.width,
               imgHeight: refIm.height,
               //videoWidth: oWidth,
@@ -223,6 +243,9 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     imageData = context_process.getImageData(0, 0, vw, vh);
     //console.log(imageData)
     imgproc.grayscale(imageData.data, vw, vh, img_u8);
+    //console.log(imageData.data)
+    grayV = color2gray(imageData.data, vw*vh);
+    //console.log(grayV);
     //imageData = context_process.getImageData(0, 0, w, h);
     //requestAnimationFrame(update);
   }
@@ -244,7 +267,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     update()
     if(imageData) {
       //console.log(img_u8)
-      worker.postMessage({ type: 'process', data: img_u8 });
+      //worker.postMessage({ type: 'process', data: img_u8 });
+      worker.postMessage({ type: 'process', data: grayV });
     }
     //update();
   }

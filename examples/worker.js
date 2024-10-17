@@ -1,5 +1,3 @@
-import WebARKitController from "../src/WebARKitController";
-
 importScripts("../dist/WebARKit.js");
 
 var ar;
