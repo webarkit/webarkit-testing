@@ -1,9 +1,3 @@
-//var oWidth = window.innerWidth;
-//var oHeight = window.innerHeight;
-
-//var oWidth = 640;
-//var oHeight = 480;
-
 function isMobile () {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
@@ -183,15 +177,15 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     }
   };
 
-  //var lasttime = Date.now();
-  //var time = 0;
+  var lasttime = Date.now();
+  var time = 0;
 
   const draw = function () {
     render_update();
-    /*var now = Date.now();
+    var now = Date.now();
     var dt = now - lasttime;
     time += dt;
-    lasttime = now;*/
+    lasttime = now;
 
     if (!world) {
       sphere.visible = false;
@@ -204,28 +198,17 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     renderer.render(scene, camera);
   };
 
-  let update =  () => {
+  const process = function () {
     context_process.fillStyle = 'black';
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
-    imageData = context_process.getImageData(0, 0, pw, ph);
+    const imageData = context_process.getImageData(0, 0, pw, ph);
+    worker.postMessage({ type: 'process', data: imageData }, [imageData.data.buffer]);
   }
 
-  //update();
-
-  var process = function () {
-    update()
-    if(imageData) {
-      //worker.postMessage({ type: 'process', data: imageData.data.buffer }, [imageData.data.buffer]);
-      worker.postMessage({ type: 'process', data: imageData },  [imageData.data.buffer]);
-    }
-    //update();
-  }
-  var tick = function () {
+  const tick = function () {
     draw();
-    //process();
-    //update();
     requestAnimationFrame(tick);
   };
 
