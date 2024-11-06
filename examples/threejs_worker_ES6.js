@@ -90,7 +90,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
     worker = new Worker('./worker_threejs.js')
 
-    const refIm = document.getElementById("refIm");
+    //const refIm = document.getElementById("refIm");
 
     const type = setTrackerType();
     const loadImage =  (URL) => {
@@ -102,8 +102,10 @@ function start(markerUrl, video, input_width, input_height, render_update, track
               type: "initTracker",
               trackerType: type,
               imageData: buffer,
-              imgWidth: refIm.width,
-              imgHeight: refIm.height,
+              //imgWidth: refIm.width,
+              imgWidth: 1637,
+              //imgHeight: refIm.height,
+              imgHeight: 2048,
               //videoWidth: oWidth,
               //videoHeight: oHeight,
               videoWidth: vw,
@@ -204,7 +206,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
     const imageData = context_process.getImageData(0, 0, pw, ph);
-    worker.postMessage({ type: 'process', data: imageData }, [imageData.data.buffer]);
+    worker.postMessage({ type: 'process', imagedata: imageData }, [imageData.data.buffer]);
   }
 
   const tick = function () {

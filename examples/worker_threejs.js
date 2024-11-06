@@ -1,18 +1,18 @@
 importScripts("../dist/WebARKit.js");
 
 var ar;
-var next = null;
-var markerResult = null;
+let next = null;
+let markerResult = null;
 
 self.onmessage = (e) => {
-  var msg = e.data;
+  const msg = e.data;
   switch (msg.type) {
     case "initTracker": {
       initTracker(msg);
       return;
     }
     case "process": {
-      next = msg.data;
+      next = msg.imagedata;
       processFrame();
       return;
     }
@@ -20,16 +20,16 @@ self.onmessage = (e) => {
 };
 
 function initTracker(msg) {
-  var trackerType = msg.trackerType;
+  const trackerType = msg.trackerType;
   //console.log("msg from initTracker: ", msg);
 
-  var onLoad = function (wark) {
+  const onLoad = function (wark) {
     ar = wark;
     //console.log("wark: ", wark)
     wark.setLogLevel(WebARKit.WebARKitController.WEBARKIT_LOG_LEVEL_DEBUG);
     wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.RGBA);
 
-    var cameraProjMat = wark.getCameraProjectionMatrix();
+    const cameraProjMat = wark.getCameraProjectionMatrix();
     console.log("camera proj Mat: ", cameraProjMat);
 
     postMessage({
