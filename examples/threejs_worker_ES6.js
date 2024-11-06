@@ -209,7 +209,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
-    imageData = context_process.getImageData(0, 0, vw, vh);
+    imageData = context_process.getImageData(0, 0, pw, ph);
   }
 
   //update();
@@ -218,7 +218,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     update()
     if(imageData) {
       //worker.postMessage({ type: 'process', data: imageData.data.buffer }, [imageData.data.buffer]);
-      worker.postMessage({ type: 'process', data: imageData });
+      worker.postMessage({ type: 'process', data: imageData },  [imageData.data.buffer]);
     }
     //update();
   }
