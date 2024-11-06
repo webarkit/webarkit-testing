@@ -6,6 +6,7 @@ function isMobile() {
 
 export class GrayScaleMedia {
     constructor(source, width, height, canvas) {
+        console.log("Grayscale width, height: ", width, height);
         this._source = source;
         this._width = width;
         this._height = height;
@@ -87,7 +88,6 @@ export class GrayScaleMedia {
         this.gl.uniform1f(this.flipLocation, -1); // flip image
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, this._source);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
-
         this.gl.readPixels(0, 0, this.gl.drawingBufferWidth, this.gl.drawingBufferHeight, this.gl.RGBA, this.gl.UNSIGNED_BYTE, this.pixelBuf);
 
         let j = 0;
