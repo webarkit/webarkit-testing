@@ -27,7 +27,8 @@ function initTracker(msg) {
     ar = wark;
     //console.log("wark: ", wark)
     wark.setLogLevel(WebARKit.WebARKitController.WEBARKIT_LOG_LEVEL_DEBUG);
-    wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.GRAY);
+    //wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.GRAY);
+    wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.RGBA);
 
     var cameraProjMat = wark.getCameraProjectionMatrix();
     console.log("camera proj Mat: ", cameraProjMat);
@@ -66,8 +67,8 @@ function processFrame() {
   if (ar && ar.process_raw) {
     var u8 = new Uint8Array(next.data);
     //console.log(next.data)
-    //ar.process_raw(next.data, WebARKit.WebARKitController.GRAY)
-    ar.process_raw(next, WebARKit.WebARKitController.GRAY)
+    ar.process_raw(next.data, WebARKit.WebARKitController.RGBA)
+    //ar.process_raw(next, WebARKit.WebARKitController.GRAY)
     //ar.process_raw(u8, WebARKit.WebARKitController.RGBA)
   }
   if (markerResult) {

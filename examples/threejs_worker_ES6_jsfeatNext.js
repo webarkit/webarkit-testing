@@ -52,8 +52,10 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   var imgproc = new jsfeat.imgproc();
 
-  var img_u8 = new jsfeat.matrix_t(input_width, input_height, jsfeat.U8_t | jsfeat.C1_t);
-  var grayV = new Uint8ClampedArray(input_width * input_height);
+  //var img_u8 = new jsfeat.matrix_t(input_width, input_height, jsfeat.U8_t | jsfeat.C1_t);
+  var img_u8 = new jsfeat.matrix_t(oWidth, oHeight, jsfeat.U8_t | jsfeat.C1_t);
+  //var grayV = new Uint8ClampedArray(input_width * input_height);
+  var grayV = new Uint8ClampedArray(oWidth * oHeight);
 
   //var canvas_process = document.getElementById('canvas_process');
   var canvas_process = document.createElement('canvas');
@@ -88,11 +90,14 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   root.add(sphere);
 
   var load = function () {
-    vw = input_width;
-    vh = input_height;
+    //vw = input_width;
+    //vh = input_height;
+    vw = oWidth;
+    vh = oHeight;
 
     pscale = 320 / Math.max(vw, vh / 3 * 4);
-    sscale = isMobile() ? window.outerWidth / input_width : 1;
+    //sscale = isMobile() ? window.outerWidth / input_width : 1;
+    sscale = isMobile() ? window.outerWidth / oWidth : 1;
 
     sw = vw * sscale;
     sh = vh * sscale;
@@ -126,8 +131,9 @@ function start(markerUrl, video, input_width, input_height, render_update, track
             worker.postMessage({
               type: "initTracker",
               trackerType: type,
-              imageData: img_u8_tracker.data,
+              //imageData: img_u8_tracker.data,
               //imageData: grayT,
+              imageData: buffer,
               imgWidth: refIm.width,
               imgHeight: refIm.height,
               //videoWidth: oWidth,
@@ -238,7 +244,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     //context_process.fillRect(0, 0, w, h);
     //console.log("vw: ", vw, "vh: ", vh, "ox: ", ox, "oy: ", oy, "w: ",w, "h: ", h)
     //context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
-    context_process.drawImage(video, 0, 0);
+    context_process.drawImage(video, 0, 0, vw, vh);
 
     imageData = context_process.getImageData(0, 0, vw, vh);
     //console.log(imageData)
@@ -264,13 +270,14 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     //update();
     //if(!imageData) return;
     //worker.postMessage({ type: 'process', data: imageData.data.buffer }, [imageData.data.buffer]);
-    update()
+    //update()
     if(imageData) {
       //console.log(img_u8)
       //worker.postMessage({ type: 'process', data: img_u8 });
-      worker.postMessage({ type: 'process', data: grayV });
+      //worker.postMessage({ type: 'process', data: grayV });
+      worker.postMessage({ type: 'process', data: imageData});
     }
-    //update();
+    update();
   }
   var tick = function () {
     draw();
