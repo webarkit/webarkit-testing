@@ -22,6 +22,7 @@ async function initCamera(width, height) {
 
     return new Promise(resolve => {
         video.onloadedmetadata = () => {
+            video.play();
             resolve(video);
         };
     });

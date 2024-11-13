@@ -1,0 +1,81 @@
+importScripts("../dist/WebARKit.js");
+
+var ar;
+let next = null;
+let markerResult = null;
+
+self.onmessage = (e) => {
+  const msg = e.data;
+  switch (msg.type) {
+    case "initTracker": {
+      initTracker(msg);
+      return;
+    }
+    case "process": {
+      next = msg.imagedata;
+      processFrame();
+      return;
+    }
+  }
+};
+
+function initTracker(msg) {
+  const trackerType = msg.trackerType;
+  //console.log("msg from initTracker: ", msg);
+
+  const onLoad = function (wark) {
+    ar = wark;
+    //console.log("wark: ", wark)
+    wark.setLogLevel(WebARKit.WebARKitController.WEBARKIT_LOG_LEVEL_DEBUG);
+    wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.RGBA);
+
+    const cameraProjMat = wark.getCameraProjectionMatrix();
+    console.log("camera proj Mat: ", cameraProjMat);
+
+    postMessage({
+      type: "loadedTracker",
+      cameraProjMat: JSON.stringify(cameraProjMat),
+    })
+
+    postMessage({ type: "endLoading", end: true })
+
+    wark.addEventListener("getMarker", function (event) {
+      //console.log(event.data);
+      markerResult = {
+        type: "found",
+        //corners: JSON.stringify(event.data.corners),
+        //matrix: JSON.stringify(event.data.matrix),
+        //matrixGL_RH: JSON.stringify(event.data.matrixGL_RH),
+        //viewMatrix_GL: JSON.stringify(event.data.viewMatrix_GL),
+        pose: JSON.stringify(event.data.pose),
+        buffer: next.buffer,
+      };
+    });
+  };
+
+  var onError = function (error) {
+    console.error(error);
+  };
+
+  WebARKit.WebARKitController.init_raw(msg.videoWidth, msg.videoHeight, trackerType)
+    .then(onLoad)
+    .catch(onError);
+}
+
+function processFrame() {
+  markerResult = null;
+  if (ar && ar.process_raw) {
+    //var u8 = new Uint8Array(next.data);
+    ar.process_raw(next, WebARKit.WebARKitController.RGBA)
+    //ar.process_raw(u8, WebARKit.WebARKitController.RGBA)
+  }
+  if (markerResult) {
+    postMessage(markerResult, [next.buffer]);
+  } else {
+    postMessage({
+      type: "not found", buffer: next.buffer
+    } , [next.buffer]);
+  }
+
+  next = null;
+}

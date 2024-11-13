@@ -143,7 +143,7 @@ export default class WebARKitController {
   }
 
   processFrame(imageData, colorSpace) {
-    this.webarkit.processFrame(imageData, colorSpace, WebARKitController.MEDIAN_BLUR);
+    this.webarkit.processFrame(imageData, colorSpace, WebARKitController.NONE_BLUR);
   }
 
   setLogLevel(level) {
