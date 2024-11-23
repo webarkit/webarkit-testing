@@ -152,17 +152,17 @@ function start(markerUrl, video, input_width, input_height, render_update, track
         }
         case 'found': {
           found(msg);
-          process();
+          //process();
           break;
         }
         case 'not found': {
           found(null);
-          process();
+          //process();
           break;
         }
       }
       track_update();
-      process();
+      //process();
     };
   };
 
@@ -211,10 +211,11 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   const tick = function () {
     draw();
+    process();
     requestAnimationFrame(tick);
   };
 
   load();
   tick();
-  process();
+  //process();
 }

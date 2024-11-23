@@ -52,10 +52,10 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   var imgproc = new jsfeat.imgproc();
 
-  //var img_u8 = new jsfeat.matrix_t(input_width, input_height, jsfeat.U8_t | jsfeat.C1_t);
-  var img_u8 = new jsfeat.matrix_t(oWidth, oHeight, jsfeat.U8_t | jsfeat.C1_t);
+  var img_u8 = new jsfeat.matrix_t(input_width, input_height, jsfeat.U8_t | jsfeat.C1_t);
+  //var img_u8 = new jsfeat.matrix_t(oWidth, oHeight, jsfeat.U8_t | jsfeat.C1_t);
   //var grayV = new Uint8ClampedArray(input_width * input_height);
-  var grayV = new Uint8ClampedArray(oWidth * oHeight);
+  //var grayV = new Uint8ClampedArray(oWidth * oHeight);
 
   //var canvas_process = document.getElementById('canvas_process');
   var canvas_process = document.createElement('canvas');
@@ -90,14 +90,14 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   root.add(sphere);
 
   var load = function () {
-    //vw = input_width;
-    //vh = input_height;
-    vw = oWidth;
-    vh = oHeight;
+    vw = input_width;
+    vh = input_height;
+    //vw = oWidth;
+    //vh = oHeight;
 
     pscale = 320 / Math.max(vw, vh / 3 * 4);
-    //sscale = isMobile() ? window.outerWidth / input_width : 1;
-    sscale = isMobile() ? window.outerWidth / oWidth : 1;
+    sscale = isMobile() ? window.outerWidth / input_width : 1;
+    //sscale = isMobile() ? window.outerWidth / oWidth : 1;
 
     sw = vw * sscale;
     sh = vh * sscale;
@@ -108,16 +108,19 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     ph = Math.max(h, w / 4 * 3);
     ox = (pw - w) / 2;
     oy = (ph - h) / 2;
-    //canvas_process.style.clientWidth = pw + "px";
-    //canvas_process.style.clientHeight = ph + "px";
-    //canvas_process.width = pw;
-    //canvas_process.height = ph;
+    canvas_process.style.clientWidth = pw + "px";
+    canvas_process.style.clientHeight = ph + "px";
+    canvas_process.width = pw;
+    canvas_process.height = ph;
 
     renderer.setSize(sw, sh);
 
     worker = new Worker('./worker_jsfeatNext.js')
 
-    const refIm = document.getElementById("refIm");
+    //const refIm = document.getElementById("refIm");
+
+    const image_H = 2048;
+    const image_W = 1637;
 
     var type = setTrackerType();
     const loadImage =  (URL) => {
@@ -125,17 +128,19 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           .then(response => response.arrayBuffer())
           .then(buff => {
             let buffer = new Uint8Array(buff);
-            let img_u8_tracker = new jsfeat.matrix_t(refIm.width, refIm.height, jsfeat.U8_t | jsfeat.C1_t);
-            imgproc.grayscale(buffer, refIm.width, refIm.height, img_u8_tracker);
-            var grayT = color2gray(buffer, refIm.width * refIm.height);
+            let img_u8_tracker = new jsfeat.matrix_t(image_W, image_H, jsfeat.U8_t | jsfeat.C1_t);
+            imgproc.grayscale(buffer, image_W, image_H, img_u8_tracker);
+            //var grayT = color2gray(buffer, refIm.width * refIm.height);
             worker.postMessage({
               type: "initTracker",
               trackerType: type,
-              //imageData: img_u8_tracker.data,
+              imageData: img_u8_tracker.data,
               //imageData: grayT,
-              imageData: buffer,
-              imgWidth: refIm.width,
-              imgHeight: refIm.height,
+              //imageData: buffer,
+              //imgWidth: refIm.width,
+              imgWidth: image_W,
+              //imgHeight: refIm.height,
+              imgHeight: image_H,
               //videoWidth: oWidth,
               //videoHeight: oHeight,
               videoWidth: vw,
@@ -166,7 +171,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           proj[9] *= ratioH;
           proj[13] *= ratioH;
           setMatrix(camera.projectionMatrix, proj);
-          process();
+          //process();
           break;
         }
         case "endLoading": {
@@ -184,17 +189,17 @@ function start(markerUrl, video, input_width, input_height, render_update, track
         }
         case 'found': {
           found(msg);
-          process();
+          //process();
           break;
         }
         case 'not found': {
           found(null);
-          process();
+          //process();
           break;
         }
       }
       track_update();
-      process();
+      //process();
     };
   };
 
@@ -236,57 +241,28 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     renderer.render(scene, camera);
   };
 
-  let update =  () => {
+  const process = function () {
     context_process.fillStyle = 'black';
-    //console.log("pw:", pw);
-    //console.log("ph: ", ph);
+    //console.log("vw, vh, pw, ph, ox, oy: ",vw, vh, pw, ph, ox, oy);
+    //context_process.fillRect(0, 0, pw, ph);
     context_process.fillRect(0, 0, vw, vh);
-    //context_process.fillRect(0, 0, w, h);
-    //console.log("vw: ", vw, "vh: ", vh, "ox: ", ox, "oy: ", oy, "w: ",w, "h: ", h)
     //context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
     context_process.drawImage(video, 0, 0, vw, vh);
 
-    imageData = context_process.getImageData(0, 0, vw, vh);
-    //console.log(imageData)
+    const imageData = context_process.getImageData(0, 0, vw, vh);
     imgproc.grayscale(imageData.data, vw, vh, img_u8);
-    //console.log(imageData.data)
-    grayV = color2gray(imageData.data, vw*vh);
-    //console.log(grayV);
-    //imageData = context_process.getImageData(0, 0, w, h);
-    //requestAnimationFrame(update);
+    //console.log(img_u8)
+    worker.postMessage({ type: 'process', imagedata: img_u8.data });
   }
 
-  //update();
-
-  var process = function () {
-    //context_process.fillStyle = 'black';
-    //context_process.fillRect(0, 0, pw, ph);
-    //context_process.fillRect(0, 0, w, h);
-    //context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
-    //context_process.drawImage(video, 0, 0);
-
-    //var imageData = context_process.getImageData(0, 0, pw, ph);
-    //var imageData = context_process.getImageData(0, 0, w, h);
-    //update();
-    //if(!imageData) return;
-    //worker.postMessage({ type: 'process', data: imageData.data.buffer }, [imageData.data.buffer]);
-    //update()
-    if(imageData) {
-      //console.log(img_u8)
-      //worker.postMessage({ type: 'process', data: img_u8 });
-      //worker.postMessage({ type: 'process', data: grayV });
-      worker.postMessage({ type: 'process', data: imageData});
-    }
-    update();
-  }
   var tick = function () {
     draw();
-    //process();
+    process();
     //update();
     requestAnimationFrame(tick);
   };
 
   load();
   tick();
-  process();
+  //process();
 }
