@@ -131,6 +131,16 @@ window.onload = async function () {
     switch (msg.type) {
       case "loadedTracker": {
         proj = JSON.parse(msg.cameraProjMat);
+        const ratioW = pw / w;
+        const ratioH = ph / h;
+        proj[0] *= ratioW;
+        proj[4] *= ratioW;
+        proj[8] *= ratioW;
+        proj[12] *= ratioW;
+        proj[1] *= ratioH;
+        proj[5] *= ratioH;
+        proj[9] *= ratioH;
+        proj[13] *= ratioH;
         hideLoading();
         process();
         break;
@@ -168,10 +178,11 @@ window.onload = async function () {
       clearOverlayCtx();
       arElem.style.display = "none";
     } else {
-      arElem.style.display = "block";
-      console.log("pose matrix: ", JSON.parse(msg.pose));
-      let world = JSON.parse(msg.pose);
-      var mat = multiplyMatrices(proj, world);
+      //arElem.style.display = "block";
+      arElem.style.display = "none";
+      console.log("matrixGL_RH matrix: ", JSON.parse(msg.matrixGL_RH));
+      const world = JSON.parse(msg.matrixGL_RH);
+      const mat = multiplyMatrices(proj, world);
 
       function glpointToCanvas(xyz) {
         return {
@@ -180,8 +191,8 @@ window.onload = async function () {
         }
       }
       function drawpoint(x, y, z) {
-        var r = transformPoint(mat, {x: x, y: y, z: z});
-        var c = glpointToCanvas(r);
+        const r = transformPoint(mat, {x: x, y: y, z: z});
+        const c = glpointToCanvas(r);
         return c;
       }
 
@@ -190,20 +201,21 @@ window.onload = async function () {
 
       const overlayCtx = overlayCanvas.getContext("2d");
       clearOverlayCtx();
+      drawCorners(JSON.parse(msg.corners));
 
       //var width = marker.width;
-      var width= 1637;
+      const mwidth = 1637;
       //var height = marker.height;
-      var height = 2048;
-      var dpi = 150;
+      const mheight = 2048;
+      const dpi = 150;
 
-      var w = width / dpi * 2.54 * 10;
-      var h = height / dpi * 2.54 * 10;
+      const w = mwidth / dpi * 2.54 * 10;
+      const h = mheight / dpi * 2.54 * 10;
 
-      var p1 = drawpoint(0, 0, 0);
-      var p2 = drawpoint(w, 0, 0);
-      var p3 = drawpoint(w, h, 0);
-      var p4 = drawpoint(0, h, 0);
+      const p1 = drawpoint(0, 0, 0);
+      const p2 = drawpoint(w, 0, 0);
+      const p3 = drawpoint(w, h, 0);
+      const p4 = drawpoint(0, h, 0);
 
       overlayCtx.beginPath();
       overlayCtx.moveTo(p1.x, p1.y);
@@ -244,7 +256,7 @@ function setVideoStyle(elem) {
 }
 
 function createVideo() {
-  var video = document.createElement("video");
+  const video = document.createElement("video");
   video.id = "video";
   video.setAttribute("autoplay", "");
   video.setAttribute("muted", "");

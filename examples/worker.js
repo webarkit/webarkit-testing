@@ -43,6 +43,7 @@ function initTracker(msg) {
         type: "found",
         corners: JSON.stringify(event.data.corners),
         matrix: JSON.stringify(event.data.matrix),
+        matrixGL_RH: JSON.stringify(event.data.matrixGL_RH),
         pose: JSON.stringify(event.data.pose),
       };
     });
