@@ -201,7 +201,7 @@ window.onload = async function () {
 
       const overlayCtx = overlayCanvas.getContext("2d");
       clearOverlayCtx();
-      drawCorners(JSON.parse(msg.corners));
+      //drawCorners(JSON.parse(msg.corners));
 
       //var width = marker.width;
       const mwidth = 1637;
@@ -216,6 +216,8 @@ window.onload = async function () {
       const p2 = drawpoint(w, 0, 0);
       const p3 = drawpoint(w, h, 0);
       const p4 = drawpoint(0, h, 0);
+
+      console.log(p1)
 
       overlayCtx.beginPath();
       overlayCtx.moveTo(p1.x, p1.y);
