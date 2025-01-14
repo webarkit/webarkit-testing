@@ -60,6 +60,9 @@ var oHeight = window.innerHeight;
 var vw = oWidth;
 var vh = oHeight;
 
+var pscale = 320 / Math.max(vw, vh / 3 * 4);
+var sscale = isMobile() ? window.outerWidth / oWidth : 1;
+
 var sw = vw * sscale;
 var sh = vh * sscale;
 
@@ -70,11 +73,6 @@ var ph = Math.max(h, w / 4 * 3);
 
 var ox = (pw - w) / 2;
 var oy = (ph - h) / 2;
-
-
-var pscale = 320 / Math.max(vw, vh / 3 * 4);
-var sscale = isMobile() ? window.outerWidth / oWidth : 1;
-
 
 var videoEl;
 var arElem;
@@ -131,7 +129,7 @@ window.onload = async function () {
     switch (msg.type) {
       case "loadedTracker": {
         proj = JSON.parse(msg.cameraProjMat);
-        const ratioW = pw / w;
+        /*const ratioW = pw / w;
         const ratioH = ph / h;
         proj[0] *= ratioW;
         proj[4] *= ratioW;
@@ -140,7 +138,7 @@ window.onload = async function () {
         proj[1] *= ratioH;
         proj[5] *= ratioH;
         proj[9] *= ratioH;
-        proj[13] *= ratioH;
+        proj[13] *= ratioH;*/
         hideLoading();
         process();
         break;
@@ -212,12 +210,18 @@ window.onload = async function () {
       const w = mwidth / dpi * 2.54 * 10;
       const h = mheight / dpi * 2.54 * 10;
 
-      const p1 = drawpoint(0, 0, 0);
-      const p2 = drawpoint(w, 0, 0);
-      const p3 = drawpoint(w, h, 0);
-      const p4 = drawpoint(0, h, 0);
+      let p1 = drawpoint(0, 0, 0);
+      let p2 = drawpoint(w, 0, 0);
+      let p3 = drawpoint(w, h, 0);
+      let p4 = drawpoint(0, h, 0);
 
-      console.log(p1)
+      // this will draw a fixed red square, uncomment only for debugging...
+      /*p1 = {x:100, y: 100};
+      p2 = {x:200, y: 100};
+      p3 = {x:200, y: 200};
+      p4 = {x:100, y: 200};*/
+
+      console.log(p1, p2, p3, p4)
 
       overlayCtx.beginPath();
       overlayCtx.moveTo(p1.x, p1.y);
