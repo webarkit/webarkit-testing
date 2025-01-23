@@ -171,7 +171,7 @@ FLAGS += ' --profiling '
 
 var WASM_FLAGS = ' -s SINGLE_FILE=1 '
 var SIMD = ' -msimd128 '
-var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
+var ES6_FLAGS = ' -fwasm-exceptions -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
 
 FLAGS += ' --bind ';
 
