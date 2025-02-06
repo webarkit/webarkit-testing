@@ -178,8 +178,9 @@ window.onload = async function () {
     } else {
       //arElem.style.display = "block";
       arElem.style.display = "none";
-      console.log("matrixGL_RH matrix: ", JSON.parse(msg.matrixGL_RH));
-      const world = JSON.parse(msg.matrixGL_RH);
+      //console.log("matrixGL_RH matrix: ", JSON.parse(msg.matrixGL_RH));
+      console.log("viewMatrix_GL matrix: ", JSON.parse(msg.viewMatrix_GL));
+      const world = JSON.parse(msg.viewMatrix_GL);
       const mat = multiplyMatrices(proj, world);
 
       function glpointToCanvas(xyz) {
@@ -205,7 +206,7 @@ window.onload = async function () {
       const mwidth = 1637;
       //var height = marker.height;
       const mheight = 2048;
-      const dpi = 150;
+      const dpi = 220;
 
       const w = mwidth / dpi * 2.54 * 10;
       const h = mheight / dpi * 2.54 * 10;

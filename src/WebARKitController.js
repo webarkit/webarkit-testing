@@ -119,7 +119,7 @@ export default class WebARKitController {
       matrix = this.getHomography();
       this.transMatToGLMat(this.getPoseMatrix(), pose);
       viewMatrix_GL = this.getGLViewMatrix();
-      matrixGL_RH = this.arglCameraViewRHf(pose);
+      matrixGL_RH = this.arglCameraViewRHf(pose, new Float64Array(16),  1.0);
 
 
       this.dispatchEvent({
