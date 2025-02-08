@@ -180,7 +180,8 @@ window.onload = async function () {
       arElem.style.display = "none";
       //console.log("matrixGL_RH matrix: ", JSON.parse(msg.matrixGL_RH));
       console.log("viewMatrix_GL matrix: ", JSON.parse(msg.viewMatrix_GL));
-      const world = JSON.parse(msg.viewMatrix_GL);
+      console.log("transMatrix matrix: ", JSON.parse(msg.transMatrix));
+      const world = JSON.parse(msg.transMatrix);
       const mat = multiplyMatrices(proj, world);
 
       function glpointToCanvas(xyz) {

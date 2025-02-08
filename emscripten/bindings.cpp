@@ -35,6 +35,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("getPoseMatrix", &WebARKit::getPoseMatrix)
       .function("getPoseMatrix2", &WebARKit::getPoseMatrix2)
       .function("getGLViewMatrix", &WebARKit::getGLViewMatrix)
+      .function("getTransformationMatrix", &WebARKit::getTransformationMatrix)
       .function("getCameraProjectionMatrix", &WebARKit::getCameraProjectionMatrix)
       .function("getCorners", &WebARKit::getCorners)
       .function("isValid", &WebARKit::isValid);

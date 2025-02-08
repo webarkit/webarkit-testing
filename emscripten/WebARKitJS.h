@@ -37,6 +37,7 @@ class WebARKit {
     emscripten::val getHomography();
     emscripten::val getPoseMatrix();
     emscripten::val getPoseMatrix2();
+    emscripten::val getTransformationMatrix();
     emscripten::val getGLViewMatrix();
     emscripten::val getCameraProjectionMatrix();
     emscripten::val getCorners();
