@@ -15,7 +15,7 @@ This is a repository testing for [**WebARKit**](https://github.com/webarkit). Th
 
 ### Pre-requisites
 
-You need emscripten `3.1.26` because OpenCV may be built with this version. We are using our OpenCV (4.7.0) forked version.
+You need emscripten `3.1.26` because OpenCV may be built with this version. We are using our OpenCV (4.10.0) forked version.
 
 ### Instructions
 

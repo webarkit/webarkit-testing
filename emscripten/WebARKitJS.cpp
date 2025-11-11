@@ -44,6 +44,15 @@ emscripten::val WebARKit::getPoseMatrix2() {
     return pose;
 }
 
+emscripten::val WebARKit::getTransformationMatrix() {
+    std::array<double, 16> transMatrix = manager.getTransformationMatrix();
+    emscripten::val tM = emscripten::val::array();
+    for(auto t:transMatrix) {
+        tM.call<void>("push", t);
+    }
+    return tM;
+}
+
 emscripten::val WebARKit::getGLViewMatrix() {
     cv::Mat glViewMatrix = manager.getGLViewMatrix();
     emscripten::val glView = emscripten::val::array();

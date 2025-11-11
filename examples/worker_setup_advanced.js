@@ -1,17 +1,17 @@
 function multiplyMatrices(a, b) {
-  var ae = a;
-  var be = b;
-  var te = new Float64Array(16);
+  const ae = a;
+  const be = b;
+  const te = new Float64Array(16);
 
-  var a11 = ae[0], a12 = ae[4], a13 = ae[8], a14 = ae[12];
-  var a21 = ae[1], a22 = ae[5], a23 = ae[9], a24 = ae[13];
-  var a31 = ae[2], a32 = ae[6], a33 = ae[10], a34 = ae[14];
-  var a41 = ae[3], a42 = ae[7], a43 = ae[11], a44 = ae[15];
+  const a11 = ae[0], a12 = ae[4], a13 = ae[8], a14 = ae[12];
+  const a21 = ae[1], a22 = ae[5], a23 = ae[9], a24 = ae[13];
+  const a31 = ae[2], a32 = ae[6], a33 = ae[10], a34 = ae[14];
+  const a41 = ae[3], a42 = ae[7], a43 = ae[11], a44 = ae[15];
 
-  var b11 = be[0], b12 = be[4], b13 = be[8], b14 = be[12];
-  var b21 = be[1], b22 = be[5], b23 = be[9], b24 = be[13];
-  var b31 = be[2], b32 = be[6], b33 = be[10], b34 = be[14];
-  var b41 = be[3], b42 = be[7], b43 = be[11], b44 = be[15];
+  const b11 = be[0], b12 = be[4], b13 = be[8], b14 = be[12];
+  const b21 = be[1], b22 = be[5], b23 = be[9], b24 = be[13];
+  const b31 = be[2], b32 = be[6], b33 = be[10], b34 = be[14];
+  const b41 = be[3], b42 = be[7], b43 = be[11], b44 = be[15];
 
   te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
   te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
@@ -37,12 +37,12 @@ function multiplyMatrices(a, b) {
 }
 
 function transformPoint(m, xyz) {
-  var x = xyz.x, y = xyz.y, z = xyz.z;
-  var e = m;
+  const { x, y, z } = xyz;
+  const e = m;
 
-  var w = 1 / (e[3] * x + e[7] * y + e[11] * z + e[15]);
+  const w = 1 / (e[3] * x + e[7] * y + e[11] * z + e[15]);
 
-  var r = {};
+  const r = {};
   r.x = (e[0] * x + e[4] * y + e[8] * z + e[12]) * w;
   r.y = (e[1] * x + e[5] * y + e[9] * z + e[13]) * w;
   r.z = (e[2] * x + e[6] * y + e[10] * z + e[14]) * w;
@@ -50,46 +50,23 @@ function transformPoint(m, xyz) {
   return r;
 }
 
-function isMobile () {
-  return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
-}
+const oWidth = window.innerWidth;
+const oHeight = window.innerHeight;
 
-var oWidth = window.innerWidth;
-var oHeight = window.innerHeight;
+let videoEl;
+let arElem;
+let grayScaleVideo;
+let grayScaleImage;
+let grayVideoData;
+let overlayCanvas;
+let videoCanvas;
+let stats;
+let loadingPopUp;
+let worker;
 
-var vw = oWidth;
-var vh = oHeight;
+let proj;
 
-var sw = vw * sscale;
-var sh = vh * sscale;
-
-var w = vw * pscale;
-var h = vh * pscale;
-var pw = Math.max(w, h / 3 * 4);
-var ph = Math.max(h, w / 4 * 3);
-
-var ox = (pw - w) / 2;
-var oy = (ph - h) / 2;
-
-
-var pscale = 320 / Math.max(vw, vh / 3 * 4);
-var sscale = isMobile() ? window.outerWidth / oWidth : 1;
-
-
-var videoEl;
-var arElem;
-var grayScaleVideo;
-var grayScaleImage;
-var grayVideoData;
-var overlayCanvas;
-var videoCanvas;
-var stats;
-var loadingPopUp;
-var worker;
-
-var proj;
-
-var type = setTrackerType();
+const type = setTrackerType();
 
 window.onload = async function () {
   videoEl = createVideo();
@@ -107,7 +84,7 @@ window.onload = async function () {
   const grayImageData = grayScaleImage.getFrame();
   arElem = document.getElementById("arElem");
   grayScaleVideo = new GrayScale.GrayScaleMedia(videoEl, oWidth, oHeight);
-  var videoSource = await initVideo();
+  const videoSource = await initVideo();
 
   worker = new Worker("./worker.js");
 
@@ -127,20 +104,10 @@ window.onload = async function () {
   arElem.style.zIndex = 2;
 
   worker.onmessage = function (ev) {
-    var msg = ev.data;
+    const msg = ev.data;
     switch (msg.type) {
       case "loadedTracker": {
         proj = JSON.parse(msg.cameraProjMat);
-        const ratioW = pw / w;
-        const ratioH = ph / h;
-        proj[0] *= ratioW;
-        proj[4] *= ratioW;
-        proj[8] *= ratioW;
-        proj[12] *= ratioW;
-        proj[1] *= ratioH;
-        proj[5] *= ratioH;
-        proj[9] *= ratioH;
-        proj[13] *= ratioH;
         hideLoading();
         process();
         break;
@@ -156,10 +123,9 @@ window.onload = async function () {
         break;
       }
     }
-    //process();
   };
 
-  let update = () => {
+  const update = () => {
     stats.begin();
     grayVideoData = grayScaleVideo.getFrame();
     const videoCanvasCtx = videoCanvas.getContext("2d");
@@ -178,16 +144,24 @@ window.onload = async function () {
       clearOverlayCtx();
       arElem.style.display = "none";
     } else {
-      //arElem.style.display = "block";
       arElem.style.display = "none";
-      console.log("matrixGL_RH matrix: ", JSON.parse(msg.matrixGL_RH));
-      const world = JSON.parse(msg.matrixGL_RH);
+      
+      const v = JSON.parse(msg.viewMatrix_GL);
+      // The 12-element viewMatrix_GL is a 3x4 matrix arranged as 4 columns of 3 rows each.
+      // We convert it to a 16-element column-major matrix by adding the final row [0,0,0,1].
+      const world = [
+        v[0], v[1], v[2], 0,
+        v[3], v[4], v[5], 0,
+        v[6], v[7], v[8], 0,
+        v[9], v[10], v[11], 1
+      ];
+      
       const mat = multiplyMatrices(proj, world);
 
       function glpointToCanvas(xyz) {
         return {
-          x: (xyz.x + 1) * 0.5 * pw / pscale * sscale - ox / pscale * sscale,
-          y: (1 - xyz.y) * 0.5 * ph / pscale * sscale - oy / pscale * sscale,
+          x: (xyz.x + 1) * 0.5 * overlayCanvas.width,
+          y: (1 - xyz.y) * 0.5 * overlayCanvas.height,
         }
       }
       function drawpoint(x, y, z) {
@@ -196,26 +170,32 @@ window.onload = async function () {
         return c;
       }
 
-      //drawCorners(JSON.parse(msg.corners));
-      //transformElem(JSON.parse(msg.matrix), arElem);
-
       const overlayCtx = overlayCanvas.getContext("2d");
       clearOverlayCtx();
-      drawCorners(JSON.parse(msg.corners));
 
-      //var width = marker.width;
+      // Physical size of the marker in millimeters
       const mwidth = 1637;
-      //var height = marker.height;
       const mheight = 2048;
-      const dpi = 150;
+      const dpi = 220;
 
       const w = mwidth / dpi * 2.54 * 10;
       const h = mheight / dpi * 2.54 * 10;
 
-      const p1 = drawpoint(0, 0, 0);
-      const p2 = drawpoint(w, 0, 0);
-      const p3 = drawpoint(w, h, 0);
-      const p4 = drawpoint(0, h, 0);
+      const w2 = w / 2;
+      const h2 = h / 2;
+
+      // We flip the Y coordinate of the points to account for the difference
+      // between the OpenCV coordinate system (Y down) and WebGL (Y up).
+      const p1 = drawpoint(-w2, h2, 0);
+      const p2 = drawpoint(w2, h2, 0);
+      const p3 = drawpoint(w2, -h2, 0);
+      const p4 = drawpoint(-w2, -h2, 0);
+
+      // this will draw a fixed red square, uncomment only for debugging...
+      /*p1 = {x:100, y: 100};
+      p2 = {x:200, y: 100};
+      p3 = {x:200, y: 200};
+      p4 = {x:100, y: 200};*/
 
       overlayCtx.beginPath();
       overlayCtx.moveTo(p1.x, p1.y);
@@ -223,9 +203,9 @@ window.onload = async function () {
       overlayCtx.lineTo(p3.x, p3.y);
       overlayCtx.lineTo(p4.x, p4.y);
       overlayCtx.closePath();
-      overlayCtx.strokeStyle = "red";
+      overlayCtx.strokeStyle = "lime";
+      overlayCtx.lineWidth = 5;
       overlayCtx.stroke();
-
     }
   }
 
@@ -283,55 +263,7 @@ function createOverlayCanvas() {
   document.body.appendChild(overlayCanvas);
 }
 
-function transformElem(h, elem) {
-  // column major order
-  let transform = [
-    h[0],
-    h[3],
-    0,
-    h[6],
-    h[1],
-    h[4],
-    0,
-    h[7],
-    0,
-    0,
-    1,
-    0,
-    h[2],
-    h[5],
-    0,
-    h[8],
-  ];
-  transform = "matrix3d(" + transform.join(",") + ")";
-  elem.style["-ms-transform"] = transform;
-  elem.style["-webkit-transform"] = transform;
-  elem.style["-moz-transform"] = transform;
-  elem.style["-o-transform"] = transform;
-  elem.style.transform = transform;
-  elem.style.display = "block";
-}
-
 function clearOverlayCtx() {
   const overlayCtx = overlayCanvas.getContext("2d");
   overlayCtx.clearRect(0, 0, oWidth, oHeight);
 }
-
-function drawCorners(corners) {
-  const overlayCtx = overlayCanvas.getContext("2d");
-  clearOverlayCtx();
-
-  overlayCtx.beginPath();
-  overlayCtx.strokeStyle = "blue";
-  overlayCtx.lineWidth = 3;
-
-  // [x1,y1,x2,y2,x3,y3,x4,y4]
-  overlayCtx.moveTo(corners[0], corners[1]);
-  overlayCtx.lineTo(corners[2], corners[3]);
-  overlayCtx.lineTo(corners[4], corners[5]);
-  overlayCtx.lineTo(corners[6], corners[7]);
-  overlayCtx.lineTo(corners[0], corners[1]);
-
-  overlayCtx.stroke();
-}
-

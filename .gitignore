@@ -2,3 +2,4 @@ build/*.bc
 node_modules
 opencv-em
 opencv_js
+.idea
