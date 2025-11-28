@@ -94,25 +94,29 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
     const type = setTrackerType();
     const loadImage =  (URL) => {
-      fetch(URL)
-          .then(response => response.arrayBuffer())
-          .then(buff => {
-            let buffer = new Uint8Array(buff);
-            worker.postMessage({
-              type: "initTracker",
-              trackerType: type,
-              imageData: buffer,
-              //imgWidth: refIm.width,
-              imgWidth: 1637,
-              //imgHeight: refIm.height,
-              imgHeight: 2048,
-              //videoWidth: oWidth,
-              //videoHeight: oHeight,
-              videoWidth: vw,
-              videoHeight: vh,
-            });
-            return buffer;
-          })
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, img.width, img.height);
+          worker.postMessage({
+            type: "initTracker",
+            trackerType: type,
+            imageData: imageData.data,
+            imgWidth: img.width,
+            imgHeight: img.height,
+            videoWidth: vw,
+            videoHeight: vh,
+          }, [imageData.data.buffer]);
+          resolve();
+        };
+        img.onerror = reject;
+        img.src = URL;
+      });
     }
 
     loadImage(markerUrl)
