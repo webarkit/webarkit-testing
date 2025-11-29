@@ -45,7 +45,7 @@ function initTracker(msg) {
         type: "found",
         //corners: JSON.stringify(event.data.corners),
         //matrix: JSON.stringify(event.data.matrix),
-        //matrixGL_RH: JSON.stringify(event.data.matrixGL_RH),
+        matrixGL_RH: JSON.stringify(event.data.matrixGL_RH),
         //viewMatrix_GL: JSON.stringify(event.data.viewMatrix_GL),
         pose: JSON.stringify(event.data.pose),
       };

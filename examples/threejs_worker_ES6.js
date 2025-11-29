@@ -125,17 +125,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       switch (msg.type) {
         case "loadedTracker": {
           const proj = JSON.parse(msg.cameraProjMat);
-          //console.log("proj: ", proj);
-          const ratioW = pw / w;
-          const ratioH = ph / h;
-          proj[0] *= ratioW;
-          proj[4] *= ratioW;
-          proj[8] *= ratioW;
-          proj[12] *= ratioW;
-          proj[1] *= ratioH;
-          proj[5] *= ratioH;
-          proj[9] *= ratioH;
-          proj[13] *= ratioH;
           setMatrix(camera.projectionMatrix, proj);
           process();
           break;
@@ -175,8 +164,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     if (!msg) {
       world = null;
     } else {
-      world = JSON.parse(msg.pose);
-      //world = JSON.parse(msg.matrixGL_RH);
+      //world = JSON.parse(msg.pose);
+      world = JSON.parse(msg.matrixGL_RH);
       //world = JSON.parse(msg.viewMatrix_GL);
 
     }
