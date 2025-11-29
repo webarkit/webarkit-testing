@@ -69,18 +69,17 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     vw = input_width;
     vh = input_height;
 
-    pscale = 320 / Math.max(vw, vh / 3 * 4);
     sscale = isMobile() ? window.outerWidth / input_width : 1;
 
     sw = vw * sscale;
     sh = vh * sscale;
 
-    w = vw * pscale;
-    h = vh * pscale;
-    pw = Math.max(w, h / 3 * 4);
-    ph = Math.max(h, w / 4 * 3);
-    ox = (pw - w) / 2;
-    oy = (ph - h) / 2;
+    w = vw;
+    h = vh;
+    pw = vw;
+    ph = vh;
+    ox = 0;
+    oy = 0;
     canvas_process.style.clientWidth = pw + "px";
     canvas_process.style.clientHeight = ph + "px";
     canvas_process.width = pw;
@@ -94,25 +93,29 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
     const type = setTrackerType();
     const loadImage =  (URL) => {
-      fetch(URL)
-          .then(response => response.arrayBuffer())
-          .then(buff => {
-            let buffer = new Uint8Array(buff);
-            worker.postMessage({
-              type: "initTracker",
-              trackerType: type,
-              imageData: buffer,
-              //imgWidth: refIm.width,
-              imgWidth: 1637,
-              //imgHeight: refIm.height,
-              imgHeight: 2048,
-              //videoWidth: oWidth,
-              //videoHeight: oHeight,
-              videoWidth: vw,
-              videoHeight: vh,
-            });
-            return buffer;
-          })
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, img.width, img.height);
+          worker.postMessage({
+            type: "initTracker",
+            trackerType: type,
+            imageData: imageData.data,
+            imgWidth: img.width,
+            imgHeight: img.height,
+            videoWidth: vw,
+            videoHeight: vh,
+          }, [imageData.data.buffer]);
+          resolve();
+        };
+        img.onerror = reject;
+        img.src = URL;
+      });
     }
 
     loadImage(markerUrl)
@@ -201,11 +204,9 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   };
 
   const process = function () {
-    context_process.fillStyle = 'black';
-    context_process.fillRect(0, 0, pw, ph);
-    context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
+    context_process.drawImage(video, 0, 0, vw, vh);
 
-    const imageData = context_process.getImageData(0, 0, pw, ph);
+    const imageData = context_process.getImageData(0, 0, vw, vh);
     worker.postMessage({ type: 'process', imagedata: imageData }, [imageData.data.buffer]);
   }
 
