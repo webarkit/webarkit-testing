@@ -60,7 +60,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   scene.add(root);
 
   sphere.material.flatShading;
-  sphere.scale.set(.5, .5, .5);
+  sphere.scale.set(1, 1, 1);
 
   root.matrixAutoUpdate = false;
   root.add(sphere);
@@ -154,7 +154,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
         }
       }
       track_update();
-      //process();
+      process();
     };
   };
 
@@ -201,7 +201,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   const tick = function () {
     draw();
-    process();
     requestAnimationFrame(tick);
   };
 
