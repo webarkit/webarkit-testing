@@ -4,6 +4,28 @@ var ar;
 let next = null;
 let markerResult = null;
 
+function toGrayscale(data, width, height, flip = false) {
+  const gray = new Uint8Array(width * height);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const i = y * width + x;
+      const r = data[i * 4];
+      const g = data[i * 4 + 1];
+      const b = data[i * 4 + 2];
+
+      let grayIndex;
+      if (flip) {
+        grayIndex = (height - 1 - y) * width + x;
+      } else {
+        grayIndex = i;
+      }
+
+      gray[grayIndex] = (0.299 * r + 0.587 * g + 0.114 * b);
+    }
+  }
+  return gray;
+}
+
 self.onmessage = (e) => {
   const msg = e.data;
   switch (msg.type) {
@@ -64,7 +86,17 @@ function initTracker(msg) {
 function processFrame() {
   markerResult = null;
   if (ar && ar.process_raw) {
-    ar.process_raw(next, WebARKit.WebARKitController.GRAY)
+    // Convert RGBA to Grayscale and Flip Y (to match GL coordinate system used by tracker)
+    // next is ImageData object {data: Uint8ClampedArray, width, height} or just the object passed
+    // from main thread. In main thread we passed { type: 'process', imagedata: imageData }
+    // where imageData is ImageData object. structuredClone or Transferable passes it.
+    // 'next' is assigned msg.imagedata.
+    // Check if next has width/height properties.
+    const width = next.width;
+    const height = next.height;
+    const gray = toGrayscale(next.data, width, height, true);
+
+    ar.process_raw(gray, WebARKit.WebARKitController.GRAY)
   }
   if (markerResult) {
     postMessage(markerResult);

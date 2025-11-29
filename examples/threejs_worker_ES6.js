@@ -14,13 +14,24 @@ const setMatrix = function (matrix, value) {
   }
 };
 
-function toGrayscale(data, width, height) {
+function toGrayscale(data, width, height, flip = false) {
   const gray = new Uint8Array(width * height);
-  for (let i = 0; i < width * height; i++) {
-    const r = data[i * 4];
-    const g = data[i * 4 + 1];
-    const b = data[i * 4 + 2];
-    gray[i] = (0.299 * r + 0.587 * g + 0.114 * b);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const i = y * width + x;
+      const r = data[i * 4];
+      const g = data[i * 4 + 1];
+      const b = data[i * 4 + 2];
+
+      let grayIndex;
+      if (flip) {
+        grayIndex = (height - 1 - y) * width + x;
+      } else {
+        grayIndex = i;
+      }
+
+      gray[grayIndex] = (0.299 * r + 0.587 * g + 0.114 * b);
+    }
   }
   return gray;
 }
@@ -113,7 +124,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0);
           const imageData = ctx.getImageData(0, 0, img.width, img.height);
-          const gray = toGrayscale(imageData.data, img.width, img.height);
+          // Flip the marker image to match the flipped video feed (WebARKit/GrayScale.js behavior)
+          const gray = toGrayscale(imageData.data, img.width, img.height, true);
           worker.postMessage({
             type: "initTracker",
             trackerType: type,
@@ -208,8 +220,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     context_process.drawImage(video, 0, 0, vw, vh);
 
     const imageData = context_process.getImageData(0, 0, vw, vh);
-    const gray = toGrayscale(imageData.data, vw, vh);
-    worker.postMessage({ type: 'process', imagedata: gray }, [gray.buffer]);
+    // Send RGBA to worker to offload conversion and avoid main thread jank
+    worker.postMessage({ type: 'process', imagedata: imageData }, [imageData.data.buffer]);
   }
 
   const tick = function () {
