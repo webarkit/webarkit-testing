@@ -95,19 +95,18 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     //vw = oWidth;
     //vh = oHeight;
 
-    pscale = 320 / Math.max(vw, vh / 3 * 4);
     sscale = isMobile() ? window.outerWidth / input_width : 1;
     //sscale = isMobile() ? window.outerWidth / oWidth : 1;
 
     sw = vw * sscale;
     sh = vh * sscale;
 
-    w = vw * pscale;
-    h = vh * pscale;
-    pw = Math.max(w, h / 3 * 4);
-    ph = Math.max(h, w / 4 * 3);
-    ox = (pw - w) / 2;
-    oy = (ph - h) / 2;
+    w = vw;
+    h = vh;
+    pw = vw;
+    ph = vh;
+    ox = 0;
+    oy = 0;
     canvas_process.style.clientWidth = pw + "px";
     canvas_process.style.clientHeight = ph + "px";
     canvas_process.width = pw;
@@ -124,30 +123,40 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
     var type = setTrackerType();
     const loadImage =  (URL) => {
-      fetch(URL)
-          .then(response => response.arrayBuffer())
-          .then(buff => {
-            let buffer = new Uint8Array(buff);
-            let img_u8_tracker = new jsfeat.matrix_t(image_W, image_H, jsfeat.U8_t | jsfeat.C1_t);
-            imgproc.grayscale(buffer, image_W, image_H, img_u8_tracker);
-            //var grayT = color2gray(buffer, refIm.width * refIm.height);
-            worker.postMessage({
-              type: "initTracker",
-              trackerType: type,
-              imageData: img_u8_tracker.data,
-              //imageData: grayT,
-              //imageData: buffer,
-              //imgWidth: refIm.width,
-              imgWidth: image_W,
-              //imgHeight: refIm.height,
-              imgHeight: image_H,
-              //videoWidth: oWidth,
-              //videoHeight: oHeight,
-              videoWidth: vw,
-              videoHeight: vh,
-            });
-            return buffer;
-          })
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, img.width, img.height);
+
+          let img_u8_tracker = new jsfeat.matrix_t(img.width, img.height, jsfeat.U8_t | jsfeat.C1_t);
+          // Assuming imgproc.grayscale expects RGBA or similar.
+          // If imageData.data is RGBA (4 channels), and grayscale expects buffer...
+          // Original code was: imgproc.grayscale(buffer, image_W, image_H, img_u8_tracker);
+          // The JSFeat implementation usually takes input, width, height, output.
+          // Since imageData is RGBA, we need to know if jsfeat handles RGBA input.
+          // The previous code passed 'buffer' from fetch (compressed jpeg) which was definitely wrong.
+          // Assuming imgproc.grayscale handles RGBA Uint8ClampedArray/Uint8Array:
+          imgproc.grayscale(imageData.data, img.width, img.height, img_u8_tracker);
+
+          worker.postMessage({
+            type: "initTracker",
+            trackerType: type,
+            imageData: img_u8_tracker.data,
+            imgWidth: img.width,
+            imgHeight: img.height,
+            videoWidth: vw,
+            videoHeight: vh,
+          }, [img_u8_tracker.data.buffer]);
+          resolve();
+        };
+        img.onerror = reject;
+        img.src = URL;
+      });
     }
 
     loadImage(markerUrl)
