@@ -199,11 +199,20 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     } else {
       const m = JSON.parse(msg.matrixGL_RH);
 
-      // Invert Z-axis (OpenCV +Z -> OpenGL -Z for visibility)
-      m[2] = -m[2];
-      m[6] = -m[6];
-      m[10] = -m[10];
-      m[14] = -m[14];
+      // Invert X and Y axes to fix "Top Right" vs "Bottom Left" quadrant mismatch.
+      // Do NOT invert Z, as that caused visibility issues.
+
+      // Invert X
+      m[0] = -m[0];
+      m[4] = -m[4];
+      m[8] = -m[8];
+      m[12] = -m[12];
+
+      // Invert Y
+      m[1] = -m[1];
+      m[5] = -m[5];
+      m[9] = -m[9];
+      m[13] = -m[13];
 
       world = m;
     }
