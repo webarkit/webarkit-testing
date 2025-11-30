@@ -149,15 +149,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       switch (msg.type) {
         case "loadedTracker": {
           const proj = JSON.parse(msg.cameraProjMat);
-          // The video frame is flipped vertically, so we might need to flip the projection matrix Y-axis
-          // or the camera view. Let's try flipping the projection Y scale.
-          // proj[5] is the Y scale (1/tan(fov/2) * aspect?).
-          // Actually, usually [1][1] (index 5).
-          // Try negating it.
-          // proj[5] *= -1;
-          // Wait, if we used matrixGL_RH which handles coordinate conversion, maybe projection matches?
-          // But if image was flipped, the geometry in camera space is flipped.
-
           setMatrix(camera.projectionMatrix, proj);
           process();
           break;

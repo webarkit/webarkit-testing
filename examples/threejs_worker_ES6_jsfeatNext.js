@@ -134,13 +134,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           const imageData = ctx.getImageData(0, 0, img.width, img.height);
 
           let img_u8_tracker = new jsfeat.matrix_t(img.width, img.height, jsfeat.U8_t | jsfeat.C1_t);
-          // Assuming imgproc.grayscale expects RGBA or similar.
-          // If imageData.data is RGBA (4 channels), and grayscale expects buffer...
-          // Original code was: imgproc.grayscale(buffer, image_W, image_H, img_u8_tracker);
-          // The JSFeat implementation usually takes input, width, height, output.
-          // Since imageData is RGBA, we need to know if jsfeat handles RGBA input.
-          // The previous code passed 'buffer' from fetch (compressed jpeg) which was definitely wrong.
-          // Assuming imgproc.grayscale handles RGBA Uint8ClampedArray/Uint8Array:
           imgproc.grayscale(imageData.data, img.width, img.height, img_u8_tracker);
 
           worker.postMessage({
