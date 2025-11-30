@@ -197,13 +197,15 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     if (!msg) {
       world = null;
     } else {
-      const m = JSON.parse(msg.viewMatrix_GL);
-      // C++ bug workaround: The library computes raw OpenCV pose [R|t] and transposes it,
-      // but fails to apply the coordinate conversion to OpenGL (flip Y and Z axes).
-      // We apply the conversion matrix diag(1, -1, -1, 1) here.
+      const m = JSON.parse(msg.matrixGL_RH);
+      // Coordinate System Fix:
+      // The matrix returned by WebARKit (via arglCameraViewRHf or raw pose) seems to correspond
+      // to an OpenCV-style coordinate system (Y-down, Z-forward) or has inverted Y/Z axes due to
+      // internal calculations. To align with Three.js/OpenGL (Y-up, Z-backward), we invert
+      // the Y and Z axes of the model-view matrix.
       // Since m is Column-Major:
-      // Row 1 (indices 1, 5, 9, 13) corresponding to Y-axis
-      // Row 2 (indices 2, 6, 10, 14) corresponding to Z-axis
+      // Row 1 (indices 1, 5, 9, 13) corresponds to Y-axis
+      // Row 2 (indices 2, 6, 10, 14) corresponds to Z-axis
 
       m[1] = -m[1];
       m[5] = -m[5];
