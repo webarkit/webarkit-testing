@@ -197,7 +197,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     if (!msg) {
       world = null;
     } else {
-      world = JSON.parse(msg.transMatrix);
+      world = JSON.parse(msg.matrixGL_RH);
     }
   };
 
