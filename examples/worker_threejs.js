@@ -86,19 +86,28 @@ function initTracker(msg) {
 
 function processFrame() {
   markerResult = null;
-  if (ar && ar.process_raw) {
-    // Convert RGBA to Grayscale and Flip Y (to match GL coordinate system used by tracker)
-    // next is ImageData object {data: Uint8ClampedArray, width, height} or just the object passed
-    // from main thread. In main thread we passed { type: 'process', imagedata: imageData }
-    // where imageData is ImageData object. structuredClone or Transferable passes it.
-    // 'next' is assigned msg.imagedata.
-    // Check if next has width/height properties.
-    const width = next.width;
-    const height = next.height;
-    const gray = toGrayscale(next.data, width, height, false);
+  if (ar && ar.process_raw && next && next.data) {
+    try {
+      // Convert RGBA to Grayscale and Flip Y (to match GL coordinate system used by tracker)
+      // next is ImageData object {data: Uint8ClampedArray, width, height} or just the object passed
+      // from main thread. In main thread we passed { type: 'process', imagedata: imageData }
+      // where imageData is ImageData object. structuredClone or Transferable passes it.
+      // 'next' is assigned msg.imagedata.
+      // Check if next has width/height properties.
+      const width = next.width;
+      const height = next.height;
 
-    ar.process_raw(gray, WebARKit.WebARKitController.GRAY)
+      if (width > 0 && height > 0 && next.data.length === width * height * 4) {
+          const gray = toGrayscale(next.data, width, height, false);
+          ar.process_raw(gray, WebARKit.WebARKitController.GRAY)
+      } else {
+          console.warn("Invalid frame data skipped");
+      }
+    } catch (e) {
+      console.error("Worker process error:", e);
+    }
   }
+
   if (markerResult) {
     postMessage(markerResult);
   } else {
