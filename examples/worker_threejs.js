@@ -94,7 +94,7 @@ function processFrame() {
     // Check if next has width/height properties.
     const width = next.width;
     const height = next.height;
-    const gray = toGrayscale(next.data, width, height, true);
+    const gray = toGrayscale(next.data, width, height, false);
 
     ar.process_raw(gray, WebARKit.WebARKitController.GRAY)
   }

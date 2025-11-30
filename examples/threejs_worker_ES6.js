@@ -124,8 +124,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0);
           const imageData = ctx.getImageData(0, 0, img.width, img.height);
-          // Flip the marker image to match the flipped video feed (WebARKit/GrayScale.js behavior)
-          const gray = toGrayscale(imageData.data, img.width, img.height, true);
+          // Use standard orientation (no flip)
+          const gray = toGrayscale(imageData.data, img.width, img.height, false);
           worker.postMessage({
             type: "initTracker",
             trackerType: type,
@@ -157,9 +157,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           // proj[5] *= -1;
           // Wait, if we used matrixGL_RH which handles coordinate conversion, maybe projection matches?
           // But if image was flipped, the geometry in camera space is flipped.
-
-          // Flip Y scale in projection matrix to account for flipped video feed
-          proj[5] *= -1;
 
           setMatrix(camera.projectionMatrix, proj);
           process();
