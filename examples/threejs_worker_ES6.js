@@ -198,8 +198,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
       world = null;
     } else {
       //world = JSON.parse(msg.pose);
-      //world = JSON.parse(msg.matrixGL_RH);
-      world = JSON.parse(msg.viewMatrix_GL);
+      world = JSON.parse(msg.matrixGL_RH);
+      //world = JSON.parse(msg.viewMatrix_GL);
 
     }
   };
