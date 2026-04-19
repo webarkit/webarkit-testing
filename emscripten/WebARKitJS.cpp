@@ -1,13 +1,40 @@
 #include "WebARKitJS.h"
 
+static int bppForColorSpace(webarkit::ColorSpace cs) {
+    switch (cs) {
+        case webarkit::RGBA: return 4;
+        case webarkit::RGB:  return 3;
+        case webarkit::GRAY: return 1;
+        default:             return 4;
+    }
+}
+
+WebARKit::~WebARKit() {
+    delete[] m_frameBuffer;
+    m_frameBuffer = nullptr;
+}
+
 void WebARKit::initTrackerGray(emscripten::val data_buffer, int width, int height, webarkit::ColorSpace colorSpace) {
     auto u8 = emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
     manager.initTracker(u8.data(), width, height, colorSpace);
 }
 
-void WebARKit::processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace, webarkit::BLUR_TYPE blurType) {
-    auto u8 = emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
-    manager.processFrameData(u8.data(), this->videoWidth, this->videoHeight, colorSpace, blurType);
+void WebARKit::initFrameBuffer(webarkit::ColorSpace colorSpace) {
+    delete[] m_frameBuffer;
+    m_frameBufferSize = (size_t)this->videoWidth * this->videoHeight * bppForColorSpace(colorSpace);
+    m_frameBuffer = new uint8_t[m_frameBufferSize];
+}
+
+int WebARKit::getFrameBufferPtr() {
+    return reinterpret_cast<int>(m_frameBuffer);
+}
+
+void WebARKit::processFrame(webarkit::ColorSpace colorSpace, webarkit::BLUR_TYPE blurType) {
+    if (!m_frameBuffer) {
+        printf("[WebARKit] processFrame called before initFrameBuffer!\n");
+        return;
+    }
+    manager.processFrameData(m_frameBuffer, this->videoWidth, this->videoHeight, colorSpace, blurType);
 }
 
 void WebARKit::setLogLevel(int logLevel) { manager.setLogLevel(logLevel); }

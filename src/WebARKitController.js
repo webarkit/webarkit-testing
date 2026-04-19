@@ -36,7 +36,7 @@ export default class WebARKitController {
     // directly init with given width / height
     const webARC = new WebARKitController();
 
-    return await webARC._initialize_raw( videoWidth, videoHeight, trackerType);
+    return await webARC._initialize_raw(videoWidth, videoHeight, trackerType);
   }
 
   async _initialize_raw(videoWidth, videoHeight, trackerType) {
@@ -145,8 +145,20 @@ export default class WebARKitController {
     return this.webarkit.initTrackerGray(imgData, width, height, trackerType);
   }
 
+  initFrameBuffer(colorSpace) {
+    this.webarkit.initFrameBuffer(colorSpace);
+    this._frameBufferPtr = this.webarkit.getFrameBufferPtr();
+  }
+
   processFrame(imageData, colorSpace) {
-    this.webarkit.processFrame(imageData, colorSpace, WebARKitController.NONE_BLUR);
+    // Lazy-init: allocate buffer on first call if not already done explicitly.
+    if (!this._frameBufferPtr) {
+      this.initFrameBuffer(colorSpace);
+    }
+    // Write directly into WASM linear memory — no per-frame copy.
+    // Read HEAPU8 fresh each frame to guard against heap growth invalidation.
+    this.instance.HEAPU8.set(imageData, this._frameBufferPtr);
+    this.webarkit.processFrame(colorSpace, WebARKitController.NONE_BLUR);
   }
 
   setLogLevel(level) {

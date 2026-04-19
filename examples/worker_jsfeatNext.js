@@ -29,7 +29,8 @@ function initTracker(msg) {
     wark.setLogLevel(WebARKit.WebARKitController.WEBARKIT_LOG_LEVEL_DEBUG);
     wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.GRAY);
     //wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.RGBA);
-
+    // Allocate the persistent WASM frame buffer once — avoids convertJSArrayToNumberVector on every frame.
+    wark.initFrameBuffer(WebARKit.WebARKitController.GRAY);
     var cameraProjMat = wark.getCameraProjectionMatrix();
     console.log("camera proj Mat: ", cameraProjMat);
 
