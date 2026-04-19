@@ -29,6 +29,8 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .constructor<>()
       .constructor<int, int, webarkit::TRACKER_TYPE>()
       .function("initTrackerGray", &WebARKit::initTrackerGray)
+      .function("initFrameBuffer", &WebARKit::initFrameBuffer)
+      .function("getFrameBufferPtr", &WebARKit::getFrameBufferPtr)
       .function("processFrame", &WebARKit::processFrame)
       .function("setLogLevel", &WebARKit::setLogLevel)
       .function("getHomography", &WebARKit::getHomography)

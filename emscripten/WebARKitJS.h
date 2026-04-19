@@ -31,8 +31,12 @@ class WebARKit {
         manager.initialiseBase(m_trackerType, this->videoWidth, this->videoHeight);
     }
 
+    ~WebARKit();
+
     void initTrackerGray(emscripten::val data_buffer, int width, int height, webarkit::ColorSpace colorSpace);
-    void processFrame(emscripten::val data_buffer, webarkit::ColorSpace colorSpace, webarkit::BLUR_TYPE blurType);
+    void initFrameBuffer(webarkit::ColorSpace colorSpace);
+    int  getFrameBufferPtr();
+    void processFrame(webarkit::ColorSpace colorSpace, webarkit::BLUR_TYPE blurType);
     void setLogLevel(int logLevel);
     emscripten::val getHomography();
     emscripten::val getPoseMatrix();
@@ -48,4 +52,6 @@ class WebARKit {
     int videoHeight;
     webarkit::TRACKER_TYPE m_trackerType;
     webarkit::WebARKitManager manager;
+    uint8_t* m_frameBuffer = nullptr;
+    size_t   m_frameBufferSize = 0;
 };
