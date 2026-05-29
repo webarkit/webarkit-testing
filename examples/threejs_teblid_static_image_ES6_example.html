@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WebARKit Teblid - Static Image ES6 example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
+    <link rel="stylesheet" href="css/nft-style.css">
+</head>
+<body>
+
+<div id="loading">
+    <img src="data/aframe-k.png"/>
+    <span class="loading-text">Loading, please wait</span>
+</div>
+
+<!--
+==================
+STATS
+==================
+-->
+<div id="stats" class="ui stats">
+    <div id="stats1" class="stats-item">
+        <p class="stats-item-title">Main</p>
+    </div>
+    <div id="stats2" class="stats-item">
+        <p class="stats-item-title">Worker</p>
+    </div>
+</div>
+
+<div id="app">
+    <!--
+        No <video>: the input is a static image.
+        The img element is hidden; it is only used as the source
+        for context_process.drawImage() in threejs_static_image_worker_ES6.js
+    -->
+    <img id="static-image" src="data/pinball-demo.jpg" style="display:none;">
+    <canvas id="canvas"></canvas>
+</div>
+
+<script src="js/stats.min.js"></script>
+<script src="js/three.min.js"></script>
+
+<script>
+    function setTrackerType() {
+        return 'teblid';
+    }
+</script>
+
+<script src="threejs_static_image_worker_ES6.js"></script>
+
+<script>
+    /**
+     * STATS
+     */
+    var statsMain = new Stats();
+    statsMain.showPanel(0);
+    document.getElementById('stats1').appendChild(statsMain.dom);
+
+    var statsWorker = new Stats();
+    statsWorker.showPanel(0);
+    document.getElementById('stats2').appendChild(statsWorker.dom);
+
+    window.addEventListener('load', () => {
+        console.log('init WebARKit Teblid Static Image...');
+
+        const image = document.getElementById('static-image');
+
+        // Wait for the image to load before starting the tracker
+        const ready = () => {
+            initTargetCanvas(image.naturalWidth, image.naturalHeight);
+            start(
+                './data/pinball.jpg',
+                image,
+                image.naturalWidth,
+                image.naturalHeight,
+                function () { statsMain.update(); },
+                function () { statsWorker.update(); }
+            );
+        };
+
+        if (image.complete) {
+            ready();
+        } else {
+            image.addEventListener('load', ready);
+        }
+    });
+
+    function initTargetCanvas(width, height) {
+        const canvas = document.querySelector('#canvas');
+        canvas.width = width;
+        canvas.height = height;
+    }
+</script>
+
+</body>
+</html>
