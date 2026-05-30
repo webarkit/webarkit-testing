@@ -59,7 +59,21 @@ function start(markerUrl, image, input_width, input_height, render_update, track
   sphere.scale.set(.5, .5, .5);
 
   root.matrixAutoUpdate = false;
-  root.add(sphere);
+
+  // Frame correction. The library's marker frame uses image-coordinate
+  // conventions (+X right, +Y down, +Z into the marker), which puts AR
+  // content "behind" the marker in a three.js scene. A 180 degree rotation
+  // around the local Y axis (a proper rotation, no reflection) flips X and
+  // Z so that +Z faces the camera and the content sits above the marker.
+  // The remaining axis tilt observed in some demo images is tied to an
+  // unresolved projection X-mirror in the upstream library (see
+  // webarkit/WebARKitLib#35) and cannot be fully corrected from the example
+  // side until that lands.
+  const markerFrame = new THREE.Object3D();
+  markerFrame.rotation.y = Math.PI;
+  root.add(markerFrame);
+
+  markerFrame.add(sphere);
 
   const load = function () {
     vw = input_width;
@@ -160,7 +174,12 @@ function start(markerUrl, image, input_width, input_height, render_update, track
     if (!msg) {
       world = null;
     } else {
-      world = JSON.parse(msg.pose);
+      // Use the GL right-handed modelview (matrixGL_RH) — this is the pose
+      // after the full CV->GL handedness flip (Y and Z rows negated incl.
+      // translation), so the tracked object sits in front of the GL camera.
+      // The raw `pose` field is the OpenCV camera pose (+Z forward) and would
+      // place the object behind the camera under three.js' GL projection.
+      world = JSON.parse(msg.matrixGL_RH);
     }
   };
 
