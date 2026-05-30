@@ -29,11 +29,14 @@ STATS
 
 <div id="app">
     <!--
-        No <video>: the input is a static image.
-        The img element is hidden; it is only used as the source
-        for context_process.drawImage() in threejs_static_image_worker_ES6.js
+        No <video>: the input is a static image. The img is displayed full-bleed
+        (same layout as #video in the webcam examples) so it acts as the visible
+        background; the canvas above (z-index:100) renders the 3D overlay.
+        The same img element is also sampled by context_process.drawImage() in
+        threejs_static_image_worker_ES6.js as the tracker's input frame.
     -->
-    <img id="static-image" src="data/pinball-demo.jpg" style="display:none;">
+    <img id="static-image" src="data/pinball-demo.jpg"
+         style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;">
     <canvas id="canvas"></canvas>
 </div>
 
