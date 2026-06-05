@@ -175,3 +175,91 @@ green=height, blue=out toward camera) and **no** example-side rotation.
 **Arbiter disposition: REVISE** — finding approved (revert #36); projection flip
 decoupled into a separate empirically-gated step; example/gtest changes gated on
 verification.
+
+---
+
+## BREAKTHROUGH (resolved the static-image orientation) — example-side fix
+
+After the multi-agent review, the actual root cause and a working fix were found
+empirically. Status: **kept as an example-side correction**; folding into the
+library is still **undecided**.
+
+### Root cause confirmed
+
+`GrayScale` (the WebGL helper used by `teblid_example`) **flips the image
+vertically** — directly observed: a face rendered through `GrayScale.getFrame()`
+appears upside-down (its shader does `tex_coords.y = 1 - tex_coords.y` and
+`gl_Position.y *= flipY(-1)`, and it outputs single-channel GRAY). So:
+
+- `teblid_example` feeds the tracker (marker **and** frames) **bottom-up**.
+- The static example feeds canvas-2D `getImageData` — **top-down**.
+
+The whole WebARKit pose/projection chain was tuned against the **bottom-up**
+(`GrayScale`) convention. Fed top-down (canvas) input, the rendered pose is
+mirrored. (A clean canvas Y-flip of the feed did NOT reproduce `GrayScale` — it
+broke matching — so the fix was done on the rendered pose, not the feed.)
+
+### Working fix (in `examples/threejs_static_image_worker_ES6.js`)
+
+All example-side; no `GrayScale`, normal/right-side-up display, standard
+projection, unflipped feed:
+
+1. **Anchoring correction** in `found()`, applied to the modelview `world`
+   (= `matrixGL_RH`): negate the **Y row** and the **Z column**.
+   - Y row (column-major): `world[1], world[5], world[13]`
+   - Z column: `world[8], world[10]`
+   - `world[9]` (M12) is in both → left unchanged.
+   - One row + one column negation = determinant +1 → a **proper rotation**
+     (not a reflection), so normals/back-faces stay correct for real meshes.
+2. **Content convention** via a `markerFrame` child of `root`,
+   `markerFrame.rotation.x = Math.PI` (180° about X) → +Y toward the bottom of
+   the reference image, +Z into the marker (the marker's image convention).
+   AR content is attached to `markerFrame`.
+
+Verified with a cube: it rests flat on the marker and stands off the surface
+with the expected convention.
+
+### Open decision
+
+- Keep as the example-side correction above (current choice), **or**
+- Fold the equivalent into the library so any top-down/canvas consumer gets it
+  for free. Regression canary: `teblid_example` (bottom-up via `GrayScale`).
+
+## Next investigation: real camera calibration (camera_para.dat / ARParamLT)
+
+`WebARKitCamera::setupCamera(w,h)` currently **synthesizes** the intrinsics from
+a hard-coded **70° diagonal FOV** (no real calibration, zero distortion). That
+guessed focal length feeds both `solvePnP` (pose) and `cameraProjectionMatrix`
+(the GL frustum), and is a likely source of projection inaccuracy.
+
+ArtoolkitX's `PlanarTracker::Initialise` instead receives a real `ARParam`
+(loaded from `camera_para.dat` via `arParamLoad` / `arParamLTLoad` →
+`arParamLTCreate`) and builds OpenCV `_K` directly from `cParam.mat[i][j]`, plus
+distortion from `cParam.dist_factor` (v4: 5 coeffs, v5: 12 coeffs).
+Ref: webarkit/artoolkitx `Source/ARX/OCVT/PlanarTracker.cpp` L99–133.
+
+**Good news — the loaders are already vendored** in `emscripten/WebARKitLib`:
+
+- `arParamLoadFromBuffer(buffer, bufsize, ARParam*)` — `lib/SRC/AR/paramFile.c:368`
+  (buffer variant is the right one for WASM: fetch the `.dat` in JS, pass bytes).
+- `arParamChangeSize(ARParam* src, xsize, ysize, ARParam* dst)` —
+  `lib/SRC/AR/paramChangeSize.c:55` (rescale calibration to the actual frame size).
+- `arParamLTCreate(ARParam*, offset)` — `lib/SRC/AR/paramLT.c:168`.
+- `ARParam` / `ARParamLT` structs — `include/AR/param.h`.
+
+### Proposed approach
+
+1. Add `WebARKitCamera::loadCameraParamFromBuffer(buffer, size, width, height)`:
+   `arParamLoadFromBuffer` → `arParamChangeSize` (to width×height) → fill `cmat`
+   from `cParam.mat` (3×3 part) and `kc` from `cParam.dist_factor`.
+2. Expose it through `emscripten/bindings.cpp` so JS can pass a fetched
+   `camera_para.dat` ArrayBuffer.
+3. Optionally build the GL projection with the vendored `arglCameraFrustumRHf`
+   (from the `ARParam`) instead of the custom `cameraProjectionMatrix` — this
+   would sidestep the custom projection's sign questions in #35 entirely.
+
+Note: this calibration work is **largely independent** of the orientation fix
+above (that was a Y-flip convention issue, not a focal-length issue), but a
+correct `ARParam` + `arglCameraFrustumRHf` could also clean up the projection.
+Verify against `upstream/dev` first (check whether the merged #171 changes any
+camera/param code before starting).
