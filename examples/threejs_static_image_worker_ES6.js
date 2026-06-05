@@ -60,20 +60,26 @@ function start(markerUrl, image, input_width, input_height, render_update, track
 
   root.matrixAutoUpdate = false;
 
-  // Frame correction. The library's marker frame uses image-coordinate
-  // conventions (+X right, +Y down, +Z into the marker), which puts AR
-  // content "behind" the marker in a three.js scene. A 180 degree rotation
-  // around the local Y axis (a proper rotation, no reflection) flips X and
-  // Z so that +Z faces the camera and the content sits above the marker.
-  // The remaining axis tilt observed in some demo images is tied to an
-  // unresolved projection X-mirror in the upstream library (see
-  // webarkit/WebARKitLib#35) and cannot be fully corrected from the example
-  // side until that lands.
+  // TEST (WebARKitLib#35): no render-side compensation, so we read the
+  // library's raw pose with the Y-flipped feed. Sphere + axes on root directly.
+  // Orient the content to the marker's image convention: +X right, +Y toward
+  // the bottom of the reference image, +Z into the marker. A 180-degree rotation
+  // about X (a proper rotation) flips green (Y) toward the bottom and reverses
+  // blue (Z) relative to the raw tracked frame.
   const markerFrame = new THREE.Object3D();
-  markerFrame.rotation.y = Math.PI;
+  markerFrame.rotation.x = Math.PI;
   root.add(markerFrame);
 
-  markerFrame.add(sphere);
+  // TEST cube: with +Z now into the marker, place it on the -Z side so it rests
+  // on the surface toward the viewer. Axes attached to the same frame.
+  const box = new THREE.Mesh(
+    new THREE.BoxGeometry(0.6, 0.6, 0.6),
+    new THREE.MeshNormalMaterial()
+  );
+  box.position.set(0, 0, -0.3);
+  markerFrame.add(box);
+  const axes = new THREE.AxesHelper(1.0); // X=red, Y=green, Z=blue
+  markerFrame.add(axes);
 
   const load = function () {
     vw = input_width;
@@ -174,12 +180,18 @@ function start(markerUrl, image, input_width, input_height, render_update, track
     if (!msg) {
       world = null;
     } else {
-      // Use the GL right-handed modelview (matrixGL_RH) — this is the pose
-      // after the full CV->GL handedness flip (Y and Z rows negated incl.
-      // translation), so the tracked object sits in front of the GL camera.
-      // The raw `pose` field is the OpenCV camera pose (+Z forward) and would
-      // place the object behind the camera under three.js' GL projection.
       world = JSON.parse(msg.matrixGL_RH);
+      // CV->GL orientation fix for top-down (canvas) input (WebARKitLib#35).
+      // Negate the modelview's Y row (row 1) AND Z column (column 2). One row +
+      // one column negation keeps the determinant +1 → a PROPER rotation (not a
+      // reflection), so normals / back-faces stay correct for real meshes.
+      // Column-major indices: row 1 = [1,5,9,13], column 2 = [8,9,10,11];
+      // they overlap at world[9] (M12), which is negated twice → left unchanged.
+      world[1]  = -world[1];   // row 1 (Y): M10
+      world[5]  = -world[5];   //           M11
+      world[13] = -world[13];  //           M13 (translation Y)
+      world[8]  = -world[8];   // column 2 (Z): M02
+      world[10] = -world[10];  //              M22
     }
   };
 
@@ -211,9 +223,8 @@ function start(markerUrl, image, input_width, input_height, render_update, track
     context_process.fillStyle = 'black';
     context_process.fillRect(0, 0, vw, vh);
 
-    // The tracker crashes if it detects a marker on its very first frame
-    // (its tracking-point selection only runs from the second frame onward).
-    // Feed one blank warmup frame first, then the real static image 1:1.
+    // Feed one blank warmup frame first, then the real static image 1:1
+    // (UNFLIPPED — normal working feed; only the display is flipped for this test).
     if (processCount > 0) {
       context_process.drawImage(image, 0, 0, vw, vh);
     }
