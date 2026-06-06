@@ -45,6 +45,7 @@ class WebARKit {
     emscripten::val getGLViewMatrix();
     emscripten::val getCameraProjectionMatrix();
     emscripten::val getCorners();
+    bool loadCameraParam(emscripten::val data_buffer);
     bool isValid();
 
   private:

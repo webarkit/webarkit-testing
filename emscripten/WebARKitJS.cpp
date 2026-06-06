@@ -112,4 +112,11 @@ emscripten::val WebARKit::getCorners() {
 
 bool WebARKit::isValid() { return manager.isValid(); }
 
+// Load real camera calibration from a camera_para.dat buffer (a JS Uint8Array).
+// Call after construction and before reading getCameraProjectionMatrix().
+bool WebARKit::loadCameraParam(emscripten::val data_buffer) {
+    auto u8 = emscripten::convertJSArrayToNumberVector<uint8_t>(data_buffer);
+    return manager.getTracker()->loadCameraParam(u8.data(), (int)u8.size());
+}
+
 #include "bindings.cpp"
