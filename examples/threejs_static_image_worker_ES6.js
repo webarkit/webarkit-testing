@@ -102,9 +102,17 @@ function start(markerUrl, image, input_width, input_height, render_update, track
     // Decode the marker JPEG into RGBA pixels with a 2D canvas. The tracker's
     // initTrackerGray() treats the buffer as raw pixels (no JPEG decode), so we
     // must hand it decoded data, not the compressed file bytes.
+    // Optional real camera calibration: fetch camera_para.dat in parallel.
+    // If absent (404) we fall back to the synthetic FOV camera. Returns a
+    // Uint8Array of the file bytes, or null.
+    const cameraParaPromise = fetch('data/camera_para.dat')
+      .then(r => (r.ok ? r.arrayBuffer() : null))
+      .then(buf => (buf ? new Uint8Array(buf) : null))
+      .catch(() => null);
+
     const loadMarker = (URL) => {
       const markerImg = new Image();
-      markerImg.onload = () => {
+      markerImg.onload = async () => {
         const mw = markerImg.naturalWidth;
         const mh = markerImg.naturalHeight;
         const markerCanvas = document.createElement('canvas');
@@ -113,6 +121,7 @@ function start(markerUrl, image, input_width, input_height, render_update, track
         const markerCtx = markerCanvas.getContext('2d', {willReadFrequently: true});
         markerCtx.drawImage(markerImg, 0, 0, mw, mh);
         const markerData = markerCtx.getImageData(0, 0, mw, mh);
+        const cameraPara = await cameraParaPromise; // Uint8Array or null
         worker.postMessage({
           type: "initTracker",
           trackerType: type,
@@ -121,6 +130,7 @@ function start(markerUrl, image, input_width, input_height, render_update, track
           imgHeight: mh,
           videoWidth: vw,
           videoHeight: vh,
+          cameraPara: cameraPara,
         });
       };
       markerImg.src = URL;

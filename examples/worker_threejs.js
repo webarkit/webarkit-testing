@@ -31,6 +31,13 @@ function initTracker(msg) {
     // Allocate the persistent WASM frame buffer once — avoids convertJSArrayToNumberVector on every frame.
     wark.initFrameBuffer(WebARKit.WebARKitController.RGBA);
 
+    // Optional: override the synthetic FOV camera with real calibration from a
+    // camera_para.dat (Uint8Array) before the projection matrix is read.
+    if (msg.cameraPara) {
+      const ok = wark.loadCameraParam(msg.cameraPara);
+      console.log('loadCameraParam:', ok ? 'real camera_para.dat loaded' : 'FAILED (using default camera)');
+    }
+
     const cameraProjMat = wark.getCameraProjectionMatrix();
     console.log("camera proj Mat: ", cameraProjMat);
 

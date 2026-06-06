@@ -145,6 +145,17 @@ export default class WebARKitController {
     return this.webarkit.initTrackerGray(imgData, width, height, trackerType);
   }
 
+  /**
+   * Override the synthetic FOV-based camera with real calibration from an
+   * ArtoolkitX camera_para.dat file. Pass a Uint8Array of the file's bytes.
+   * Call after init_raw and before reading getCameraProjectionMatrix().
+   * @param {Uint8Array} buffer the camera_para.dat bytes
+   * @return {boolean} true if the parameters were loaded successfully
+   */
+  loadCameraParam(buffer) {
+    return this.webarkit.loadCameraParam(buffer);
+  }
+
   initFrameBuffer(colorSpace) {
     this.webarkit.initFrameBuffer(colorSpace);
     this._frameBufferPtr = this.webarkit.getFrameBufferPtr();

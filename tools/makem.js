@@ -145,7 +145,14 @@ var webarkit_sources = [
     'WebARKitOpticalTracking/TrackingPointSelector.cpp',
     'WebARKitOpticalTracking/WebARKitHomographyInfo.cpp',
     'WebARKitOpticalTracking/WebARKitTracker.cpp',
-    'WebARKitOpticalTracking/WebARKitConfig.cpp'
+    'WebARKitOpticalTracking/WebARKitConfig.cpp',
+    // ArtoolkitX camera_para.dat (ARParam) loading — minimal set (WebARKitLib#35
+    // follow-up). paramFile.c is self-contained (arParamVersionInfo[], byteswap,
+    // paramdtof are internal); paramChangeSize.c is pure arithmetic; log.c
+    // provides arLog() for the ARLOG* macros.
+    '../../lib/SRC/AR/paramFile.c',
+    '../../lib/SRC/AR/paramChangeSize.c',
+    '../../lib/SRC/ARUtil/log.c'
 ].map(function (src) {
     return path.resolve(__dirname, WEBARKITLIB_ROOT + '/WebARKit/WebARKitTrackers/', src);
 });
