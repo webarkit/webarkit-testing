@@ -1,16 +1,148 @@
-# Design: Align WebARKit Pose + Projection with ArtoolkitX (issue #35)
+# Design: Static-image Teblid AR example — localization, pose & projection fix (issues #30, #35, WebARKitLib#42)
 
-Tracks: webarkit/WebARKitLib#35 (projection X-mirror) and the related
-pose-convention correction. Supersedes part of the reasoning in
-webarkit/WebARKitLib#34 / PR #36.
+> **STATUS: SOLVED ✅** — the static-image example tracks the pinball marker and
+> renders AR content correctly localized, oriented and right-side-up.
+>
+> This top section is the **authoritative resolution**. Everything below the
+> `Investigation history` divider is the original design/debate record; several
+> of its hypotheses — a *projection-only* #35 fix (X+/Y−), the `GrayScale`
+> Y-flip theory, and the example-side `markerFrame` / row+column pose correction
+> — were **superseded** by the root cause documented here. Kept for the record.
 
 ## Headline finding
 
-By tracing the **complete** ArtoolkitX OCVT -> render chain (which WebARKit
-reimplemented rather than vendored) and comparing it to WebARKit, we found that
-**PR #36 (already merged) diverged from the ArtoolkitX reference.** The correct
-fix for the axis-orientation bug (#35) requires three *coordinated* changes, one
-of which is reverting #36's pose change.
+The symptom (AR content mirrored / on the wrong panel, later off-screen) looked
+like one "mirror" bug but was **three independent bugs stacked**. The headline —
+and the one that masked the other two for weeks — was a feature-detection
+**scale-factor bug**, *not* the pose/projection conventions we first chased.
+All three fixes are orthogonal; each addresses a different stage:
+
+1. **position** — keypoint scale-factor double-application (`WebARKitTracker.cpp`)
+2. **screen-X mirror** — projection X-focal sign (`WebARKitGL.cpp`)
+3. **handedness** — marker-frame Y,Z column negation / D·R·D (`WebARKitPattern.cpp`)
+
+## Fix 1 — scale-factor double-application *(root cause)* — `WebARKitTracker.cpp`
+
+`WebARKitTrackerImpl::initialize()` derives `_featureDetectScaleFactor` from an
+image-pyramid downsample level, meant to scale keypoints detected on a
+*downsampled* image back up to full-frame coords. **But downsampling is
+disabled** — the `pyrDown` block in `resetTracking()` is commented out and
+`extractFeatures()` runs on the **full-resolution** frame. The already-full-res
+matched keypoints were nevertheless multiplied by the factor in `MatchFeatures()`:
+
+```cpp
+finalMatched1[i].pt.x *= _featureDetectScaleFactor[0];
+finalMatched1[i].pt.y *= _featureDetectScaleFactor[1];
+```
+
+With `featureImageMinSize = 640×480`:
+
+| Frame | pyrLevel | factor | effect |
+|---|---|---|---|
+| 640×480 (typical webcam) | 0 | **1.0** | harmless — why it stayed hidden |
+| 2000×1500 (this static image) | 1 | **2.0** | every matched keypoint doubled |
+| 1920×1080 | 1 | 2.0 | also broken (never tested) |
+
+Doubling the keypoints localized the marker at ~2× its true position
+(bottom-right), exploded the homography, and fed `solvePnP` doubled image points
+→ wrong translation → content on the wrong panel. **This is a general library
+bug: any frame larger than `featureImageMinSize` is mis-localized.**
+
+**Fix:** while detection is full-res the factor must be identity —
+`_featureDetectScaleFactor = cv::Vec2f(1.0f, 1.0f)`, with the pyramid-derived
+computation commented out (restore it together with the `pyrDown` detection path
+if downsampled detection is ever re-enabled).
+
+## Fix 2 — projection X-focal sign — `WebARKitGL.cpp`
+
+`cameraProjectionMatrix` used a **negative** X focal (`-2*f_x/w`), mirroring
+screen-X. The modelview already does the CV→GL handedness flip (Y,Z **row**
+negation in `arglCameraViewRHf`), so the projection must be the plain pinhole
+form with **both focals positive**:
+
+```cpp
+projectionMatrix[0] = 2.0f * f_x / screenWidth;   // was -2.0f
+projectionMatrix[5] = 2.0f * f_y / screenHeight;  // unchanged (+)
+```
+
+gtests `TestCameraProjectionMatrix` / `CheckCameraProjectionMatrix` updated:
+`[0]` → `+1.7851850084276433`.
+
+> Supersedes the earlier #35 plan (X+/**Y−**). With WebARKit's row-negating
+> modelview the correct pair is X+/**Y+** (standard GL), not ArtoolkitX's X+/Y−
+> (which pairs with a *different* modelview convention).
+
+## Fix 3 — marker-frame handedness (D·R·D) — `WebARKitPattern.cpp`
+
+`updateTrackable()` negates the Y,Z rotation **columns** of `trans` (matching
+ArtoolkitX `ARTrackable2d::updateWithTwoDResults`). With the downstream Y,Z
+**row** negation in `arglCameraViewRHf` this yields `D·R·D` (`D = diag(1,−1,−1)`)
+— a right-handed marker frame with **X=right, Y=up, Z=toward the viewer**, so
+content at `+Z` pops up out of the marker:
+
+```cpp
+trans[j][0] =  transMat[j][0];
+trans[j][1] = -transMat[j][1];
+trans[j][2] = -transMat[j][2];
+trans[j][3] = (transMat[j][3] * m_scale * 0.001f * 1.64f);   // translation NOT negated
+```
+
+The translation column is untouched → this **cannot move position**, only
+orientation. (Earlier D·R·D attempts looked wrong only because Fix 1 was
+simultaneously corrupting position.)
+
+## How it was diagnosed (the method that cracked it)
+
+Instrumenting the pipeline beat theorizing about conventions:
+
+1. **`MATCH centroid` log** (`MatchFeatures`): centroid of matched reference vs
+   frame keypoints read `ref(1034,908) → frame(1816,1250)` on a 2000×1500 frame,
+   while the marker physically sits at ~(908,625). **(1816,1250) = 2×(908,625)**
+   → exposed the scale factor.
+2. **Debug overlay** (example JS, no rebuild): drew `getCorners()` (warped bbox,
+   `output[9..16]`) on the tracker's actual input frame. Pre-fix the quad
+   exploded off-screen; post-fix it sat tightly on the panel, corners in order →
+   localization confirmed correct.
+3. **Pose-log NDC math** (example JS): `matrixGL_RH` translation
+   `(−1.996, 2.223, −9.094)` projected through the negative-X projection to NDC
+   `(+0.39, +0.58)` (upper-right, behind the debug overlay) but corner-0 sits at
+   NDC `(−0.32, +0.61)` (upper-left) → **X mirrored, Y correct**. `proj[0]→+`
+   gave `(−0.39, +0.58)` ✓. The rotation columns then showed Z=−0.94 (into the
+   table) → the handedness fix (#3).
+
+| projection | ndc_x | ndc_y | cube appeared |
+|---|---|---|---|
+| X+ / Y− | −0.39 | −0.58 | bottom |
+| X− / Y+ (old baseline) | +0.39 | +0.58 | upper-right (behind overlay) |
+| **X+ / Y+ (fix)** | **−0.39** | **+0.58** | **upper-left, on the marker** ✓ |
+
+## Final verified state
+
+Marker correctly localized; cube + axes anchored at the marker origin (reference
+top-left corner) on the panel; right-handed frame red→right, green→up,
+blue→toward viewer; **no** example-side pose correction, **no** `markerFrame`
+hack, **no** `GrayScale`. Diagnostics (the `MATCH centroid` log, the JS debug
+overlay, the `[POSE]`/`[PROJ]` logs) were removed after verification.
+
+## Changes / commits
+
+WebARKitLib (`fix/pose-drd-convention`):
+- **scale-factor fix** — `WebARKitTracker.cpp` — *its own commit (broad bug)*
+- projection X sign + D·R·D + gtests — `WebARKitGL.cpp`, `WebARKitPattern.cpp`,
+  `tests/webarkit_test.cc`
+
+webarkit-testing (`fix/pose-drd-convention`):
+- static-image example (`examples/threejs_static_image_worker_ES6.js`), rebuilt
+  `build/` + `dist/`, submodule pointer bump.
+
+---
+
+# Investigation history (superseded in part — kept as record)
+
+> ⚠️ The reasoning below predates the root-cause discovery above. The
+> "three coordinated changes / revert #36" framing and the `GrayScale`
+> Y-flip "BREAKTHROUGH" were **wrong about the static-image case** — the actual
+> cause was the scale-factor bug (Fix 1). Read as history, not guidance.
 
 ## The reference chain (ArtoolkitX, webarkit/artoolkitx master)
 
@@ -179,6 +311,13 @@ verification.
 ---
 
 ## BREAKTHROUGH (resolved the static-image orientation) — example-side fix
+
+> ⚠️ **SUPERSEDED.** This `GrayScale` Y-flip theory and the example-side
+> row+column / `markerFrame` correction did NOT survive. `GrayScale` does flip
+> vertically, but that was never the static example's problem — the static path
+> (`getImageData` → OpenCV) is top-down on both sides. The real cause was the
+> scale-factor bug (Fix 1, top of doc); once fixed, no example-side pose
+> correction is needed. Retained only to show the path not taken.
 
 After the multi-agent review, the actual root cause and a working fix were found
 empirically. Status: **kept as an example-side correction**; folding into the
