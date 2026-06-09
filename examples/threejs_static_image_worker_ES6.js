@@ -60,26 +60,19 @@ function start(markerUrl, image, input_width, input_height, render_update, track
 
   root.matrixAutoUpdate = false;
 
-  // TEST (WebARKitLib#35): no render-side compensation, so we read the
-  // library's raw pose with the Y-flipped feed. Sphere + axes on root directly.
-  // Orient the content to the marker's image convention: +X right, +Y toward
-  // the bottom of the reference image, +Z into the marker. A 180-degree rotation
-  // about X (a proper rotation) flips green (Y) toward the bottom and reverses
-  // blue (Z) relative to the raw tracked frame.
-  const markerFrame = new THREE.Object3D();
-  markerFrame.rotation.x = Math.PI;
-  root.add(markerFrame);
-
-  // TEST cube: with +Z now into the marker, place it on the -Z side so it rests
-  // on the surface toward the viewer. Axes attached to the same frame.
+  // WebARKitLib#42: the library now emits a correct D*R*D GL pose (right-handed
+  // marker frame: X=right, Y=up, Z=toward viewer) plus a standard projection, so
+  // there is NO render-side compensation here — content is attached directly to
+  // the tracked root. The box anchors at the marker origin (object 0,0,0 =
+  // reference top-left corner). Cube + axes kept for verification.
   const box = new THREE.Mesh(
     new THREE.BoxGeometry(0.6, 0.6, 0.6),
     new THREE.MeshNormalMaterial()
   );
-  box.position.set(0, 0, -0.3);
-  markerFrame.add(box);
+  box.position.set(0, 0, 0.3); // rest on the +Z side of the marker
+  root.add(box);
   const axes = new THREE.AxesHelper(1.0); // X=red, Y=green, Z=blue
-  markerFrame.add(axes);
+  root.add(axes);
 
   const load = function () {
     vw = input_width;
@@ -180,18 +173,9 @@ function start(markerUrl, image, input_width, input_height, render_update, track
     if (!msg) {
       world = null;
     } else {
+      // WebARKitLib#42: use matrixGL_RH directly — the library now produces a
+      // correct GL modelview, so no example-side correction is needed.
       world = JSON.parse(msg.matrixGL_RH);
-      // CV->GL orientation fix for top-down (canvas) input (WebARKitLib#35).
-      // Negate the modelview's Y row (row 1) AND Z column (column 2). One row +
-      // one column negation keeps the determinant +1 → a PROPER rotation (not a
-      // reflection), so normals / back-faces stay correct for real meshes.
-      // Column-major indices: row 1 = [1,5,9,13], column 2 = [8,9,10,11];
-      // they overlap at world[9] (M12), which is negated twice → left unchanged.
-      world[1]  = -world[1];   // row 1 (Y): M10
-      world[5]  = -world[5];   //           M11
-      world[13] = -world[13];  //           M13 (translation Y)
-      world[8]  = -world[8];   // column 2 (Z): M02
-      world[10] = -world[10];  //              M22
     }
   };
 
@@ -224,7 +208,7 @@ function start(markerUrl, image, input_width, input_height, render_update, track
     context_process.fillRect(0, 0, vw, vh);
 
     // Feed one blank warmup frame first, then the real static image 1:1
-    // (UNFLIPPED — normal working feed; only the display is flipped for this test).
+    // (UNFLIPPED — display and tracker input share the same orientation).
     if (processCount > 0) {
       context_process.drawImage(image, 0, 0, vw, vh);
     }
