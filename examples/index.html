@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>WebARKit Examples</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root { color-scheme: light dark; }
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem 4rem;
+            line-height: 1.5;
+        }
+        h1 { margin-bottom: 0.25rem; }
+        .sub { color: #777; margin-top: 0; }
+        h2 {
+            margin-top: 2rem;
+            padding-bottom: 0.35rem;
+            border-bottom: 1px solid rgba(127, 127, 127, 0.35);
+            font-size: 1.15rem;
+        }
+        ul { list-style: none; padding: 0; }
+        li { margin: 0.55rem 0; }
+        a { font-weight: 600; text-decoration: none; color: #2563eb; }
+        a:hover { text-decoration: underline; }
+        .desc { color: #777; font-weight: 400; }
+        .note { font-size: 0.85rem; color: #777; }
+        .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.05rem 0.4rem;
+            border-radius: 4px;
+            background: #16a34a;
+            color: #fff;
+            vertical-align: middle;
+            margin-left: 0.4rem;
+        }
+        .badge.review { background: #d97706; }
+    </style>
+</head>
+<body>
+    <h1>WebARKit Examples</h1>
+    <p class="sub">Browser AR examples for the WebARKit tracking library.</p>
+
+    <h2>Feature-tracker examples</h2>
+    <ul>
+        <li><a href="./teblid_example.html">Teblid</a>
+            <span class="desc">— TEBLID descriptor tracker.</span></li>
+        <li><a href="./akaze_example.html">AKAZE</a>
+            <span class="desc">— AKAZE feature tracker.</span></li>
+        <li><a href="./orb_example.html">ORB</a>
+            <span class="desc">— ORB feature tracker.</span></li>
+        <li><a href="./freak_example.html">FREAK</a>
+            <span class="desc">— FREAK descriptor tracker.</span></li>
+    </ul>
+
+    <h2>three.js AR examples</h2>
+    <ul>
+        <li><a href="./threejs_teblid_static_image_ES6_example.html">Teblid &mdash; static image</a>
+            <span class="badge">working</span>
+            <span class="desc">— AR overlay on a still image, Teblid tracker.</span></li>
+        <li><a href="./threejs_teblid_webcam_ES6_example.html">Teblid &mdash; webcam</a>
+            <span class="badge">new</span>
+            <span class="desc">— live camera AR, Teblid tracker (bufferCopy ping-pong).</span></li>
+    </ul>
+
+    <h2>Other / under review <span class="note">(see issue #36)</span></h2>
+    <p class="note">These older examples are kept for now but may be broken or
+    superseded; they are being audited in issue #36.</p>
+    <ul>
+        <li><a href="./teblid_example_4_threejs.html">Teblid + three.js</a>
+            <span class="badge review">review</span></li>
+        <li><a href="./teblid_advanced_example.html">Teblid advanced</a>
+            <span class="badge review">review</span></li>
+        <li><a href="./threejs_speedy_ES6_example.html">three.js + Speedy</a>
+            <span class="badge review">review</span></li>
+        <li><a href="./threejs_bufferCopy_ES6_example.html">three.js bufferCopy</a>
+            <span class="badge review">review</span></li>
+        <li><a href="./threejs_ES6_example.html">three.js ES6</a>
+            <span class="badge review">review</span></li>
+        <li><a href="./threejs_ES6_jsfeatNext_example.html">three.js + jsfeatNext</a>
+            <span class="badge review">review</span></li>
+    </ul>
+</body>
+</html>
