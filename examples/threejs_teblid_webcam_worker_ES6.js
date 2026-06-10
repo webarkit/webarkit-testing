@@ -160,6 +160,12 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   // On-screen tracking status. Updated only on transitions (cheap); the same
   // transitions are also logged to the console, alongside the worker's logs.
+  //
+  // NOTE: "found"/"tracked" reflects the library's isValid(). The tracker does
+  // not reliably declare tracking lost when the marker leaves the frame, so this
+  // status (and the rendered pose) can persist on a stale lock. This is a known
+  // library limitation, not specific to this example -- see
+  // webarkit/WebARKitLib#46.
   const statusEl = document.getElementById('status');
   let statusTracked = null;
   const setStatus = function (isTracked) {
