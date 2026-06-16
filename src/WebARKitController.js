@@ -169,6 +169,12 @@ export default class WebARKitController {
     return this.webarkit.isValid();
   }
 
+  // WebARKitLib#38: when true, the tracked pose origin is the marker centre
+  // instead of the reference image's top-left corner. Default false.
+  setOriginCentered(centered) {
+    this.webarkit.setOriginCentered(centered);
+  }
+
   getHomography() {
     return this.webarkit.getHomography();
   }
