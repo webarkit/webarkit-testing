@@ -26,63 +26,49 @@
         a { font-weight: 600; text-decoration: none; color: #2563eb; }
         a:hover { text-decoration: underline; }
         .desc { color: #777; font-weight: 400; }
-        .note { font-size: 0.85rem; color: #777; }
-        .badge {
-            display: inline-block;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 0.05rem 0.4rem;
-            border-radius: 4px;
-            background: #16a34a;
-            color: #fff;
-            vertical-align: middle;
-            margin-left: 0.4rem;
+        .note {
+            margin: 0.4rem 0 0.9rem;
+            color: #555;
+            font-size: 0.9rem;
         }
-        .badge.review { background: #d97706; }
+        code {
+            font-size: 0.85em;
+            padding: 0.05rem 0.3rem;
+            background: rgba(127, 127, 127, 0.15);
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
     <h1>WebARKit Examples</h1>
     <p class="sub">Browser AR examples for the WebARKit tracking library.</p>
 
-    <h2>Feature-tracker examples</h2>
+    <h2>Feature-tracker example</h2>
+    <p class="note">
+        Lightweight 2D demo: consumes only the marker <strong>homography</strong>
+        (<code>getHomography()</code>) and the warped marker corners
+        (<code>getCorners()</code>). The blue rectangle outlines the detected marker
+        and the AR image is positioned via CSS <code>matrix3d</code>. There is no 3D
+        pose and no real camera calibration, so the overlay is less precise (a small
+        size offset around the printed marker is expected).
+    </p>
     <ul>
-        <li><a href="./teblid_example.html">Teblid</a>
-            <span class="desc">— TEBLID descriptor tracker.</span></li>
-        <li><a href="./akaze_example.html">AKAZE</a>
-            <span class="desc">— AKAZE feature tracker.</span></li>
-        <li><a href="./orb_example.html">ORB</a>
-            <span class="desc">— ORB feature tracker.</span></li>
-        <li><a href="./freak_example.html">FREAK</a>
-            <span class="desc">— FREAK descriptor tracker.</span></li>
+        <li><a href="./feature_trackers_example.html">All trackers &mdash; unified</a>
+            <span class="desc">— pick Teblid / AKAZE / ORB / FREAK from a dropdown.</span></li>
     </ul>
 
     <h2>three.js AR examples</h2>
+    <p class="note">
+        Full 3D AR: consumes the corrected right-handed GL modelview
+        <code>matrixGL_RH</code> plus the camera projection from the library, and
+        renders content (cube + axes) with three.js. More precise placement than the
+        2D feature-tracker example.
+    </p>
     <ul>
         <li><a href="./threejs_teblid_static_image_ES6_example.html">Teblid &mdash; static image</a>
-            <span class="badge">working</span>
             <span class="desc">— AR overlay on a still image, Teblid tracker.</span></li>
         <li><a href="./threejs_teblid_webcam_ES6_example.html">Teblid &mdash; webcam</a>
-            <span class="badge">new</span>
             <span class="desc">— live camera AR, Teblid tracker (bufferCopy ping-pong).</span></li>
-    </ul>
-
-    <h2>Other / under review <span class="note">(see issue #36)</span></h2>
-    <p class="note">These older examples are kept for now but may be broken or
-    superseded; they are being audited in issue #36.</p>
-    <ul>
-        <li><a href="./teblid_example_4_threejs.html">Teblid + three.js</a>
-            <span class="badge review">review</span></li>
-        <li><a href="./teblid_advanced_example.html">Teblid advanced</a>
-            <span class="badge review">review</span></li>
-        <li><a href="./threejs_speedy_ES6_example.html">three.js + Speedy</a>
-            <span class="badge review">review</span></li>
-        <li><a href="./threejs_bufferCopy_ES6_example.html">three.js bufferCopy</a>
-            <span class="badge review">review</span></li>
-        <li><a href="./threejs_ES6_example.html">three.js ES6</a>
-            <span class="badge review">review</span></li>
-        <li><a href="./threejs_ES6_jsfeatNext_example.html">three.js + jsfeatNext</a>
-            <span class="badge review">review</span></li>
     </ul>
 </body>
 </html>

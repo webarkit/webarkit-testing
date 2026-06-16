@@ -32,7 +32,6 @@
     "@babel/preset-env": "7.29.7",
     "babel-loader": "10.1.1",
     "rimraf": "^6.1.3",
-    "speedy-vision": "^0.9.0-wip",
     "webpack": "5.107.2",
     "webpack-cli": "^7.0.3"
   },
