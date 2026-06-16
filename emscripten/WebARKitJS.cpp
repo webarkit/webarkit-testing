@@ -112,4 +112,6 @@ emscripten::val WebARKit::getCorners() {
 
 bool WebARKit::isValid() { return manager.isValid(); }
 
+void WebARKit::setOriginCentered(bool centered) { manager.setOriginCentered(centered); }
+
 #include "bindings.cpp"

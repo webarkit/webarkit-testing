@@ -35,6 +35,9 @@ function initTracker(msg) {
     wark.loadTrackerGrayImage(msg.imageData, msg.imgWidth, msg.imgHeight, WebARKit.WebARKitController.RGBA);
     // Allocate the persistent WASM frame buffer once.
     wark.initFrameBuffer(WebARKit.WebARKitController.RGBA);
+    // WebARKitLib#38: anchor AR content at the marker centre (opt-in; default is
+    // the reference image's top-left corner).
+    wark.setOriginCentered(true);
 
     const cameraProjMat = wark.getCameraProjectionMatrix();
     console.log("camera proj Mat: ", cameraProjMat);

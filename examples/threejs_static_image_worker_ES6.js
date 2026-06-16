@@ -63,8 +63,9 @@ function start(markerUrl, image, input_width, input_height, render_update, track
   // WebARKitLib#42: the library now emits a correct D*R*D GL pose (right-handed
   // marker frame: X=right, Y=up, Z=toward viewer) plus a standard projection, so
   // there is NO render-side compensation here — content is attached directly to
-  // the tracked root. The box anchors at the marker origin (object 0,0,0 =
-  // reference top-left corner). Cube + axes kept for verification.
+  // the tracked root. WebARKitLib#38: the worker calls setOriginCentered(true),
+  // so the pose origin is the marker CENTRE — content at (0,0,0) sits in the
+  // middle (was the reference top-left corner). Cube + axes kept for verification.
   const box = new THREE.Mesh(
     new THREE.BoxGeometry(0.6, 0.6, 0.6),
     new THREE.MeshNormalMaterial()

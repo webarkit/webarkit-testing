@@ -46,6 +46,7 @@ class WebARKit {
     emscripten::val getCameraProjectionMatrix();
     emscripten::val getCorners();
     bool isValid();
+    void setOriginCentered(bool centered);
 
   private:
     int videoWidth;

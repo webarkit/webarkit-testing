@@ -40,5 +40,6 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("getTransformationMatrix", &WebARKit::getTransformationMatrix)
       .function("getCameraProjectionMatrix", &WebARKit::getCameraProjectionMatrix)
       .function("getCorners", &WebARKit::getCorners)
-      .function("isValid", &WebARKit::isValid);
+      .function("isValid", &WebARKit::isValid)
+      .function("setOriginCentered", &WebARKit::setOriginCentered);
 };
