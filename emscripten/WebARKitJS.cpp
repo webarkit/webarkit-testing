@@ -49,8 +49,8 @@ emscripten::val WebARKit::getHomography() {
     return homography;
 }
 
-emscripten::val WebARKit::getPoseMatrix() {
-    cv::Mat poseMatrix = manager.getPoseMatrix();
+emscripten::val WebARKit::getPoseMatrixCV() {
+    cv::Mat poseMatrix = manager.getPoseMatrixCV();
     emscripten::val pose = emscripten::val::array();
     for (auto i = 0; i < poseMatrix.rows; i++) {
         for (auto j = 0; j < poseMatrix.cols; j++) {
@@ -60,8 +60,8 @@ emscripten::val WebARKit::getPoseMatrix() {
     return pose;
 }
 
-emscripten::val WebARKit::getPoseMatrix2() {
-    auto poseMatrix =  (float (*)[4])manager.getPoseMatrix2();
+emscripten::val WebARKit::getPoseMatrixGL() {
+    auto poseMatrix =  (float (*)[4])manager.getPoseMatrixGL();
     emscripten::val pose = emscripten::val::array();
     for (auto i = 0; i < 3; i++) {
         for (auto j = 0; j < 4; j++) {
