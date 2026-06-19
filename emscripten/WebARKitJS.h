@@ -39,8 +39,8 @@ class WebARKit {
     void processFrame(webarkit::ColorSpace colorSpace, webarkit::BLUR_TYPE blurType);
     void setLogLevel(int logLevel);
     emscripten::val getHomography();
-    emscripten::val getPoseMatrix();
-    emscripten::val getPoseMatrix2();
+    emscripten::val getPoseMatrixCV();
+    emscripten::val getPoseMatrixGL();
     emscripten::val getTransformationMatrix();
     emscripten::val getGLViewMatrix();
     emscripten::val getCameraProjectionMatrix();
