@@ -118,7 +118,7 @@ export default class WebARKitController {
 
       corners = this.getCorners();
       matrix = this.getHomography();
-      this.transMatToGLMat(this.getPoseMatrix(), pose);
+      this.transMatToGLMat(this.getPoseMatrixGL(), pose);
       transMatrix = this.getTransformationMatrix();
       viewMatrix_GL = this.getGLViewMatrix();
       matrixGL_RH = this.arglCameraViewRHf(pose, new Float64Array(16),  1.0);
@@ -179,8 +179,12 @@ export default class WebARKitController {
     return this.webarkit.getHomography();
   }
 
-  getPoseMatrix() {
-    return this.webarkit.getPoseMatrix2();
+  getPoseMatrixGL() {
+    return this.webarkit.getPoseMatrixGL();
+  }
+
+  getPoseMatrixCV() {
+    return this.webarkit.getPoseMatrixCV();
   }
 
   getTransformationMatrix() {
