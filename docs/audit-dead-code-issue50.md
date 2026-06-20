@@ -43,6 +43,47 @@ keep/remove/fix call.
 
 ---
 
+## Decisions & status (post-review, June 2026)
+
+This section records the **final dispositions** agreed after review. The per-file
+tables and the cleanup decision table below are the *original audit verdicts* and
+are superseded here where they differ — we deliberately favoured keeping anything
+with plausible future value over maximal deletion.
+
+### Removed — webarkit/WebARKitLib#57 (behavior-neutral)
+- `WebARKitManager::update()` — declared but never defined/called (dangling).
+- `im_gray()` — commented-out grayscale helper (`WebARKitUtils.h`).
+- Commented-out `_trackables[…]` multi-marker lines + `getPoseMatrix3` comments in
+  `WebARKitTracker.cpp/.h`.
+
+> Note: the emscripten build is **not** byte-reproducible, so even this
+> comment/dead-decl-only change regenerates `build/`+`dist/`; both examples were
+> rebuilt and verified (static pyrLevel 1, webcam pyrLevel 0, 1000 matches).
+
+### Kept — OCVT-derived (ArtoolkitX parity / possible future use)
+Cross-checked against ArtoolkitX OCVT: `CleanUp` is **live upstream**
+(`PlanarTracker::RemoveAllMarkers`); the others are vestigial even upstream but
+kept for parity. **KEEP:** `CleanUp`, `GetAllFeatures`, `IsSelected`, `markerRoi`
+(TrackedPoint), `inlier_matches` (HomographyInfo).
+
+### Kept — debug scaffolding
+`_trackVizActive` / `TrackerVisualization` and all `if (_trackVizActive)` blocks —
+kept as scaffolding for a future tracking-debug overlay (the data-collection hooks
+are the costly part to reconstruct). No setter today, so it stays inert.
+
+### Kept — plausible WebARKit API / accessors / config (formerly REMOVE candidates)
+`getWebARKitVersion`, `getTracker`, `getDistortionCoefficients`, the `initTracker(cv::Mat)`
+and `arglCameraViewRHf(cv::Mat)` overloads, `webarkitGetVersion(char**)` + the
+`WEBARKIT_HEADER_VERSION_MAJOR/MINOR/TINY/DEV` constants, `N`, `featureDetectPyramidLevel`,
+and `grayscale()` — kept as plausible public API / OCVConfig parity.
+
+### Pending decision
+- `computePose` / `invertPose` / `computeGLviewMatrix()` (no-arg) — WebARKit's own
+  pose math, superseded by `cameraPoseFromPoints` + the #55 `pose3d` fix. Not yet
+  removed; awaiting a keep/remove call.
+
+---
+
 ## Named suspects from #50 — resolution
 
 | Suspect | Verdict | Evidence |
