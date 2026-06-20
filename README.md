@@ -1,38 +1,125 @@
 # webarkit-testing
 
-This is a repository testing for [**WebARKit**](https://github.com/webarkit). This will not became the official repository, it's only a testing repository to test the code and the features of WebARKit. When it will be ready and mature, the code wiil be hosted in a new repository.
+The **WebARKit** superproject: the build glue, the JavaScript controller, and the
+examples that exercise the [WebARKitLib](https://github.com/webarkit/WebARKitLib)
+C++/WASM tracker in the browser.
 
-## Features to add / issues to solve
+WebARKit is a browser-side Augmented Reality tracker — an emscripten port of the
+**OCVT** planar-tracking design from [ArtoolkitX](https://github.com/artoolkitx/artoolkitx).
+This repo compiles that C++ library to WebAssembly, wraps it in a small JS API, and
+ships runnable examples. It is the experimental/testing home for WebARKit while the
+design stabilises.
 
-- [x] Tracking inside a WebWorker to improve performances
-- [x] Refactor the example and avoid Grayscale class to be used directly in WebARKitController
-- [x] Fix jittering in detection phase.
-- [x] Solve issue: Uncaught exception in processFrame https://github.com/kalwalt/webarkit-testing/issues/11.
-- [x] Reduce code size of the final bundled library file.
-- [ ] Improve stability and tracker detection.
+> **Two version numbers, on purpose.** The npm package (`package.json`) and the C++
+> library (`WebARKitLib/.../WebARKitConfig.cpp`) version independently — they are
+> different artifacts, so their version numbers differ.
 
-## Building
+## Repository layout
 
-### Pre-requisites
+| Path | What |
+|---|---|
+| `src/WebARKitController.js` | the public JS API — `init_raw()` / `process_raw()`, the `getMarker` event, and the pose/matrix getters |
+| `src/utils/GrayScale.js` | standalone grayscale helper (separate webpack bundle, used by the feature-trackers example) |
+| `emscripten/WebARKitJS.{h,cpp}` | the C++↔JS wrapper class exposed to WebAssembly |
+| `emscripten/bindings.cpp` | emscripten `EMSCRIPTEN_BINDINGS` — the C++ methods/enums surfaced to JS |
+| `emscripten/WebARKitLib/` | **git submodule** → the [WebARKitLib](https://github.com/webarkit/WebARKitLib) C++ source (the actual tracker) |
+| `tools/makem.js` | the emscripten compile driver (invoked by `npm run build`) |
+| `build/` | WASM build outputs (`webarkit_ES6_wasm.js`, `…simd.js`) |
+| `dist/` | webpack bundles (`WebARKit.js`, `GrayScale.js`) — what consumers load |
+| `examples/` | runnable demos (see below) |
+| `docs/` | design docs for the architectural decisions (see [Design docs](#design-docs)) |
 
-You need emscripten `3.1.26` because OpenCV may be built with this version. We are using our OpenCV (4.10.0) forked version.
+## Prerequisites
 
-### Instructions
+- **Docker** (the WASM toolchain runs in a container — you do not need a local emscripten install).
+- **Node.js** + npm (for the webpack bundle and the dev server).
+- Emscripten **emsdk 3.1.26** and a forked **OpenCV 4.10.0** — both handled via Docker below. OpenCV does **not** need a separate download: `opencv` and `opencv_contrib` are vendored as git submodules (fetched by the recursive clone) and compiled by `build_cv_w_docker.sh`.
 
-Before all, you need to clone this repository with the WebARKitLib and opencv submodules:
+## Getting started
 
+Clone **recursively** — the WebARKitLib, `opencv`, and `opencv_contrib` submodules
+are all vendored, so this fetches everything (no separate OpenCV download):
+
+```bash
+git clone --recursive https://github.com/webarkit/webarkit-testing.git
+cd webarkit-testing
+npm install
 ```
-git clone --recursive https://github.com/kalwalt/webarkit-testing.git
+
+### Build flow (two steps)
+
+The build is **two stages**: compile the C++ to WASM, then bundle the JS.
+
+```bash
+# 1. one-time: create the emscripten build container
+npm run setup-docker
+
+# 2a. build OpenCV (only needed once, or when the OpenCV fork changes)
+./build_cv_w_docker.sh
+
+# 2b. compile WebARKitLib -> WASM (build/), inside the container
+npm run build-docker
+
+# 3. bundle the JS -> dist/WebARKit.js
+npm run build-es6
 ```
 
-then if you plan to modify the C++ source code, you need to build opencv, run `./build_cv_w_docker.sh`, the script will build OpenCV with docker.
+- **`npm run build-docker`** runs the emscripten build (`tools/makem.js`) inside the
+  `emscripten-webarkit-testing` container — use this, not the bare `npm run build`,
+  unless you have a local emscripten 3.1.26 toolchain.
+- **`npm run build-es6`** produces the production `dist/` bundle. For an auto-rebuilding
+  dev bundle use `npm run dev-es6`; for a debug WASM build use `npm run build-docker-debug`.
 
-You are ready to modify the code and remember to re-build the project every time with: `npm run build` and  re-build js code with `npm run build-es6` if you want a dev build use  `npm run dev-es6`.
-It is possible to build a debug version of the library with `npm run build-debug` and then run `npm run dev-es6` to update the dist library.
+> After **any** change to the C++ submodule you must re-run `build-docker` **and**
+> `build-es6`; the committed `build/` + `dist/` artifacts are the built output. (The
+> emscripten output is generally not byte-reproducible, so expect those files to change.)
 
-## Examples
+### Run the examples
 
-Go in examples folder try one of the examples... point the camera to the pinball.jpg image and you will see some messages.
-At the moment it support Akaze, Orb, Freak and Teblid. When the pinball image is detected and tracked it should display a colored image with a blue rect border around. Consider that the examples are not optimized for Mobile devices yet, best to try on desktop PC.
+```bash
+npm run serve          # serves the repo (npx http-server)
+# then open examples/index.html in a browser
+```
 
-Try the live examples at [www.webarkit.org/examples/webarkit-testing](https://www.webarkit.org/examples/webarkit-testing)
+Point the camera (or the static demo image) at `examples/data/pinball.jpg`. On a match
+you'll see the tracked overlay. Examples are desktop-first.
+
+| Example | Tracker | Notes |
+|---|---|---|
+| `examples/threejs_teblid_static_image_ES6_example.html` | Teblid | three.js cube on a still image |
+| `examples/threejs_teblid_webcam_ES6_example.html` | Teblid | three.js cube on the live webcam |
+| `examples/feature_trackers_example.html` | Akaze / ORB / Freak / Teblid | picks the detector via a URL param |
+
+Live demos: [www.webarkit.org/examples/webarkit-testing](https://www.webarkit.org/examples/webarkit-testing)
+
+## The WebARKitLib submodule
+
+The C++ tracker lives in `emscripten/WebARKitLib` as a submodule tracking
+`webarkit/WebARKitLib`'s `dev` branch. For **cross-repo work**:
+
+1. Branch from `dev` in *both* repos.
+2. Make the C++ change in the submodule; make the glue/example/build change here.
+3. Open a **PR pair** (submodule PR → `WebARKitLib:dev`, superproject PR → `webarkit-testing:dev`).
+4. After the submodule PR merges, re-bump the submodule pointer to the merged `dev` tip.
+
+## Design docs
+
+The architecture and the non-obvious tracking decisions are documented under `docs/`:
+
+- [`design-projection-and-pose-artoolkitx-alignment.md`](docs/design-projection-and-pose-artoolkitx-alignment.md) — the pose/projection/handedness pipeline, aligned to ArtoolkitX.
+- [`design-pose-cv-to-gl-fix.md`](docs/design-pose-cv-to-gl-fix.md) — OpenCV→GL pose conversion (D·R·D).
+- [`design-center-origin-option.md`](docs/design-center-origin-option.md) — `setOriginCentered`.
+- [`design-detection-downsampling.md`](docs/design-detection-downsampling.md) + [`design-detection-guard.md`](docs/design-detection-guard.md) — detection-side performance.
+- [`design-tracking-loss-fix.md`](docs/design-tracking-loss-fix.md) — tracking-loss handling.
+- [`design-static-image-teblid-example.md`](docs/design-static-image-teblid-example.md) + [`design-webcam-teblid-example.md`](docs/design-webcam-teblid-example.md) — the examples.
+- [`audit-dead-code-issue50.md`](docs/audit-dead-code-issue50.md) — the C++ dead-code inventory + keep/remove decisions.
+
+## Contributing
+
+- Branch from `dev`; PR back to `dev`.
+- Sign your commits.
+- For C++ changes, see the cross-repo PR-pair flow above and verify against both examples.
+
+## License
+
+LGPL-3.0.
