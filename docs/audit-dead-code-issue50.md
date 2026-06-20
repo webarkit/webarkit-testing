@@ -77,10 +77,12 @@ and `arglCameraViewRHf(cv::Mat)` overloads, `webarkitGetVersion(char**)` + the
 `WEBARKIT_HEADER_VERSION_MAJOR/MINOR/TINY/DEV` constants, `N`, `featureDetectPyramidLevel`,
 and `grayscale()` — kept as plausible public API / OCVConfig parity.
 
-### Pending decision
+### Removed — webarkit/WebARKitLib#58 (Tier 3)
 - `computePose` / `invertPose` / `computeGLviewMatrix()` (no-arg) — WebARKit's own
-  pose math, superseded by `cameraPoseFromPoints` + the #55 `pose3d` fix. Not yet
-  removed; awaiting a keep/remove call.
+  pose math, superseded by `cameraPoseFromPoints` + the #55 `pose3d` fix. Removed
+  (behavior-neutral; the live `cameraPoseFromPoints` → `getTrackablePose` →
+  `updateTrackable` → `computeGLviewMatrix(cv::Mat&)` path is unchanged). With this,
+  the #50 audit is complete — every remaining flagged symbol was decided KEEP.
 
 ---
 
