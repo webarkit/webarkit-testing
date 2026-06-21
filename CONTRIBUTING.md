@@ -51,9 +51,29 @@ Scan through our [existing issues](https://github.com/webarkit/webarkit-testing/
 
 ### Commit your update
 
-Commit the changes once you are happy with them. See [Atom's contributing guide](https://github.com/atom/atom/blob/master/CONTRIBUTING.md#git-commit-messages) to know how to use emoji for commit messages.
+Commit your changes once you are happy with them, and **sign your commits**
+(`git commit -S …`).
 
-Once your changes are ready, don't forget to self-review to speed up the review process:zap:.
+**Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/):**
+`<type>(<optional scope>): <description>` — e.g. `feat:`, `fix:`, `docs:`, `refactor:`,
+`test:`, `chore:`. For example:
+
+```
+feat(examples): add a tracker picker to the webcam demo
+fix(controller): read HEAPU8 fresh each frame
+chore: bump WebARKitLib to merged dev
+```
+
+**If you changed C++** (the `emscripten/WebARKitLib` submodule), rebuild and commit the
+regenerated artifacts: `npm run build-docker` (WASM → `build/`) then `npm run build-es6`
+(bundle → `dist/`), and verify both examples still track (`npm run serve`). Pure
+JS / example / docs changes need no rebuild.
+
+For a change spanning both repos, branch from `dev` in **both** WebARKitLib and
+webarkit-testing, open a **PR pair** (both → `dev`), and re-point the submodule to the
+merged `dev` tip after the library PR lands.
+
+Once your changes are ready, don't forget to self-review to speed up the review process :zap:.
 
 ### Pull Request
 

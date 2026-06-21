@@ -116,8 +116,11 @@ The architecture and the non-obvious tracking decisions are documented under `do
 
 ## Contributing
 
-- Branch from `dev`; PR back to `dev`.
-- Sign your commits.
+Please read [`./CONTRIBUTING.md`](./CONTRIBUTING.md) for the full guidelines. In short:
+
+- Branch from `dev`; PR back to `dev`; sign your commits.
+- **Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/)**
+  (e.g. `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`).
 - For C++ changes, see the cross-repo PR-pair flow above and verify against both examples.
 
 ## License
