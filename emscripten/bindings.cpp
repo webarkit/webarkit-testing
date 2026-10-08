@@ -12,7 +12,9 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
   enum_<webarkit::ColorSpace>("ColorSpace")
       .value("RGBA", webarkit::RGBA)
       .value("RGB", webarkit::RGB)
-      .value("GRAY", webarkit::GRAY);
+      .value("GRAY", webarkit::GRAY)
+      .value("BGR", webarkit::BGR)
+      .value("BGRA", webarkit::BGRA);
 
   enum_<webarkit::BLUR_TYPE>("BLUR_TYPE")
       .value("MEDIAN_BLUR", webarkit::MEDIAN_BLUR)

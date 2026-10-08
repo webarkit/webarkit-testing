@@ -4,6 +4,8 @@ static int bppForColorSpace(webarkit::ColorSpace cs) {
     switch (cs) {
         case webarkit::RGBA: return 4;
         case webarkit::RGB:  return 3;
+        case webarkit::BGRA: return 4;
+        case webarkit::BGR:  return 3;
         case webarkit::GRAY: return 1;
         default:             return 4;
     }
