@@ -44,8 +44,11 @@ STATS
 <script src="js/three.min.js"></script>
 
 <script>
+    // Default tracker is AKAZE (the one validated against pinball-demo.jpg for
+    // WebARKitLib#53); override with ?tracker=orb|freak|teblid|akaze to compare.
     function setTrackerType() {
-        return 'akaze';
+        const t = new URLSearchParams(location.search).get('tracker');
+        return ['orb', 'akaze', 'freak', 'teblid'].includes(t) ? t : 'akaze';
     }
 </script>
 
