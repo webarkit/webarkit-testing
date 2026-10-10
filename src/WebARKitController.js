@@ -5,6 +5,8 @@ export default class WebARKitController {
   static RGBA;
   static RGB;
   static GRAY;
+  static BGR;
+  static BGRA;
   static ORB_TRACKER;
   static AKAZE_TRACKER;
   static FREAK_TRACKER;
@@ -75,6 +77,8 @@ export default class WebARKitController {
     WebARKitController.GRAY = this.instance.ColorSpace.GRAY;
     WebARKitController.RGBA = this.instance.ColorSpace.RGBA;
     WebARKitController.RGB = this.instance.ColorSpace.RGB;
+    WebARKitController.BGR = this.instance.ColorSpace.BGR;
+    WebARKitController.BGRA = this.instance.ColorSpace.BGRA;
 
     this.version = packageInfo.version;
     console.info("WebARKit ", this.version);
