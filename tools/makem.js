@@ -162,8 +162,6 @@ if (WITH_FILTERING) DEFINES += ' -D WITH_FILTERING ';
 var FLAGS = '' + OPTIMIZE_FLAGS;
 FLAGS += ' -Wno-warn-absolute-paths ';
 FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
-FLAGS += ' -s USE_ZLIB=1';
-FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s "EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
@@ -220,6 +218,10 @@ var OPENCV_LIBS = [
     path.resolve(__dirname, '../opencv_js/lib/libopencv_imgproc.a'),
     path.resolve(__dirname, '../opencv_js/lib/libopencv_video.a'),
     path.resolve(__dirname, '../opencv_js/lib/libopencv_xfeatures2d.a'),
+    // Link the prebuilt WASM zlib instead of '-s USE_ZLIB=1': emscripten ports fetch
+    // from github.com at build time and fail offline. No libjpeg symbols are used
+    // by the tracker (examples decode JPEG in JS), so '-s USE_LIBJPEG' was dropped.
+    path.resolve(__dirname, '../opencv_js/3rdparty/lib/libzlib.a'),
 ].map(function (s) { return ' ' + s }).join(' ');
 
 function format(str) {

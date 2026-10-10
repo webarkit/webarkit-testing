@@ -35,7 +35,7 @@ STATS
         The same img element is also sampled by context_process.drawImage() in
         threejs_static_image_worker_ES6.js as the tracker's input frame.
     -->
-    <img id="static-image" src="data/pinball-demo-big.jpg"
+    <img id="static-image" src="data/pinball-demo.jpg"
          style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;">
     <canvas id="canvas"></canvas>
 </div>
@@ -44,8 +44,11 @@ STATS
 <script src="js/three.min.js"></script>
 
 <script>
+    // Default tracker is AKAZE (the one validated against pinball-demo.jpg for
+    // WebARKitLib#53); override with ?tracker=orb|freak|teblid|akaze to compare.
     function setTrackerType() {
-        return 'teblid';
+        const t = new URLSearchParams(location.search).get('tracker');
+        return ['orb', 'akaze', 'freak', 'teblid'].includes(t) ? t : 'akaze';
     }
 </script>
 
