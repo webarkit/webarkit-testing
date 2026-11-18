@@ -37,6 +37,15 @@ npm run build-es6             # JS bundle -> dist/
 - **After any change to the WebARKitLib submodule or the C++ glue, run both
   `build-docker` and `build-es6`** and commit the regenerated `build/` + `dist/`.
   The emscripten output is not byte-reproducible; expect those files to change.
+- Only the glue (`emscripten/WebARKitJS.*`, `bindings.cpp`) changed? `npm run build-docker-no-libar`
+  reuses `build/libwebarkit*.bc`. Never use it after a submodule change.
+
+## Exposing a new C++ call to JS
+
+1. `emscripten/WebARKitJS.h/.cpp` — wrap it in the `WebARKit` class.
+2. `emscripten/bindings.cpp` — `.function("name", &WebARKit::name)` (enums go in `enum_<>`).
+3. `src/WebARKitController.js` — add the JS method.
+4. Rebuild both stages; check an example in `examples/` uses it correctly.
 
 ## Test
 
@@ -76,5 +85,9 @@ cmake -DEMSCRIPTEN_COMP=0 .. && make
   library (`WebARKitConfig.cpp` in the submodule, e.g. v0.12.0). Never bump one to match the other.
 - **Live demos** are hosted in the `webarkit/webarkit.github.io` repo, not in `docs/`.
 - Do not hand-edit `build/` or `dist/`; regenerate them.
+- `dist/WebARKit.js` bundles only the **SIMD** build (`src/WebARKitController.js` imports
+  `build/webarkit_ES6_wasm.simd`); the non-SIMD file is built but not used by the bundle.
+- C++ glue (`emscripten/*.cpp|h`) follows `.clang-format` (LLVM, 4-space indent).
+  WebARKitLib code follows that repo's own style; don't reformat the submodule from here.
 - Don't mount a host folder at `/lib` in a Linux container (it shadows system libraries) — use `/work`.
 - Performance claims need an A/B measurement (baseline build vs. change), not a single number.
